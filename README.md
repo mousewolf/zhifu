@@ -66,6 +66,12 @@ Caomao_2018_Beta_v1.0
 │  └─.htaccess          用于apache的重写
 │
 ├─data                  应用数据存放目录
+│  ├─cret               商户证书目录         
+│  ├─cront              定时器脚本目录
+│  ├─extend             拓展类库目录
+│  ├─runtime            运行日志目录
+│  ├─supervisord        守护进程日志目录
+|  └─ ...
 ├─thinkphp              ThinkPHP框架系统目录
 ├─vendor                第三方类库目录（Composer依赖库）
 ├─build.php             自动生成定义文件（参考）
@@ -79,7 +85,7 @@ Caomao_2018_Beta_v1.0
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-QQ群: [939417065](交流群)
+QQ群: [939417065](交流群 暗号：Caomao)
 
 Email: (brianwaring98#gmail.com, 把#换成@)
 
@@ -91,7 +97,7 @@ Github: https://github.com/iredcap
 
 ThinkPHP：http://www.thinkphp.cn
 
-LayuiAdmin：https://www.layui.com/admin/
+LayuiAdmin：https://www.layui.com/admin/ (商用请授权)
 
 OneBase： https://www.onebase.org
 
