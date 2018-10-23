@@ -1,0 +1,109 @@
+{include file="common::header"/}
+<style>
+    body{
+        background: #ffffff;
+    }
+    .page_nav{
+        line-height: 60px;
+        padding: 0 20px 0 20px;
+    }
+    .page_nav a{
+        /*text-decoration: underline;*/
+        color: #939393;
+    }
+    .page_nav a:hover{
+        color: #0d0d0d;
+        text-decoration: underline;
+    }
+</style>
+<link rel="stylesheet" href="__STATIC__/index/css/order.css">
+<div class="vip_content">
+    <div class="w1200">
+        {include file="user::menu"/}
+        <div class="r vip_list" >
+            <div class="vs_con">
+                <h3>卡密充值</h3>
+                <div id="phone-bd">
+                    <div id="reg_form">
+                        <div>
+                            <label>卡密密码</label>
+                            <input type="text" name="sn_pass" id="sn_pass" placeholder="请输入卡密" value="">
+                            <p class="reg_err">卡密密码错误</p>
+                        </div>
+                        <div>
+                            <label>验证码</label>
+                            <div class="phone-bd-div">
+                                <input id="reg_sms_code" type="text" placeholder="">
+                                <!--<button type="button" id="tel_yzm">获取短信验证码</button>-->
+                                <img id="reg_yzm_img" src="picture/c726c18c6a5343f9bd4eed2a18ded8d6.gif" width="101" height="42">
+                            </div>
+                            <p>验证码错误</p>
+                        </div>
+                        <div class="reg_btn">
+                            <button id="pay_card_recharge" type="button">充值</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="recharge-desc">
+                    <p>1、卡密充值需验证手机。<a href="/user/bind-phone">立即验证</a></p>
+                    <p>2、每个账号同种类型的卡密仅限使用1次。</p>
+                </div>
+            </div>
+            <div class="vc_con active">
+                <h3>打款记录（<a  onclick="page('申请提现', '{:url(\'index/Balance/apply\')}', this, '810px', '360px');">申请提现</a>）</h3>
+                <table width="auto" style="white-space:nowrap">
+                    <thead>
+                    <tr>
+                        <th>单号</th>
+                        <th>金额</th>
+                        <th>账户</th>
+                        <th>备注</th>
+                        <th class="vc_time">更新</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody class="vc_tbody">
+                    {volist name="list" id="vo"}
+                    <tr>
+                        <td>{$vo.cash_no}</td>
+                        <td class="vc_money">￥{$vo.amount}</td>
+                        <td>{$vo.myaccount}</td>
+                        <td>{$vo.remarks}</td>
+                        <td class="vc_time">{$vo.update_time|date='Y/m/d h:i:s',###}</td>
+                        <td class="ok">
+                            {switch $vo.status}
+                            {case 0}<span style="color: orange;">进行中</span>{/case}
+                            {case 1}<span style="color: green;">支付</span>{/case}
+                            {default}<span style="color: black;">异常</span>{/case}
+                            {/switch}
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="page_nav">
+                    {$list->render()}
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+{include file="common::footer"/}
+
+<script>
+    layui.use(['form','layer'], function(){
+        var form = layui.form(),
+            layer = layui.layer;
+
+
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

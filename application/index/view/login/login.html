@@ -1,0 +1,74 @@
+{include file="common::header"/}
+<style>
+    .header {
+        height: 92px;
+    }
+    .nav li a:hover, .nav li.active a {
+        color: #00ceff;
+        border-bottom: 2px solid rgb(21, 189, 249);
+    }
+    #reg {
+        height: 440px;
+    }
+    .remember{
+        color: #bcbdc1;
+    }
+</style>
+
+<link rel="stylesheet" href="__STATIC__/index/css/login.css">
+
+<div id="content" style="padding-top: 8%;">
+
+    <div id="reg">
+        <h2>用户登录</h2>
+    </div>
+    <div class="register_v2 c-main-cont">
+        <div class="account-main c-center">
+            <div>
+                <div class="account-input-cont c-relative">
+                    <input id="login-email" type="text" placeholder="邮箱" autocomplete=off class="account-input">
+                    <div class="c-input-checked-icon c-hide login-email-checked"></div>
+                </div>
+                <div id="email-tip" class="account-tip-cont">
+                    <div class="c-error-icon c-hide"></div>
+                    <div class="c-tip-text">请输入您的邮箱地址</div>
+                </div>
+            </div>
+            <div>
+                <div class="account-input-cont c-relative">
+                    <input id="login-password" type="password" placeholder="密码" autocomplete=off class="account-input">
+                    <div class="c-input-checked-icon c-hide login-password-checked"></div>
+                </div>
+                <!-- <div class="password-type-con">
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-text"></div>
+                </div> -->
+
+            </div>
+            <div>
+                <div id="captcha-box" style="margin-top: 20px;margin-bottom: 10px;"></div>
+                <div id="machine-verify-tip" class="account-tip-cont c-hide">
+                    <div class="c-error-icon"></div>
+                    <div class="c-tip-text c-error-text"></div>
+                </div>
+            </div>
+
+            <div class="line">
+                <a href="javascript:layer.alert('请联系客服 :) </br>客服QQ：702154416 </br>（周一至周日 9:00 - 23:00）');" class="account-forger-text">忘记密码？</a>
+            </div>
+
+            <div class="account-regist-btn c-btn-primary account-regist-btn-disabled">登录</div>
+        </div>
+    </div>
+    <div class="c-clear" style="height: 50px;"></div>
+</div>
+
+{include file="common::footer"/}
+
+<script type="text/javascript" src="__STATIC__/index/js/gt.js"></script>
+<script type="text/javascript" src="__STATIC__/index/js/login.js"></script>
+
+</body>
+</html>

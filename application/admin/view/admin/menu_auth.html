@@ -1,0 +1,78 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layuiAdmin 角色管理 iframe 框</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__STATIC__/admin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-card-body layui-row layui-col-space10">
+        {$list}
+    </div>
+    <div class="layui-form-item layui-hide">
+        <button class="layui-btn" lay-submit lay-filter="app-user-auth-submit" id="app-user-auth-submit">提交</button>
+    </div>
+</div>
+
+<script src="__STATIC__/admin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__STATIC__/admin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+
+        form.on('checkbox(checkbox-parent)', function(data){
+            var dataid = data.value;
+            console.log(data)
+            $("input.checkbox-child[name=rules]").each(function () {
+                this.checked = data.elem.checked;
+                 console.log(data);
+            });
+            form.render('checkbox');
+
+            //console.log(data.elem.parentNode.previousSibling);
+            //$('input.checkbox-child[data-pid=' + dataid + ']').prop('checked', $(this).is(':checked'));
+        });
+
+        form.on('checkbox(checkbox-child)', function(data){
+            var dataid = data.value;
+            console.log('child-id:'+ dataid)
+            dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+            var parent = $('input.checkbox-parent[data-id=' + dataid + ']');
+            if ($(this).is(':checked')) {
+                parent.prop('checked', true);
+                //循环到顶级
+                while (dataid.lastIndexOf("-") != 2) {
+                    dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+                    parent = $('input[data-id=' + dataid + ']');
+                    parent.prop('checked', true);
+                }
+            } else {
+                //父级
+                if ($('input.checkbox-child[data-pid=' + dataid + '-]:checked').length == 0) {
+                    parent.prop('checked', false);
+                    //循环到顶级
+                    while (dataid.lastIndexOf("-") != 2) {
+                        dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+                        parent = $('input.checkbox-child[data-id=' + dataid + ']');
+                        if ($('input[data-pid=' + dataid + '-]:checked').length == 0) {
+                            parent.prop('checked', false);
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

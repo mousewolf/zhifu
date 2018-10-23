@@ -1,0 +1,135 @@
+{include file="common::header"/}
+<link rel="stylesheet" href="__STATIC__/index/css/index.css">
+<div class="index_banner ">
+    <div class="w1200">
+        <p>API聚合支付系统</p>
+        <p>只要一个支付API接入，轻松收款。</p>
+        <ul>
+            <li>简单</li>
+            <li>专业</li>
+            <li>稳定</li>
+            <li>高匿</li>
+        </ul>
+        <a id="get_api" onmousemove="moveToGetApi()" onmouseout="outToGetApi()" href="/get">
+            <img class="down_img" src="__STATIC__/index/picture/down.png">立即体验</a>
+        <i class="next"></i>
+    </div>
+</div>
+<div id="" class="index_part anim-start">
+    <div class="w1200">
+        <h2>产品优势</h2>
+        <h3>高品质代理服务商 助力企业数据采集</h3>
+        <ul class="product_attribute">
+            <li>
+                <i><img src="__STATIC__/index/picture/hign-speed.png"></i>
+                <h3>开源代码</h3>
+                <p>多年支付行业产品研发经验，多种支付产品，满足多种商业化需求</p>
+            </li>
+            <li>
+                <i><img src="__STATIC__/index/picture/high-available.png"></i>
+                <h3>可用率高</h3>
+                <p>拥有高质量IP资源，专业团队7*24h提供技术支持，保障IP可用率≥99.99%</p>
+            </li>
+            <li>
+                <i><img src="__STATIC__/index/picture/apis.png"></i>
+                <h3>客户服务</h3>
+                <p>一对一售后群组，提供技术支持指导，从运营到数据的所有问题</p>
+            </li>
+            <li>
+                <i><img src="__STATIC__/index/picture/anonymous.png"></i>
+                <h3>功能强大</h3>
+                <p>众多客户商业实战使用，不断更新升级，性价比极高的系统</p>
+            </li>
+
+
+        </ul>
+    </div>
+</div>
+<div class="index_part anim-start">
+    <div class="w1200">
+        <h2>服务场景</h2>
+        <h3>已被应用于超过十个行业的近万个项目中</h3>
+        <ul class="sense">
+            <li>
+                <div></div>
+                <i>&nbsp;</i>
+                <h3>数据采集</h3>
+                <p>爬虫抓取 数据分析</p>
+            </li>
+            <li>
+                <div></div>
+                <i>&nbsp;</i>
+                <h3>网络营销</h3>
+                <p>电商推广 网购下单</p>
+            </li>
+            <li>
+                <div></div>
+                <i>&nbsp;</i>
+                <h3>效果补量</h3>
+                <p>广告优化 SEO优化</p>
+            </li>
+            <li>
+                <div></div>
+                <i>&nbsp;</i>
+                <h3>投票助力</h3>
+                <p>网页投票 爱豆打榜</p>
+            </li>
+            <li>
+                <div></div>
+                <i>&nbsp;</i>
+                <h3>注册登录</h3>
+                <p>网站注册 软件挂机</p>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="i_news clearfix anim-start">
+    <div class="w1200">
+        <h2 class="i_title">动态</h2>
+        <div>
+            <dl class="l">
+                <a href="/news/t5i9">更多&raquo;&raquo;</a>
+                <dt>行业资讯</dt>
+                {volist name='article_list' id='vo'}
+                <dd>
+                    <a href="/news/{$vo.id}"><span
+                            class="l text">{$vo.title}</span><span
+                            class="r">{$vo.create_time|date='Y-m-d',###}</span></a></dd>
+                {/volist}
+            </dl>
+            <dl class="r">
+                <a href="/news/n2r0/">更多&raquo;&raquo;</a>
+                <dt>最新公告</dt>
+                <dd>
+                    <a href="/news/a2r38/"><span
+                            class="l text">以支持支付方式</span><span
+                            class="r">2018-09-29</span></a></dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="index_partner clearfix anim-start">
+    <div class="w1200">
+        <div class="partner-desc">
+            <h2>合作伙伴</h2>
+            <p>携手打造大数据生态圈无限可能</p>
+            <a href="/login">立即使用</a>
+        </div>
+        <div class="partner-list">
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{include file="common::footer"/}
+
+<script src="__STATIC__/index/js/index.js"></script>
+<script type="text/javascript" src="__STATIC__/index/js/gradient.js"></script>
+</body>
+</html>

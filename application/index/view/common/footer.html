@@ -1,0 +1,68 @@
+<div class="footer">
+    <div class="w1200">
+        <div class="f_con">
+            <div class="fc_top clearfix">
+                <dl>
+                    <dt>常见问题</dt>
+                    <dd>接入问题</dd>
+                    <dd>使用问题</dd>
+                </dl>
+                <dl>
+                    <dt>接入支持</dt>
+                    <dd>API开发文档</dd>
+                </dl>
+                <dl>
+                    <dt>关于我们</dt>
+                    <dd><a href="javascript:void(0);">公司介绍</a></dd>
+                    <dd><a onclick="page('服务条款','/protocol',this,'1300px','750px')">服务条款</a></dd>
+                </dl>
+                <dl>
+                    <dt>联系我们</dt>
+                    <dd>客服QQ：702154416</dd>
+                    <dd style="font-size: 14px;">（周一至周日 9:00 - 23:00）</dd>
+                    <dd>商务合作：Partner@iredcap.cn</dd>
+                </dl>
+                <div class="clearfix"></div>
+            </div>
+            <div class="fc_bottom clearfix">
+                <div class="f_logo l"><img src="__STATIC__/white-logo-200-60.png"></div>
+                <div class="fc_con r">
+                    <p>小红帽科技 · 草帽聚合支付 · 桂ICP备180004251号</p>
+                    <p>官网上所有内容的最终解释权归本公司所有</p>
+                </div>
+            </div>
+        </div>
+        <div class="f_ewm">
+            <img src="__STATIC__/qr-pub.jpg" width="100" height="100">
+            <p>小红帽科技</p>
+        </div>
+    </div>
+</div>
+
+<script src="__STATIC__/index/js/jquery.min.js"></script>
+<script src="__STATIC__/index/js/common.js"></script>
+<!--Layui-->
+<script src="__LAYUI__/layui.js"></script>
+<script src="__LAYUI__/common.js"></script>
+<script src="__STATIC__/copyright.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        //选定
+        var actionName = '{$Request.controller}{$Request.action}';
+        $("."+actionName).addClass('active');
+
+        $('.hl_admin').on('mouseover', function () {
+            $('.hl_admin ul').show();
+        }).on('mouseout', function () {
+            $('.hl_admin ul').hide();
+        });
+
+        $('.nav').on('mouseover', function (index) {
+            $('.nav ul li index').addClass('active');
+        }).on('mouseout', function () {
+            $('.nav ul li index').removeClass('active');
+        });
+
+    });
+</script>

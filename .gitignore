@@ -1,0 +1,9 @@
+.idea
+aplication/extra
+data/cret
+data/extend
+data/runtime
+thinkphp
+vendor
+composer.lock
+*.log

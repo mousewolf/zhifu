@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>商户列表管理</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/css/admin.css" />
+</head>
+
+<body>
+<div class="page-content-wrap">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline tool-btn">
+                <button class="layui-btn layui-btn-small layui-btn-normal addBtn hidden-xs" data-url="{:url('user/add')}"><i class="layui-icon">&#xe654;</i></button>
+            </div>
+            <div class="layui-inline">
+                <input type="text" name="keywords" placeholder="商户ID|商户账户|手机号码" value="{$Request.get.keywords|default=''}" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn layui-btn-normal" lay-submit="search">搜索</button>
+        </div>
+    </form>
+    <div class="layui-form" id="table-list">
+        <table class="layui-table" lay-even lay-skin="nob">
+
+            <thead>
+            <tr>
+                <th><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose"></th>
+                <th>ID</th>
+                <th>用户名</th>
+                <th class="hidden-xs">邮箱</th>
+                <th class="hidden-xs">手机号</th>
+                <th class="hidden-xs">QQ</th>
+                <th class="hidden-xs">代理</th>
+                <th class="hidden-xs">验证</th>
+                <th>状态</th>
+                <th class="hidden-xs">创建时间</th>
+                <th class="hidden-xs">更新时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td><input type="checkbox" name="" lay-skin="primary" data-id="{$vo.uid}"></td>
+                <td>{$vo.uid}</td>
+                <td>{$vo.username}</td>
+                <td class="hidden-xs">{$vo.account}</td>
+                <td class="hidden-xs">{$vo.phone}</td>
+                <td class="hidden-xs">{$vo.qq}</td>
+                <td class="hidden-xs"><button class="layui-btn layui-btn-mini layui-btn-{$vo.is_agent == 1?'success':'warm'}" >{$vo.is_agent == 1?'是':'否'}</button></td>
+                <td class="hidden-xs"><button class="layui-btn layui-btn-mini layui-btn-{$vo.is_verify == 1?'success':'warm'}">{$vo.is_verify == 1?'是':'否'}</button></td>
+                <td><button class="layui-btn layui-btn-mini layui-btn-{$vo.status == 1?'success':'warm'} table-list-status" data-id="{$vo.uid}" data-status='{$vo.status}'>{$vo.status == 1?'可用':'禁用'}</button></td>
+                <td class="hidden-xs">{$vo.create_time|date='Y-m-d h:i:s',###}</td>
+                <td class="hidden-xs">{$vo.update_time|date='Y-m-d h:i:s',###}</td>
+                <td>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-mini layui-btn-normal  edit-btn" data-id="{$vo.uid}" data-url="{:url('user/edit')}"><i class="layui-icon">&#xe642;</i></button>
+                        <button class="layui-btn layui-btn-mini layui-btn-danger del-btn" data-id="{$vo.uid}" data-url="{:url('user/del')}"><i class="layui-icon">&#xe640;</i></button>
+                    </div>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        {$list->render()}
+    </div>
+</div>
+<script src="__STATIC__/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="__STATIC__/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'jquery', 'layer', 'laydate','laypage'], function() {
+        var $ = layui.jquery;
+
+        //修改状态
+        $('#table-list').on('click', '.table-list-status', function() {
+            var That = $(this);
+            var status = That.attr('data-status');
+            var id = That.attr('data-id');
+            //提交修改
+            $.post("{:url('user/changeStatus')}",{id:id,status:status},function (res) {
+                    if (res.code == 1){
+                        if(status == 1) {
+                            That.removeClass('layui-btn-success').addClass('layui-btn-warm').html('禁用').attr('data-status', 0);
+
+                        }else{
+                            That.removeClass('layui-btn-warm').addClass('layui-btn-success').html('可用').attr('data-status', 1);
+                        }
+                    }
+                    layer.alert(res.msg,{title: "修改状态", btn: ['确定']});
+                }
+            );
+            return false;
+        });
+
+    });
+</script>
+</body>
+
+</html>

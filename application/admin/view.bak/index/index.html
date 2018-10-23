@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>网站后台管理模版</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/css/admin.css"/>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+<body>
+<div class="main-layout" id='main-layout'>
+    <!--侧边栏-->
+    <div class="main-layout-side">
+        <div class="m-logo" style="background: #00b5f9 url('/static/white-logo-150-45.png') center center no-repeat;">
+        </div>
+        <ul class="layui-nav layui-nav-tree" lay-filter="leftNav">
+            {volist name='_menuList.father' id='vo'}
+            <li class="layui-nav-item">
+                <a href="javascript:;" data-id="{$vo.id}" data-url="{$vo.id == 1 ? '' : url($vo.controller.'/'.$vo.action)}" data-text="{$vo.name}"><i class="iconfont">{$vo.ico}</i>{$vo.name}</a>
+                {volist name='_menuList.child' id='vv'}
+                {if condition="$vv.pid eq $vo.id"}
+                <dl class="layui-nav-child">
+                    <dd class="{$vv.controller}-{$vv.action}"><a href="javascript:;" data-id="{$vv.id}" data-url="{:url($vv.controller.'/'.$vv.action)}" data-text="{$vv.name}"><span class="l-line"></span>{$vv.name}</a></dd>
+                {/if}
+                {/volist}
+                </dl>
+            </li>
+            {/volist}
+        </ul>
+    </div>
+    <!--右侧内容-->
+    <div class="main-layout-container">
+        <!--头部-->
+        <div class="main-layout-header">
+            <div class="menu-btn" id="hideBtn">
+                <a href="javascript:;">
+                    <span class="iconfont">&#xe60e;</span>
+                </a>
+            </div>
+            <ul class="layui-nav" lay-filter="rightNav">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" data-url="{:url('admin/profile')}" data-id="" data-text="个人信息">管理员</a>
+                </li>
+                <li class="layui-nav-item"><a href="javascript:;">退出</a></li>
+            </ul>
+        </div>
+        <!--主体内容-->
+        <div class="main-layout-body">
+            <!--tab 切换-->
+            <div class="layui-tab layui-tab-brief main-layout-tab" lay-filter="tab" lay-allowClose="true">
+                <ul class="layui-tab-title">
+                    <li class="layui-this welcome">后台主页</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show" style="background: #f5f5f5;">
+                        <!--1-->
+                        <iframe src="{:url('index/welcome')}" width="100%" height="100%" name="iframe" scrolling="auto" class="iframe" framborder="0"></iframe>
+                        <!--1end-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--遮罩-->
+    <div class="main-mask">
+
+    </div>
+</div>
+<script type="text/javascript">
+    var scope={
+        link:'./welcome.html'
+    }
+    var className = '{$Request.controller}-{$Request.action}'
+    $("."+className).addClass('layui-this');
+    $("."+className).parent().addClass('layui-nav-itemed');
+    $("."+className).parent().show();
+</script>
+<script src="__STATIC__/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="__STATIC__/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="__STATIC__/admin/js/main.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+{include file="common::header"/}
+
+<link rel="stylesheet" href="__STATIC__/index/css/register.css">
+<div id="content" style="padding-top: 8%;">
+    <div id="reg">
+        <h2>注册账号</h2>
+    </div>
+    <div class="register_v2 c-main-cont">
+        <div class="account-main c-center">
+            <!--        <div class="account-title">邮箱账号注册</div>-->
+            <div>
+                <div class="account-input-cont c-relative">
+                    <input id="regist-email" type="text" placeholder="邮箱" autocomplete=off class="account-input">
+                    <div class="c-input-checked-icon c-hide regist-email-checked"></div>
+                </div>
+                <div id="email-tip" class="account-tip-cont">
+                    <div class="c-error-icon c-hide"></div>
+                    <div class="c-tip-text">请输入您的邮箱地址</div>
+                </div>
+            </div>
+            <div>
+                <div class="account-input-cont c-relative">
+                    <input id="regist-psw" type="password" placeholder="密码" autocomplete=off class="account-input">
+                    <div class="c-input-checked-icon c-hide regist-psw-checked"></div>
+                </div>
+                <!-- <div class="password-type-con">
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-btn"></div>
+                    <div class="password-type-text"></div>
+                </div> -->
+                <div id="account-psw-tip" class="c-hide">
+                    <div class="c-tip-cont psw-check1">
+                        <div class="c-tip-icon"></div>
+                        <div class="c-tip-text-black">不能包含空格或特殊字符</div>
+                    </div>
+                    <div class="c-tip-cont psw-check2">
+                        <div class="c-tip-icon"></div>
+                        <div class="c-tip-text-black">长度6-18位</div>
+                    </div>
+                    <div class="c-tip-cont psw-check3">
+                        <div class="c-tip-icon"></div>
+                        <div class="c-tip-text-black">包含数字、大写和小写字母</div>
+                    </div>
+                </div>
+            </div>
+            <div id="captcha-cont" class="c-hide">
+                <div id="captcha-box" style="margin-top: 20px;margin-bottom: 10px;"></div>
+                <div id="machine-verify-tip" class="account-tip-cont c-hide">
+                    <div class="c-error-icon"></div>
+                    <div class="c-tip-text c-error-text"></div>
+                </div>
+            </div>
+            <div id="tel-cont" class="c-hide">
+                <div>
+                    <div class="account-tel-cont">
+                        <div class="account-free-btn">绑定手机号</div>
+                        <input type="text" placeholder="手机号码" autocomplete=off class="account-tel">
+                        <div class="c-input-checked-icon c-hide"></div>
+                    </div>
+                    <div id="tel-tip" class="account-tip-cont c-hide">
+                        <div class="c-error-icon"></div>
+                        <div class="c-tip-text c-error-text"></div>
+                    </div>
+                </div>
+                <div id="verify-cont">
+                    <div class="account-verify-cont">
+                        <input type="text" placeholder="短信验证码" autocomplete=off class="account-verify-input">
+                        <div class="account-verify-btn c-btn-primary account-verify-btn-disable">发送短信验证码</div>
+                    </div>
+                    <!--<div id="verify-tip-normal" class="account-tip-cont c-hide">-->
+                        <!--<div class="c-tip-icon-green"></div>-->
+                        <!--<div class="c-tip-text" style="color: #00B374;line-height: 18px;">请注意接听 0571-28357550 号码语音来电获取验证</div>-->
+                    <!--</div>-->
+                    <div id="verify-tip" class="account-tip-cont c-hide">
+                        <div class="c-error-icon"></div>
+                        <div class="c-tip-text c-error-text"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="account-regist-btn c-btn-primary account-regist-btn-disabled">立即注册</div>
+            <div class="account-protocol-tip-cont c-hide">
+                <div id="account-protocol-tip">
+                    <div class="c-error-icon"></div>
+                    <div class="c-tip-text c-error-text">请先同意服务条款</div>
+                </div>
+            </div>
+            <div class="c-clear">
+                <div class="account-protocol">
+                    <div id="checked" class="c-checkbox c-checkbox-checked"></div>
+                    <div>我已阅读并同意相关<span onclick="page('服务条款和隐私政策','/protocol',this,'1380px','750px')">服务条款和隐私政策</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="c-clear" style="height: 50px;"></div>
+</div>
+
+
+{include file="common::footer"/}
+
+<script type="text/javascript" src="__STATIC__/index/js/gt.js"></script>
+
+<script type="text/javascript" src="__STATIC__/index/js/register.js"></script>
+
+</body>
+</html>

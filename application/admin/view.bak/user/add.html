@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>新增商户</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/admin/css/admin.css" />
+</head>
+
+<body>
+<div class="page-content-wrap clearfix">
+    <form class="layui-form"  action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户邮箱：</label>
+            <div class="layui-input-block">
+                <input type="email" name="account" required lay-verify="required|email" placeholder="请输入商户邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户户名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required lay-verify="required|username" placeholder="请输入商户户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户昵称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="nickname" required lay-verify="required|nickname" placeholder="请输入商户昵称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录密码：</label>
+            <div class="layui-input-block">
+                <input type="text" name="password" required lay-verify="required|password" placeholder="请输入登录密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户类型：</label>
+            <div class="layui-input-block">
+                <select name="is_agent" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option value="0">普通商户</option>
+                    <option value="1">代理商</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户站点：</label>
+            <div class="layui-input-block">
+                <input type="text" name="siteurl" lay-verify="url" placeholder="请输入商户站点" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">站点名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="sitename" placeholder="请输入站点名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否启用：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="启用" checked>
+                <input type="radio" name="status" value="0" title="禁用">
+            </div>
+        </div>
+        <div class="layui-form-item" style="padding-left: 10px;">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="userAdd">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="__STATIC__/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="__STATIC__/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script>
+
+    layui.use(['form', 'jquery','layer'], function() {
+        var form = layui.form(),
+            layer = layui.layer,
+            $ = layui.jquery;
+        form.render();
+        //自定义验证规则
+        form.verify({
+            password: [/(.+){6,12}$/, '密码必须6到12位'],
+            nickname: [/[\u4e00-\u9fa5]/, '昵称请输入中文']
+        });
+        //全选
+        form.on('submit(userAdd)', function(data) {
+            $.post("{:url('user/add')}",data.field,function (res) {
+                    if (res.code == 1){
+                        layer.alert(res.msg);
+                    }
+                }
+            );
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>
