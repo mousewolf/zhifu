@@ -57,3 +57,7 @@ Caomao遵循Apache2开源协议发布，并提供免费使用。
 版权所有Copyright © 2017-2018 by Iredcap (https://www.iredcap.cn)
 
 All rights reserved。
+
+## 若对您有帮助，支持下吧
+----
+![赞赏](https://sirhe.cn/wp-content/uploads/2018/06/打赏.jpg)
