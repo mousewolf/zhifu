@@ -31,7 +31,7 @@ Caomao_2018_Beta_v1.0
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-QQ群: [939417065](交流群 暗号：Caomao)
+QQ群: [939417065] (交流群 暗号：Caomao)
 
 Email: (brianwaring98#gmail.com, 把#换成@)
 
