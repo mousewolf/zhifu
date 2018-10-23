@@ -16,6 +16,6 @@
  * 私密
  */
 return [
-    'data_salt'  =>  'nKBVcghcKJBchgcPuiR',
-    'aes_key'    =>  'KioPrTXXLfjsAxbL',      //ase 加密盐
+    'data_salt'  =>  '',
+    'aes_key'    =>  '',      //ase 加密盐
 ];

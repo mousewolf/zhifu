@@ -21,16 +21,16 @@ return [
         'debug'       => '0',// SMTP调试功能 0=>关闭 1 => 错误和消息 2 => 消息
         'host'        => 'smtp.mxhichina.com',
         'port'        => '465',
-        'username'    => 'service@98imo.com',
-        'password'    => 'xzx595...',
-        'address'     => 'service@98imo.com',
+        'username'    => '',
+        'password'    => '',
+        'address'     => '',
         'name'        => '小红帽'
     ],
 
     //极光
     'Jpush' => [
-        'app_key'     =>  'f00e9e4a7834fa42e2f7ce0d',
-        'secret_key'    =>  '3fdfe1e6b46b47051b34a6b6',
+        'app_key'     =>  '',
+        'secret_key'    =>  '',
         'options'   => [
             'disable_ssl'    =>  true
         ],
@@ -39,10 +39,10 @@ return [
 
     //腾讯云
     'Qsms' => [
-        'app_id'     =>      '1400144497',
-        'app_key'    =>      '420742792ff85f5ba9b5c2814a3e8026',
-        'sign_id'    =>      '170875',
-        'sign_name'  =>      '润轩商务',
-        'template_id'    =>  '205099'
+        'app_id'     =>      '',
+        'app_key'    =>      '',
+        'sign_id'    =>      '',
+        'sign_name'  =>      '',
+        'template_id'    =>  ''
     ]
 ];
