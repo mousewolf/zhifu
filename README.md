@@ -23,9 +23,13 @@ Caomao_2018_Beta_v1.0
 
 后台 ：https://admin.iredcap.cn/  (admin 123456)
 
-前台 ：https://admin.iredcap.cn/  (702154416@qq.com 123456) 
+前台 ：https://www.iredcap.cn/  (702154416@qq.com 123456) 
 
 提　示：演示站数据请勿进行修改（好人一生平安）
+
+## 更新记录：
+
+2018-10-23 v1.0 最初版本
 
 ## **问题反馈**
 
