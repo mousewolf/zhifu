@@ -13,6 +13,8 @@
 
 namespace app\admin\logic;
 use app\common\library\enum\CodeEnum;
+use think\Db;
+use think\Log;
 
 /**
  * 权限组逻辑
@@ -35,47 +37,52 @@ class AuthGroup extends BaseAdmin
     {
         return $this->modelAuthGroup->getList($where, $field, $order, $paginate);
     }
-    
+
+
     /**
-     * 权限组添加
+     * 获取权限组总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return mixed
      */
-    public function groupAdd($data = [])
-    {
-        
-        $validate_result = $this->validateAuthGroup->scene('add')->check($data);
-        
-        if (!$validate_result) {
-            
-            return [CodeEnum::ERROR, $this->validateAuthGroup->getError()];
-        }
-        
-        $url = url('groupList');
-        
-        $data['uid'] = is_admin_login();
-        
-        $result = $this->modelAuthGroup->setInfo($data);
-        
-        return $result ? [CodeEnum::SUCCESS, '权限组添加成功', $url] : [CodeEnum::ERROR, $this->modelAuthGroup->getError()];
+    public function getAuthGroupCount($where = []){
+        return $this->modelAuthGroup->getCount($where);
     }
-    
+
     /**
      * 权限组编辑
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $data
+     * @return array
      */
-    public function groupEdit($data = [])
+    public function saveGroupInfo($data = [])
     {
         
-        $validate_result = $this->validateAuthGroup->scene('edit')->check($data);
+        $validate = $this->validateAuthGroup->scene($data['scene'])->check($data);
         
-        if (!$validate_result) {
-         
-            return [CodeEnum::ERROR, $this->validateAuthGroup->getError()];
+        if (!$validate) {
+            
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validateAuthGroup->getError()];
         }
-        
-        $url = url('groupList');
-        
-        $result = $this->modelAuthGroup->setInfo($data);
+        Db::startTrans();
+        try{
+            //$data['uid'] = is_admin_login();
+            $this->modelAuthGroup->setInfo($data);
 
-        return $result ? [CodeEnum::SUCCESS, '权限组编辑成功', $url] : [CodeEnum::ERROR, $this->modelAuthGroup->getError()];
+            action_log('编辑', '权限组' . $data['id']);
+
+            Db::commit();
+            return ['code' => CodeEnum::SUCCESS, 'msg' =>  '权限组编辑成功'];
+        }catch (\Exception $e){
+            Db::rollback();
+            Log::error($e->getMessage());
+            return ['code' => CodeEnum::ERROR, 'msg' => $e->getMessage()];
+        }
+
     }
     
     /**
@@ -86,11 +93,19 @@ class AuthGroup extends BaseAdmin
         
         $result = $this->modelAuthGroup->deleteInfo($where);
 
-        return $result ? [CodeEnum::SUCCESS, '权限组删除成功'] : [CodeEnum::ERROR, $this->modelAuthGroup->getError()];
+        action_log('删除', '权限组');
+
+        return $result ? ['code' => CodeEnum::SUCCESS, 'msg' =>  '权限组删除成功'] : ['code' => CodeEnum::ERROR, 'msg' => $this->modelAuthGroup->getError()];
     }
-    
+
     /**
      * 获取权限组信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @return mixed
      */
     public function getGroupInfo($where = [], $field = true)
     {
@@ -99,39 +114,57 @@ class AuthGroup extends BaseAdmin
     }
 
     /**
+     * 获取用户组权限节点
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @return mixed
+     */
+    public function getGroupRules($where = [], $field = 'rules')
+    {
+        return $this->modelAuthGroup->getValue($where, $field);
+    }
+
+    /**
      * 设置用户组权限节点
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $data
+     * @return array
      */
     public function setGroupRules($data = [])
     {
-        
-        $data['rules'] = !empty($data['rules']) ? implode(',', array_unique($data['rules'])) : '';
-        
-        $url = url('groupList');
-        
+
+        $data['rules'] = !empty($data['rules'])
+            ? implode(',', array_unique($data['rules'])) : '';
+
         $result = $this->modelAuthGroup->setInfo($data);
-        
+
         if ($result) {
 
             $this->updateSubAuthByGroup($data['id']);
 
-            return [CodeEnum::SUCCESS, '权限设置成功', $url];
+            return ['code' => CodeEnum::SUCCESS, 'msg' =>  '权限设置成功'];
         } else {
-            
-            return [CodeEnum::ERROR, $this->modelAuthGroup->getError()];
+
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->modelAuthGroup->getError()];
         }
     }
     
     /**
      * 选择权限组
      */
-    public function selectAuthGroupList($group_list = [], $member_group_list = [])
+    public function selectAuthGroupList($group_list = [], $User_group_list = [])
     {
         
-        $member_group_ids = array_extract($member_group_list, 'group_id');
+        $User_group_ids = array_extract($User_group_list, 'group_id');
         
         foreach ($group_list as &$info) {
             
-            in_array($info['id'], $member_group_ids) ? $info['tag'] = 'active' :  $info['tag'] = '';
+            in_array($info['id'], $User_group_ids) ? $info['tag'] = 'active' :  $info['tag'] = '';
         }
             
         return $group_list;
@@ -142,10 +175,10 @@ class AuthGroup extends BaseAdmin
      * 若上级某权限被收回，则下级对应的权限同样被收回
      * 按会员更新
      */
-    public function updateSubAuthByMember($uid = 0)
+    public function updateSubAuthByUser($uid = 0)
     {
         
-        $group_list = $this->logicAuthGroupAccess->getMemberGroupInfo($uid);
+        $group_list = $this->logicAuthGroupAccess->getUserGroupInfo($uid);
         
         $rules_str_list = array_extract($group_list, 'rules');
         
@@ -161,9 +194,9 @@ class AuthGroup extends BaseAdmin
         // 当前授权会员的所有权限节点数组
         $rules_unique_array = array_unique($rules_array);
         
-        $sub_uids = $this->logicMember->getSubMemberIds($uid);
+        $sub_uids = $this->logicAdmin->getSubUserIds($uid);
         
-        $sub_group_list = $this->logicAuthGroupAccess->getMemberGroupInfo($sub_uids);
+        $sub_group_list = $this->logicAuthGroupAccess->getUserGroupInfo($sub_uids);
         
         // 所有下级的权限组id集合
         $sub_group_ids = array_unique(array_extract($sub_group_list, 'group_id'));
@@ -181,16 +214,21 @@ class AuthGroup extends BaseAdmin
         
         $group_list = $this->logicAuthGroupAccess->getAuthGroupAccessList(['group_id' => $group_id]);
         
-        $member_arr_ids = array_unique(array_extract($group_list, 'uid'));
+        $User_arr_ids = array_unique(array_extract($group_list, 'uid'));
         
-        foreach ($member_arr_ids as $id) {
+        foreach ($User_arr_ids as $id) {
             
-            $this->updateSubAuthByMember($id);
+            $this->updateSubAuthByUser($id);
         }
     }
-    
+
     /**
      * 按参数$standard_rules_array权限节点数组标准，将参数$group_ids权限组ID数组下的权限节点全部更新
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $standard_rules_array
+     * @param array $group_ids
      */
     public function updateGroupRulesByStandard($standard_rules_array = [], $group_ids = [])
     {

@@ -14,25 +14,39 @@
 
 namespace app\api\controller;;
 
+use app\api\service\ApiPayment;
 use think\Log;
-use Yansongda\Pay\Pay;
 
 class Notify extends BaseApi
 {
     /**
-     * WxPay Notify
+     * wxScan Notify
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     * @throws \Exception
      */
-    public function wxNotify()
+    public function wxScan()
     {
-        $wxpay = Pay::wechat($this->getWxOrderPayConfig());
-        $this->logicNotify->handle($wxpay->verify());
-        return $wxpay->success()->send();
+        //TODO  分发支付网关
+        $wxScan = ApiPayment::wx_scan(self::getWxOrderPayConfig());
+        $this->logicNotify->handle($wxScan->notify());
+        return $wxScan->success();
+    }
+
+    /**
+     * qqScan Notify
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @throws \Exception
+     */
+    public function qqScan()
+    {
+        //TODO  分发支付网关
+        $wxScan = ApiPayment::qq_scan(self::getWxOrderPayConfig());
+        $this->logicNotify->handle($wxScan->notify());
+        return $wxScan->success();
     }
 
     /**
@@ -49,14 +63,7 @@ class Notify extends BaseApi
         //Object  对象
         $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE));
         Log::notice("Notify:" . json_encode($response));
-        $payload = json_decode($this->logicOrders->getOrderPayConfig($response->out_trade_no), true);
-        //构建支付配置
-        $config = config('pay.wxpay');
-        $config['app_id'] = $payload['appid'];
-        $config['miniapp_id'] = $payload['appid'];
-        $config['mch_id'] = $payload['mchid'];
-        $config['key'] = $payload['key'];
+        return  json_decode($this->logicOrders->getOrderPayConfig($response->out_trade_no), true);
 
-        return $config;
     }
 }

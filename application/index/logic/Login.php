@@ -37,7 +37,7 @@ class Login extends Base
 
         if (!$validate) {
 
-            return [ CodeEnum::ERROR, $this->validateLogin->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateLogin->getError()];
         }
 
         $user = $this->logicUser->getUserInfo(['account' => $username]);
@@ -46,11 +46,11 @@ class Login extends Base
         if (!empty($user['password']) && data_md5_key($password) == $user['password']) {
             //激活判断
             if ($user['is_verify'] == UserStatusEnum::DISABLE){
-                return [ CodeEnum::ERROR,  '账号未激活,<span onclick="page(\'发送激活邮件\',\'/active/sendActive\',this,\'440px\',\'180px\')">点击发送激活邮件</span>'];
+                return [ 'code' => CodeEnum::ERROR, 'msg' =>  '账号未激活,<span onclick="page(\'发送激活邮件\',\'/active/sendActive\',this,\'440px\',\'180px\')">点击发送激活邮件</span>'];
             }
             //禁用判断
             if ($user['status'] == UserStatusEnum::DISABLE){
-                return [ CodeEnum::ERROR,  '账号禁用'];
+                return [ 'code' => CodeEnum::ERROR, 'msg' =>  '账号禁用'];
             }
             $this->modelUser->setFieldValue(['uid' => $user['uid']], 'update_time', time());
 
@@ -60,11 +60,13 @@ class Login extends Base
             session('user_auth', $auth);
             session('user_auth_sign', data_auth_sign($auth));
 
-            return [ CodeEnum::SUCCESS, '登录成功'];
+            action_log('登录', '商户'. $username .'登录成功');
+            
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' =>  '登录成功'];
 
         } else {
 
-            return [ CodeEnum::ERROR, empty($user['uid']) ? '用户账号不存在' : '密码输入错误'];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => empty($user['uid']) ? '用户账号不存在' : '密码输入错误'];
         }
     }
 
@@ -82,7 +84,7 @@ class Login extends Base
         //数据检验
         if (!$validate) {
 
-            return [ CodeEnum::ERROR, $this->validateRegister->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateRegister->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
@@ -108,10 +110,10 @@ class Login extends Base
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
 
             Db::commit();
-            return [CodeEnum::SUCCESS,'注册成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '注册成功'];
         }catch (\Exception $ex){
             Db::rollback();
-            return [ CodeEnum::ERROR,$ex->getMessage()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' =>$ex->getMessage()];
         }
     }
     /**
@@ -126,9 +128,9 @@ class Login extends Base
     public function checkField($field='',$value=''){
         $user_field = $this->modelUser->getInfo([$field=>$value], $field);
         if($user_field){
-            return [ CodeEnum::ERROR, '账户已被使用'];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => '账户已被使用'];
         }else{
-            return [ CodeEnum::SUCCESS, '账户可用'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' =>  '账户可用'];
         }
     }
 
@@ -143,15 +145,15 @@ class Login extends Base
     public function sendActiveCode($account){
         $user = $this->logicUser->getUserInfo(['account'=>$account]);
         if (!$user){
-            return [ CodeEnum::ERROR, '注册邮箱不存在'];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => '注册邮箱不存在'];
         }else{
             if (($user['status'] && $user['is_verify'] ) == UserStatusEnum::ENABLE){
-                return [ CodeEnum::ERROR, '商户已激活'];
+                return [ 'code' => CodeEnum::ERROR, 'msg' => '商户已激活'];
             }
             $user['scene']  = 'register';
             //加入邮件队列
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $user , 'AutoEmailWork');
-            return [ CodeEnum::SUCCESS,'发送成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '发送成功'];
         }
     }
 
@@ -172,18 +174,18 @@ class Login extends Base
         //验证code可用性 并返回注册商户数据对象
         $Verification = (new Activation())->VerificationActiveCode($code);
         if (!$Verification){
-            return ['code'=>'0','errmsg'=>'激活链接失效了，请重新发送'];
+            return ['code'=> CodeEnum::ERROR,'msg'=>'激活链接失效了，请重新发送'];
         }
 
         //TODO 验证逻辑
 
         $user = $this->modelUser->getUser($Verification->uid);
         if (!$user) {
-            return ['code'=> CodeEnum::ERROR,'errmsg'=>'商户不存在！'];
+            return ['code' => CodeEnum::ERROR, 'msg' =>'商户不存在！'];
         } else {
             //是否已经激活
             if(($user['status'] && $user['is_verify'] ) == UserStatusEnum::ENABLE){
-                return ['code'=> CodeEnum::SUCCESS,'errmsg'=>'商户已经激活过了 :-)'];
+                return ['code' => CodeEnum::SUCCESS, 'msg'=>'商户已经激活过了 :-)'];
             }else{
                 $this->modelUser->updateInfo(
                     ['uid'=>$Verification->uid],
@@ -192,7 +194,7 @@ class Login extends Base
                         'is_verify' => UserStatusEnum::ENABLE,
                         'is_verify_phone' => UserStatusEnum::ENABLE
                     ]);
-                return ['code'=> CodeEnum::SUCCESS,'errmsg'=>'商户激活成功！'];
+                return ['code' => CodeEnum::SUCCESS, 'msg'=>'商户激活成功！'];
             }
 
         }

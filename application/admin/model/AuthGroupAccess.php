@@ -14,7 +14,7 @@
 namespace app\admin\model;
 
 
-class AuthGroupAccess
+class AuthGroupAccess extends BaseAdmin
 {
 
 }

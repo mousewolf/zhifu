@@ -26,7 +26,7 @@ class Balance extends Base
      */
     public function record(){
         $where = ['uid' => is_login()];
-        $this->assign('list', $this->logicBalanceChange->getBalanceChangeList($where,true, 'create_time desc', 15));
+        $this->assign('list', $this->logicBalanceChange->getBalanceChangeList($where,true, 'create_time desc', 10));
 
         return $this->fetch();
     }

@@ -12,7 +12,7 @@
  *  +----------------------------------------------------------------------
  */
 
-
+use app\common\logic\Log as LogicLog;
 // 应用公共文件
 
 /**
@@ -74,8 +74,12 @@ function clear_user_login_session()
 
 /**
  * 数据签名认证
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
  * @param  array  $data 被认证的数据
  * @return string       签名
+ * @return string
  */
 function data_auth_sign($data)
 {
@@ -98,12 +102,38 @@ function data_auth_sign($data)
     return $sign;
 }
 
+
+/**
+ * 记录行为日志
+ */
+function action_log($name = '', $describe = '')
+{
+
+    $logLogic = get_sington_object('logLogic', LogicLog::class);
+
+    $logLogic->logAdd($name, $describe);
+}
+
+
+/**
+ * 获取单例对象
+ */
+function get_sington_object($object_name = '', $class = null)
+{
+
+    $request = request();
+
+    $request->__isset($object_name) ?: $request->bind($object_name, new $class());
+
+    return $request->__get($object_name);
+}
+
 /**
  * 使用上面的函数与系统加密KEY完成字符串加密
  * @param  string $str 要加密的字符串
  * @return string
  */
-function data_md5_key($str, $key = '')
+function data_md5_key($str, $key = 'Iredcap')
 {
 
     if (is_array($str)) {
@@ -129,7 +159,7 @@ function data_md5_key($str, $key = '')
  * @param string $key
  * @return string
  */
-function data_md5($str, $key = 'Yubei')
+function data_md5($str, $key = 'Iredcap')
 {
 
     return '' === $str ? '' : md5(sha1($str) . $key);
@@ -256,8 +286,7 @@ function arr2str($arr, $glue = ',')
  */
 function str2arr($str, $glue = ',')
 {
-
-    return explode($glue, $str);
+    return explode($glue, preg_replace('/[ ]/', '', $str));
 }
 
 /**
@@ -460,6 +489,15 @@ function get_settle_fee($sum)
     return $fee;
 }
 
+/**
+ * 月赋值
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @param $array
+ * @param $key
+ * @return array
+ */
 function get_order_month_stat($array,$key){
     $month = 12;
     $newArr = [];
@@ -467,7 +505,37 @@ function get_order_month_stat($array,$key){
         $newArr[$i] = 0;
     }
     foreach ($array as $v){
-        $newArr[(int)$v['month']] = (float)$v[$key];
+        $newArr[$v['month']] = (float)$v[$key];
     }
     return ($newArr);
+}
+
+/**
+ * 下划线转驼峰
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @param $uncamelized_words
+ * @param string $separator
+ * @return string
+ */
+function camelize($uncamelized_words,$separator='_'){
+
+    $uncamelized_words = $separator. str_replace($separator, " ", strtolower($uncamelized_words));
+    return ltrim(str_replace(" ", "", ucwords($uncamelized_words)), $separator );
+}
+
+
+/**
+ * 驼峰命名转下划线命名
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @param $camelCaps
+ * @param string $separator
+ * @return string
+ */
+function uncamelize($camelCaps,$separator='_')
+{
+    return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
 }

@@ -22,12 +22,18 @@ class Menu extends BaseAdmin
     
     // 面包屑
     public static $crumbs       = [];
-    
+
     // 菜单Select结构
-    public static $menuSelect   = [];
-    
+    public $menuSelect   = [];
+
     /**
      * 菜单转视图
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $menu_list
+     * @param string $child
+     * @return string
      */
     public function menuToView($menu_list = [], $child = 'child')
     {
@@ -54,7 +60,7 @@ class Menu extends BaseAdmin
             } else {
                 $url = url($menu_info['url']);
 
-                if ($menu_info['id'] == 1){
+                if ($menu_info['pid'] == 0){
 
                     $icon = empty($menu_info['icon']) ? 'home' : $menu_info['icon'];
 
@@ -66,49 +72,51 @@ class Menu extends BaseAdmin
                                 </li>";
                 }else{
                     $menu_view.= "<dd data-id='".$menu_info['id']."'>
-                                 <a lay-href='$url'>".$menu_info['name']."</a>
-                               </dd>";
+                                     <a lay-href='$url'>".$menu_info['name']."</a>
+                                   </dd>";
                 }
             }
        }
        
        return $menu_view;
     }
-    
+
     /**
      * 菜单转Select
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $menu_list
+     * @param int $level
+     * @param string $name
+     * @param string $child
+     * @return array
      */
-    public function menuToSelect($menu_list = [], $level = 0, $name = 'name', $child = 'child')
+    public function menuToSelect($menu_list = [], $level = 0,$name = 'name', $child = 'child')
     {
-        
         foreach ($menu_list as $info) {
-            
-            $tmp_str = str_repeat("&nbsp;", $level * 4);
-            
+
+            $tmp_str = str_repeat("-", $level * 2);
+
             $tmp_str .= "├";
 
-            $info['level'] = $level;
-            
-            $info[$name] = empty($level) || empty($info['pid']) ? $info[$name]."&nbsp;" : $tmp_str . $info[$name] . "&nbsp;";
-            
-            if (!array_key_exists($child, $info)) {
+            $info[$name] = empty($level) || empty($info['pid']) || $info['pid'] == 0? $info[$name] : $tmp_str . $info[$name];
 
-                array_push(self::$menuSelect, $info);
+            if (!array_key_exists($child, $info)) {
+                array_push($this->menuSelect, $info);
             } else {
-                
+               // dump($info);
                 $tmp_ary = $info[$child];
-                
-                unset($info[$child]);
-                
-                array_push(self::$menuSelect, $info);
-                
+               // unset($info[$child]);
+
+                array_push($this->menuSelect, $info);
+
                 $this->menuToSelect($tmp_ary, ++$level, $name, $child);
             }
         }
-        
-        return self::$menuSelect;
+        return $this->menuSelect;
     }
-    
+
     /**
      * 菜单转Checkbox
      */
@@ -156,7 +164,7 @@ class Menu extends BaseAdmin
         $map['module'] = request()->module();
                 
         $menu_info = $this->getMenuInfo($map);
-        
+
         // 获取自己及父菜单列表
         $this->getParentMenuList($menu_info['id']);
 
@@ -171,15 +179,18 @@ class Menu extends BaseAdmin
         
        return $menu_view;
     }
-    
+
     /**
      * 获取自己及父菜单列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $menu_id
      */
     public function getParentMenuList($menu_id = 0)
     {
-        
         $menu_info = $this->getMenuInfo(['id' => $menu_id]);
-        
+
         !empty($menu_info['pid']) && $this->getParentMenuList($menu_info['pid']);
         
         self::$crumbs [] = $menu_info;
@@ -204,78 +215,83 @@ class Menu extends BaseAdmin
         
         return $crumbs_view;
     }
-    
+
     /**
      * 获取菜单列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @param string $order
+     * @param bool $paginate
+     * @return mixed
      */
     public function getMenuList($where = [], $field = true, $order = '', $paginate = false)
     {
         
         return $this->modelMenu->getList($where, $field, $order, $paginate);
     }
-    
+
     /**
      * 获取菜单信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @return mixed
      */
     public function getMenuInfo($where = [], $field = true)
     {
         
         return $this->modelMenu->getInfo($where, $field);
     }
-    
+
     /**
-     * 菜单添加
+     * 菜单数据修改
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return array
      */
-    public function menuAdd($data = [])
-    {
-        
-        $validate_result = $this->validateMenu->scene('add')->check($data);
-        
-        if (!$validate_result) {
-            
-            return [CodeEnum::ERROR, $this->validateMenu->getError()];
+    public function seveMenuInfo($data){
+        $validate = $this->validateMenu->scene($data['scene'])->check($data);
+
+        if (!$validate) {
+
+            return ['code' => CodeEnum::ERROR, 'msg' =>  $this->validateMenu->getError()];
         }
-        
+
         $result = $this->modelMenu->setInfo($data);
 
-        $url = url('menuList', ['pid' => $data['pid'] ? $data['pid'] : 0]);
-        
-        return $result ? [CodeEnum::SUCCESS, '菜单添加成功', $url] : [CodeEnum::ERROR, $this->modelMenu->getError()];
+        action_log('编辑', '菜单' . $data['name']);
+
+        return $result ? ['code' => CodeEnum::SUCCESS, 'msg' =>  '菜单编辑成功'] : ['code' => CodeEnum::ERROR, 'msg' =>  $this->modelMenu->getError()];
     }
-    
-    /**
-     * 菜单编辑
-     */
-    public function menuEdit($data = [])
-    {
-        
-        $validate_result = $this->validateMenu->scene('edit')->check($data);
-        
-        if (!$validate_result) {
-            
-            return [CodeEnum::ERROR, $this->validateMenu->getError()];
-        }
-        
-        $url = url('menuList', ['pid' => $data['pid'] ? $data['pid'] : 0]);
-        
-        $result = $this->modelMenu->setInfo($data);
-        
-        return $result ? [CodeEnum::SUCCESS, '菜单编辑成功', $url] : [CodeEnum::ERROR, $this->modelMenu->getError()];
-    }
-    
+
     /**
      * 菜单删除
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return array
      */
     public function menuDel($where = [])
     {
         
         $result = $this->modelMenu->deleteInfo($where);
 
-        return $result ? [CodeEnum::SUCCESS, '菜单删除成功'] : [CodeEnum::ERROR, $this->modelMenu->getError()];
+        return $result ? ['code' => CodeEnum::SUCCESS, 'msg' =>  '菜单删除成功'] : ['code' => CodeEnum::ERROR, 'msg' =>  $this->modelMenu->getError()];
     }
-    
+
     /**
      * 获取默认页面标题
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
      */
     public function getDefaultTitle()
     {

@@ -37,7 +37,7 @@ class Notify extends BaseApi
         Db::startTrans();
         try{
             //获取支付订单号
-            $trade_no = $data->out_trade_no;
+            $trade_no = $data['out_trade_no'];
             //查找订单
             $order = $this->modelOrders->where(['trade_no'=>$trade_no])->lock(true)->find();
             Log::notice('查找订单');
@@ -59,6 +59,7 @@ class Notify extends BaseApi
             }
             //提交更改
             Db::commit();
+            return false;
         } catch (Exception $ex) {
             Db::rollback();
             Log::error('错误'.$ex->getMessage());

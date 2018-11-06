@@ -12,7 +12,6 @@
  *  +----------------------------------------------------------------------
  */
 
-
 namespace app\index\controller;
 
 use app\common\controller\Common;
@@ -20,6 +19,7 @@ use app\common\library\enum\CodeEnum;
 use Iredcap\Pay\Charge;
 use Iredcap\Pay\Pay;
 use think\Cache;
+use think\Log;
 
 /**
  * Class Index
@@ -32,7 +32,7 @@ class Index extends Common{
     // MCH ID
     const MCH_ID = '100001';
     //MCH KEY
-    const MCH_KEY = '2e6ef9a1256f56121b5ce27e76e60aa1';
+    const MCH_KEY = '4fcc6772cea1a4b776f7d0a8f0b14252';
     //NOTIFY URL
     const NOTIFY_URL    =   'https://api.iredcap.cn/test/notify';
     //RETURN_URL
@@ -46,6 +46,7 @@ class Index extends Common{
      * @return mixed
      */
     public function index(){
+
         $this->request->get('cache') && Cache::clear();
         //文章列表
         $this->assign('article_list',$this->logicArticle->getArticleList(['status'=> 1], 'id,title,create_time'));
@@ -146,19 +147,21 @@ class Index extends Common{
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $param
-     * @return array
      * @throws \Iredcap\Pay\exception\AuthorizationException
      * @throws \Iredcap\Pay\exception\Exception
      * @throws \Iredcap\Pay\exception\InvalidRequestException
+     * @return array
      */
     private function demo($param){
         //API 访问限制
         if (!$this->logicApi->checkFrequent('192.168.1.1')){
-            return [ CodeEnum::ERROR, "当日剩余请求次数为：“0”，无法继续测试。<br>更多请使用API发起支付,谢谢"];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => "当日剩余请求次数为：“0”，无法继续测试。<br>更多请使用API发起支付,谢谢"];
         };
+        //获取商户API
+        $user = $this->logicApi->getApiInfo(['uid' => is_login()]);
         //1.设置配置参数
-        Pay::setMchId(self::MCH_ID);         // 设置 MCH ID
-        Pay::setSecretKey(self::MCH_KEY);  // 设置 MCH KEY
+        Pay::setMchId($user['uid']);         // 设置 MCH ID
+        Pay::setSecretKey($user['key']);  // 设置 MCH KEY
         Pay::setNotifyUrl(self::NOTIFY_URL); // 设置 NOTIFY URL
         Pay::setReturnUrl(self::RETURN_URL); // 设置 RETURN URL
         Pay::setPrivateKeyPath(CRET_PATH.'/100001/rsa_private_key.pem'); // 设置私钥
@@ -172,7 +175,7 @@ class Index extends Common{
             "body" => $param['body'],
             "amount" => $param['sum'],
             "currency" =>'CNY',
-            "channel" => strtolower($param['channel']), //支付方式
+            "channel" => strtoupper('WXSCAN'), //支付方式
             "extparam" => [
                 "openid" => "ow_".getRandChar('32')
             ], //支付附加参数
@@ -191,7 +194,7 @@ class Index extends Common{
 //        $qr_code = new QrcodeLib($config);
 //        $qr_img = $qr_code->createServer($config['title']);
 //        $order['qrcode'] = $qr_img['data']['url'];
-        return $order ? [CodeEnum::SUCCESS,'发起支付成功',$order]:[CodeEnum::ERROR,'发起支付失败',''];
+        $this->result(CodeEnum::SUCCESS,$order ?'交易成功' : '交易失败',$order);
     }
 
 }

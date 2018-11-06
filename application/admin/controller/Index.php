@@ -74,7 +74,16 @@ class Index extends BaseAdmin
 
         $data = $this->logicOrders->getOrderList($where,true, 'create_time desc',false);
 
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
-
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'data'=>$data
+            ]
+        );
     }
 }

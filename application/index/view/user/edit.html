@@ -63,7 +63,7 @@
 <script src="__LAYUI__/layui.js" type="text/javascript" charset="utf-8"></script>
 <script src="__LAYUI__/common.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    layui.use(['form','jquery','layer','element'], function() {
+    layui.use(['form','jquery','layer','element'], function(index) {
         var form = layui.form(),
             layer = layui.layer,
             $ = layui.jquery,
@@ -73,21 +73,9 @@
         //监听用户信息提交
         form.on('submit(user)', function(data) {
             $.post("{:url('index/User/edit')}",data.field,function (res) {
-                    if (res.code == 1){
-
-                    }
-                layer.alert(res.msg);
-                }
-            );
-            return false;
-        });
-        //监听账户提交
-        form.on('submit(account)', function(data) {
-            $.post("{:url('index/User/edit')}",data.field,function (res) {
-                    if (res.code == 1){
-
-                    }
-                layer.alert(res.msg);
+                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500},function () {
+                        refresh(index);
+                    });
                 }
             );
             return false;

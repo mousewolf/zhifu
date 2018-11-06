@@ -18,9 +18,14 @@ namespace app\admin\logic;
  */
 class AuthGroupAccess extends BaseAdmin
 {
-    
+
     /**
      * 获得权限菜单列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $uid
+     * @return array
      */
     public function getAuthMenuList($uid = 0)
     {
@@ -33,7 +38,7 @@ class AuthGroupAccess extends BaseAdmin
         }
         
         // 获取用户组列表
-        $group_list = $this->getMemberGroupInfo($uid);
+        $group_list = $this->getUserGroupInfo($uid);
         
         $menu_ids = [];
         
@@ -70,11 +75,16 @@ class AuthGroupAccess extends BaseAdmin
 
         return $auth_list;
     }
-    
+
     /**
-     * 获取会员所属权限组信息
+     * 获取管理所属权限组信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $uid
+     * @return mixed
      */
-    public function getMemberGroupInfo($uid = 0)
+    public function getUserGroupInfo($uid = 0)
     {
         
         $this->modelAuthGroupAccess->alias('a');
@@ -92,9 +102,17 @@ class AuthGroupAccess extends BaseAdmin
         
         return $this->modelAuthGroupAccess->getList($where, $field, '', false);
     }
-    
+
     /**
      * 获取授权列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @param string $order
+     * @param bool $paginate
+     * @return mixed
      */
     public function getAuthGroupAccessList($where = [], $field = 'uid,group_id', $order = 'uid', $paginate = false)
     {

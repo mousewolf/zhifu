@@ -20,19 +20,19 @@ class BaseAdmin extends BaseLogic
 {
     /**
      * 权限检测
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param string $url
+     * @param array $url_list
+     * @param array $allow_url_list
+     * @return array
      */
-    public function authCheck($url = '', $url_list = [])
+    public function authCheck($url = '', $url_list = [],$allow_url_list =[])
     {
-
-        $pass_data = [CodeEnum::SUCCESS, '权限检查通过'];
-
-        $allow_url = config('allow_url');
-
-        $allow_url_list  = parse_config_attr($allow_url);
-
         if (is_admin_login() == 1) {
 
-            return $pass_data;
+            return [CodeEnum::SUCCESS, '权限检查通过'];
         }
 
         if (!empty($allow_url_list)) {
@@ -41,16 +41,15 @@ class BaseAdmin extends BaseLogic
 
                 if (strpos($url, strtolower($v)) !== false) {
 
-                    return $pass_data;
+                    return [CodeEnum::SUCCESS, '权限检查通过'];
                 }
             }
         }
-
         $result = in_array($url, array_map("strtolower", $url_list)) ? true : false;
 
-        !('index/index' == $url && !$result) ?: clear_login_session();
+        !('index/index' == $url && !$result) ?: clear_admin_login_session();
 
-        return $result ? $pass_data : [CodeEnum::ERROR, '未授权操作'];
+        return $result ? [CodeEnum::SUCCESS, '权限检查通过'] : [CodeEnum::ERROR, '未授权操作'];
     }
 
     /**

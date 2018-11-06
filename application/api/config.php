@@ -40,8 +40,8 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 分部日志
-        'apart_level'   =>  ['notice','info','sql','error'],
+        'apart_level'   =>  ['notice','error'],
         // 日志记录级别
-        'level'     => ['notice','info','sql','error'],
+        'level'     => ['notice','error'],
     ],
 ];

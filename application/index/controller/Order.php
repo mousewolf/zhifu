@@ -37,7 +37,7 @@ class Order extends Base
         //状态
         $where['status'] = ['eq', $this->request->get('status',OrderStatusEnum::UNPAID)];
 
-        $this->assign('list', $this->logicOrders->getOrderList($where,'id,out_trade_no,subject,body,amount,channel,create_time,status', 'create_time desc', 15));
+        $this->assign('list', $this->logicOrders->getOrderList($where,true, 'create_time desc', 10));
 
         return $this->fetch();
     }

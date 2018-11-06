@@ -30,7 +30,7 @@ class Account extends BaseAdmin
         return $this->fetch();
     }
 
-    /**
+    /**getAccountCount
      * 账户列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -42,10 +42,23 @@ class Account extends BaseAdmin
         !empty($this->request->param('uid')) && $where['uid']
             = ['eq', $this->request->param('uid')];
 
-        !empty($this->request->param('username')) && $where['username']
-            = ['like', '%'.$this->request->param('username').'%'];
-        $data = $this->logicUserAccount->getAccountList($where, 'a.*,b.id as b_id,b.name as bank', 'create_time desc', false);
-        $this->result($data || empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $data = $this->logicUserAccount->getAccountList($where, 'a.*,b.id as b_id,b.name as bank', 'a.create_time desc', false);
+
+        $count = $this->logicUserAccount->getAccountCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 
     /**

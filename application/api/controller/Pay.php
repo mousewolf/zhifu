@@ -14,6 +14,7 @@
 
 namespace app\api\controller;
 
+use app\api\service\ApiPayment;
 use app\api\service\ApiRespose;
 use app\common\library\exception\ForbiddenException;
 

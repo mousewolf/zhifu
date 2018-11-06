@@ -24,26 +24,68 @@ class Log extends BaseLogic
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param string $name
+     * @param string $action 动作
      * @param string $describe
      * @return array
      */
-    public function logAdd($name = '', $describe = '')
+    public function logAdd($action = '', $describe = '')
     {
 
         $request = request();
+        $module = $request->module();
 
+        $uid = session('admin_info')['id'] ?:session('user_info')['uid'];
 
-        $user = session('admin_info')['id'] ?:session('user_info')['uid'];
-
-        $data['uid']       = $user;
+        $data['uid']       = $uid;
+        $data['module']    = $module;
         $data['ip']        = $request->ip();
         $data['url']       = $request->url();
-        $data['name']      = $name;
-        $data['describe']  = $describe;
+        $data['action']    = $action;
+        $data['describe']  = $action . $describe;
 
         $res = $this->modelActionLog->setInfo($data);
 
-        return $res || !empty($res) ? [CodeEnum::SUCCESS, '日志添加成功', ''] : [CodeEnum::ERROR, '加入操作日志失败'];
+        return $res || !empty($res) ? ['code' => CodeEnum::SUCCESS, 'msg' =>'日志添加成功', '']
+            : ['code' => CodeEnum::ERROR, 'msg' => '加入操作日志失败'];
+    }
+
+    /**
+     * 获取日志总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return mixed
+     */
+    public function getLogCount($where = []){
+        return $this->modelActionLog->getCount($where);
+    }
+
+    /**
+     * 获取日志列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return mixed
+     */
+    public function getLogList($where = []){
+        $this->modelActionLog->limit = true;
+        return $this->modelActionLog->getList($where, true, 'create_time desc',false);
+    }
+
+    /**
+     *
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return array
+     */
+    public function logDel($where = [])
+    {
+
+        return $this->modelActionLog->deleteInfo($where) ? ['code' => CodeEnum::SUCCESS, 'msg' =>'日志删除成功', '']
+            : ['code' => CodeEnum::ERROR, 'msg' => '删除操作日志失败'];
     }
 }

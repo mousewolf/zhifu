@@ -39,7 +39,6 @@ class User extends BaseAdmin
      */
     public function getList(){
         $where = [];
-        $data = [];
 
         //组合搜索
         !empty($this->request->param('uid')) && $where['uid']
@@ -51,21 +50,28 @@ class User extends BaseAdmin
         !empty($this->request->param('email')) && $where['account']
             = ['like', '%'.$this->request->param('email').'%'];
 
-        $where['status'] = ['eq', $this->request->get('status','0')];
+        $where['status'] = ['eq', $this->request->get('status','1')];
 
         //时间搜索  时间戳搜素
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $where['create_time'] = [
-            'between', [
-                strtotime($this->request->param('start')),
-                strtotime($this->request->param('end'))
+        $where['create_time'] = $this->parseRequestDate();
+
+        $data = $this->logicUser->getUserList($where, true, 'create_time desc', false);
+
+        $count = $this->logicUser->getUserCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
             ]
-        ];
-
-        !empty($this->request->param('status')) && !empty($this->request->param('start'))
-        && $data = $this->logicUser->getUserList($where, true, 'create_time desc', false);
-
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        );
     }
 
 

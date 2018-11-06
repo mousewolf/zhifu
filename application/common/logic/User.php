@@ -33,7 +33,20 @@ class User extends BaseLogic
      */
     public function getUserList($where = [], $field = '*', $order = '', $paginate = 20)
     {
+        $this->modelUser->limit = !$paginate;
         return $this->modelUser->getList($where, $field, $order, $paginate);
+    }
+
+    /**
+     * 获取用户总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getUserCount($where = []){
+        return $this->modelUser->getCount($where);
     }
 
     /**
@@ -62,7 +75,7 @@ class User extends BaseLogic
         $validate = $this->validateUserValidate->scene('add')->check($data);
 
         if (!$validate) {
-            return [ CodeEnum::ERROR,$this->validateUserValidate->getError()];
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validateUserValidate->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
@@ -83,10 +96,10 @@ class User extends BaseLogic
             $jobData['scene']   = 'register';
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
             Db::commit();
-            return [ CodeEnum::SUCCESS,'添加商户成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '添加商户成功'];
         }catch (\Exception $ex){
             Db::rollback();
-            return [ CodeEnum::ERROR,$ex->getMessage()];
+            return ['code' => CodeEnum::ERROR, 'msg' => $ex->getMessage()];
         }
 
     }
@@ -106,7 +119,7 @@ class User extends BaseLogic
 
         if (!$validate) {
 
-            return [ CodeEnum::ERROR,$this->validateUserValidate->getError()];
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validateUserValidate->getError()];
         }
         //TODO 修改数据
         Db::startTrans();
@@ -119,11 +132,11 @@ class User extends BaseLogic
                 //$this->modelUser->setInfo($data);
 
             Db::commit();
-            return [ CodeEnum::SUCCESS,'编辑成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR,'未知错误'];
+            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
         }
     }
 
@@ -141,11 +154,11 @@ class User extends BaseLogic
             $this->modelBalance->deleteInfo($where);
             $this->modelApi->deleteInfo($where);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'会员删除成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '会员删除成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR,'未知错误'];
+            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
         }
     }
 
@@ -164,11 +177,11 @@ class User extends BaseLogic
         try{
             $this->modelUser->setFieldValue($where, $field = 'status', $value);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'修改状态成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '修改状态成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR,'未知错误'];
+            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
         }
     }
 }

@@ -16,15 +16,5 @@ namespace app\common\model;
 
 class Api extends BaseModel
 {
-    /**
-     * 获取所有Key
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return array|mixed
-     */
-    public function appKeyMap(){
-        return self::cache('appKeyMap','120')->column('id,key');
-    }
 
 }

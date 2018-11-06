@@ -4,7 +4,7 @@
  *  +----------------------------------------------------------------------
  *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
  *  +----------------------------------------------------------------------
- *  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+ *  | Copyright (c) 2018 http://www.CmPay.cn All rights reserved.
  *  +----------------------------------------------------------------------
  *  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
  *  +----------------------------------------------------------------------
@@ -154,6 +154,8 @@ return [
         '__PUBLIC__'    =>  '/',
         '__STATIC__'    => '/static',
         '__LAYUI__'    => '/static/layui',
+        '__TABLER__'    => '/static/tabler',
+        '__GREEVA__'    => '/static/greeva'
     ],
 
     // 默认跳转页面对应的模板文件
@@ -197,7 +199,7 @@ return [
     // +----------------------------------------------------------------------
     'trace'                  => [
         // 内置Html Console 支持扩展
-        'type' => 'Html',
+        'type' => 'Console',
     ],
 
     // +----------------------------------------------------------------------
@@ -208,7 +210,7 @@ return [
         // 驱动方式
         'type'   => 'Redis',
         // 缓存前缀
-        'prefix' => 'iredcap',
+        'prefix' => 'CmPay',
         // 缓存有效期 0表示永久缓存
         'expire' => 3600,//60*60
     ],
@@ -218,11 +220,11 @@ return [
     // +----------------------------------------------------------------------
 
     'session'                => [
-        'id'             => md5('Caomao'),
+        'id'             => '',
         // SESSION_ID的提交变量,解决flash上传跨域
         'var_session_id' => '',
         // SESSION 前缀
-        'prefix'         => 'iredcap',
+        'prefix'         => 'CmPay',
         // 驱动方式 支持redis memcache memcached
         'type'           => 'redis',
         // 是否自动开启 SESSION
@@ -234,13 +236,13 @@ return [
     // +----------------------------------------------------------------------
     'cookie'                 => [
         // cookie 名称前缀
-        'prefix'    => 'iredcap',
+        'prefix'    => '',
         // cookie 保存时间
         'expire'    => 604800,  //7天
         // cookie 保存路径
         'path'      => '/',
         // cookie 有效域名
-        'domain'    => '*.Caomao.com',
+        'domain'    => '*'.Env::get('app.domain_root','thinkphp.cn'),
         //  cookie 启用安全传输
         'secure'    => false,
         // httponly设置
@@ -253,7 +255,7 @@ return [
     // | 分页配置
     // +----------------------------------------------------------------------
     'paginate'               => [
-        'type'      => 'Page\Pagination',
+        'type'      => 'Page\Pagination',//bootstrap  //Page\Pagination
         'var_page'  => 'page',
         'list_rows' => 15,
     ],

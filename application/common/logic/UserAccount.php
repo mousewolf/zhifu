@@ -33,6 +33,8 @@ class UserAccount extends BaseLogic
      */
     public function getAccountList($where = [], $field = true, $order = '', $paginate = 20)
     {
+        $this->modelUserAccount->limit = !$paginate;
+
         $this->modelUserAccount->alias('a');
 
         $join = [
@@ -43,6 +45,17 @@ class UserAccount extends BaseLogic
         return $this->modelUserAccount->getList($where, $field, $order, $paginate);
     }
 
+    /**
+     * 商户账号总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getAccountCount($where = []){
+        return $this->modelUserAccount->getCount($where);
+    }
 
     /**
      * 获取商户结算账户

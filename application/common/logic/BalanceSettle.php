@@ -22,7 +22,7 @@ class BalanceSettle extends BaseLogic
 {
 
     /**
-     * 获取打款列表
+     * 获取订单结算列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -34,6 +34,7 @@ class BalanceSettle extends BaseLogic
      */
     public function getOrderSettleList($where = [], $field = 'a.*,b.account as myaccount', $order = 'a.create_time desc', $paginate = 15)
     {
+        $this->modelBalanceSettle->limit = !$paginate;
         $this->modelBalanceSettle->alias('a');
 
         $join = [
@@ -42,6 +43,18 @@ class BalanceSettle extends BaseLogic
 
         $this->modelBalanceSettle->join = $join;
         return $this->modelBalanceSettle->getList($where, $field, $order, $paginate);
+    }
+
+    /**
+     * 结算列表总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getOrderSettleCount($where = []){
+        return $this->modelBalanceSettle->getCount($where);
     }
 
     /**

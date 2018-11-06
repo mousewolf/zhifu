@@ -4,74 +4,74 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>layuiAdmin 角色管理 iframe 框</title>
+    <title>小红帽科技|草帽聚合支付 - 角色授权</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="__STATIC__/admin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/common/layui/css/layui.css" media="all">
 </head>
 <body>
 
 <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
     <div class="layui-card-body layui-row layui-col-space10">
-        {$list}
-    </div>
-    <div class="layui-form-item layui-hide">
-        <button class="layui-btn" lay-submit lay-filter="app-user-auth-submit" id="app-user-auth-submit">提交</button>
+        <input name="id" value="{$id}" hidden readonly>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择权限</label>
+            <div class="layui-input-block">
+                <div id="app-auth-tree-list"></div>
+            </div>
+        </div>
+        <!--<div class="layui-form-item">-->
+            <!--<div class="layui-input-block">-->
+                <!--<button class="layui-btn" type="submit" lay-submit lay-filter="app-auth-tree-submit">提交</button>-->
+                <!--<button class="layui-btn layui-btn-primary" type="reset">重置</button>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="app-admin-user-role-submit" id="app-admin-user-role-submit" value="确认">
+        </div>
     </div>
 </div>
 
-<script src="__STATIC__/admin/layui/layui.js"></script>
+<script src="__STATIC__/common/layui/layui.js"></script>
 <script>
     layui.config({
-        base: '__STATIC__/admin/' //静态资源所在路径
+        base: '__STATIC__/common/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'form'], function(){
+    }).use(['index','authtree', 'form'], function(){
         var $ = layui.$
-            ,form = layui.form ;
+            ,form = layui.form
+            ,authtree = layui.authtree;
 
-        form.on('checkbox(checkbox-parent)', function(data){
-            var dataid = data.value;
-            console.log(data)
-            $("input.checkbox-child[name=rules]").each(function () {
-                this.checked = data.elem.checked;
-                 console.log(data);
-            });
-            form.render('checkbox');
+        // 初始化数据
+        $.ajax({
+            url: '/admin/getAuthMenu?id=' + "<?php echo $id;?>",
+            success: function(res) {
 
-            //console.log(data.elem.parentNode.previousSibling);
-            //$('input.checkbox-child[data-pid=' + dataid + ']').prop('checked', $(this).is(':checked'));
-        });
-
-        form.on('checkbox(checkbox-child)', function(data){
-            var dataid = data.value;
-            console.log('child-id:'+ dataid)
-            dataid = dataid.substring(0, dataid.lastIndexOf("-"));
-            var parent = $('input.checkbox-parent[data-id=' + dataid + ']');
-            if ($(this).is(':checked')) {
-                parent.prop('checked', true);
-                //循环到顶级
-                while (dataid.lastIndexOf("-") != 2) {
-                    dataid = dataid.substring(0, dataid.lastIndexOf("-"));
-                    parent = $('input[data-id=' + dataid + ']');
-                    parent.prop('checked', true);
+                var checkedKey = [];
+                for (var i = 0; i <= res.data.checked.length; i++) {
+                    checkedKey.push(parseInt(res.data.checked[i]));
                 }
-            } else {
-                //父级
-                if ($('input.checkbox-child[data-pid=' + dataid + '-]:checked').length == 0) {
-                    parent.prop('checked', false);
-                    //循环到顶级
-                    while (dataid.lastIndexOf("-") != 2) {
-                        dataid = dataid.substring(0, dataid.lastIndexOf("-"));
-                        parent = $('input.checkbox-child[data-id=' + dataid + ']');
-                        if ($('input[data-pid=' + dataid + '-]:checked').length == 0) {
-                            parent.prop('checked', false);
-                        }
-                    }
-                }
+                var trees = authtree.listConvert(res.data.list, {
+                    primaryKey: 'id'
+                    ,startPid: 0
+                    ,parentKey: 'pid'
+                    ,nameKey: 'name'
+                    ,valueKey: 'id'
+                    ,checkedKey: checkedKey
+                });
+
+                // 渲染时传入渲染目标ID，树形结构数据（具体结构看样例，checked表示默认选中），以及input表单的名字
+                authtree.render('#app-auth-tree-list', trees, {
+                    inputname: 'rules[]'
+                    , layfilter: 'lay-check-auth'
+                    , openall: true
+                    , autowidth: true
+                });
             }
         });
+
     });
 </script>
 </body>
