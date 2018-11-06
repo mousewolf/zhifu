@@ -29,17 +29,20 @@ Caomao_2018_Beta_v1.0
 
 ## 更新记录：
 
+2018-11-06 v1.0 修复部分Bug,新增后台权限管理，数据统计，其他
 2018-10-23 v1.0 最初版本
 
 ## **问题反馈**
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-QQ群: [939417065] (交流群 暗号：Caomao)
+QQ群: [<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=0227fdd4ca96fb4feb57aad9542824ab76189089eb4f4fa0f8e3bd96dbf504f6"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="939417065" title="草帽开源系统开发交流"></a>] (交流群 暗号：Caomao)
 
 Email: (brianwaring98#gmail.com, 把#换成@)
 
-Github: https://github.com/iredcap
+Github: https://github.com/iredcap/pay
+
+Gitee: https://gitee.com/iredcap/pay
 
 ## **特别鸣谢**
 
