@@ -18,7 +18,6 @@ Cmpay_2018v1.0.0_Beta(测试版本)
 >详细开发文档参考 [ThinkPHP5完全开发手册](http://www.kancloud.cn/manual/thinkphp5)
 
 ### 项目结构
-***
 
 ```
 project                             应用部署目录
@@ -51,9 +50,9 @@ project                             应用部署目录
 
 ## **在线演示**
 
-后台 ：[后台演示：https://crm.iredcap.cn](https://crm.iredcap.cn "小红帽科技")  (nouser 123456)
+后台 ：https://crm.iredcap.cn  (nouser 123456)
 
-前台 ：[前台演示：https://crm.iredcap.cn](https://www.iredcap.cn "小红帽科技") (nouser@iredcap.cn 123456) 
+前台 ：https://www.iredcap.cn (nouser@iredcap.cn 123456) 
 
 提　示：演示站数据请勿进行修改（好人一生平安）
 
@@ -70,7 +69,7 @@ project                             应用部署目录
 ![输入图片说明](https://t2.wodetu.cn/2018/11/07/19ebbd6a728bae38e0cbb776b59a252b.png "运营平台")
 
 ### 版本更新
-***
+
 版本 |日期 |描述
 ------- | ------- | -------
 V1.0.0 |2018-11-06 |修复部分Bug,完善后台权限管理，数据统计，其他
@@ -91,9 +90,9 @@ V1.0.0 |2018-10-23 |最初版本
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-QQ群: [939417065](//shang.qq.com/wpa/qunwpa?idkey=0227fdd4ca96fb4feb57aad9542824ab76189089eb4f4fa0f8e3bd96dbf504f6)<img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="草帽开源系统开发交流" title="草帽开源系统开发交流">939417065</a> (交流群 暗号：Caomao)
+QQ群: [939417065](//shang.qq.com/wpa/qunwpa?idkey=0227fdd4ca96fb4feb57aad9542824ab76189089eb4f4fa0f8e3bd96dbf504f6) ![加入QQ群](http://pub.idqqimg.com/wpa/images/group.png) (交流群 暗号：Caomao)
 
-Email: (me@iredcap.cn)
+Email: me@iredcap.cn
 
 Github: https://github.com/iredcap/pay
 
@@ -121,5 +120,5 @@ OneBase： https://www.onebase.org
 All rights reserved。
 
 ## 若对您有帮助，支持下吧
-----
+
 ![赞赏](https://sirhe.cn/wp-content/uploads/2018/06/打赏.jpg)
