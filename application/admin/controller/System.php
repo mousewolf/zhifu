@@ -13,49 +13,9 @@
 
 namespace app\admin\controller;
 
-use app\common\library\enum\CodeEnum;
 
 class System extends BaseAdmin
 {
-    /**
-     * 系统设置
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function index()
-    {
-        $this->assign('list', $this->logicConfig->getConfigList());
-        return $this->fetch();
-    }
-
-    /**
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function menu(){
-        $this->assign('menu',$this->logicMenu->getAll());
-        return $this->fetch();
-    }
-
-    /**
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function email(){
-        $this->request->isPost() && $this->result(
-            $this->logicConfig->settingSave(
-                $this->request->param()
-            )
-        );
-        $this->assign('email', $this->logicConfig->getConfigList(['name' => ['like',['%email%']]]));
-        return $this->fetch();
-    }
 
     /**
      * 站点基本信息修改
@@ -64,11 +24,66 @@ class System extends BaseAdmin
      *
      */
     public function website(){
+        $this->common();
+        $this->assign('list', $this->logicConfig->getConfigList(['group'=>1],true,'sort ace'));
+        return $this->fetch();
+    }
+
+    /**
+     * 邮件修改
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function email(){
+        $this->common();
+        $this->assign('list', $this->logicConfig->getConfigList(['group'=>2],true,'sort ace'));
+        return $this->fetch();
+    }
+
+    /**
+     * 管理员信息修改
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function profile(){
+
+        //POST 提交修改
+        $this->request->isPost() && $this->result($this->logicAdmin->seveAdminInfo($this->request->post()));
+
+        $this->assign('info',$this->logicAdmin->getAdminInfo(['id' =>is_admin_login()]));
+
+        return $this->fetch();
+    }
+
+    /**
+     * 管理员密码修改
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function changePwd(){
+
+        //POST 提交修改
+        $this->request->isPost() && $this->result($this->logicAdmin->changeAdminPwd($this->request->post()));
+
+        return $this->fetch('changepwd');
+    }
+
+    /**
+     * Common
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    private function common(){
         $this->request->isPost() && $this->result(
             $this->logicConfig->settingSave(
-                $this->request->param()
+                $this->request->post()
             )
         );
-        $this->result(CodeEnum::ERROR,'未知错误');
     }
 }

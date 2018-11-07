@@ -22,7 +22,18 @@ class Api extends BaseLogic
 {
 
     /**
-     * 获取资产列表
+     * 获取所有支持的商户请求识标
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function getAppKeyMap(){
+        return $this->modelApi->getColumn([], 'id,key', $key = 'id');
+    }
+
+    /**
+     * 获取商户API列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -34,6 +45,18 @@ class Api extends BaseLogic
      */
     public function getApiList($where, $field = true, $order = 'create_time', $paginate = 15){
         return $this->modelApi->getList($where, $field, $order, $paginate);
+    }
+
+    /**
+     * 获取商户API总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getApiCount($where = []){
+        return $this->modelApi->getCount($where);
     }
 
     /**
@@ -64,7 +87,7 @@ class Api extends BaseLogic
 
         if (!$validate) {
 
-            return [ CodeEnum::ERROR,$this->validateApi->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateApi->getError()];
         }
         //TODO 修改数据
         Db::startTrans();
@@ -76,11 +99,11 @@ class Api extends BaseLogic
             //提交保存
             $this->modelApi->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'编辑成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR ,'未知错误'];
+            return [ 'code' => CodeEnum::ERROR , 'msg' => '未知错误'];
         }
     }
 

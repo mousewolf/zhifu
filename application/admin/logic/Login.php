@@ -35,7 +35,7 @@ class Login extends BaseAdmin
 
          if (!$validate) {
 
-             return [ CodeEnum::ERROR, $this->validateLogin->getError()];
+             return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateLogin->getError()];
          }
 
         $admin = $this->logicAdmin->getAdminInfo(['username' => $username]);
@@ -50,11 +50,13 @@ class Login extends BaseAdmin
             session('admin_auth', $auth);
             session('admin_auth_sign', data_auth_sign($auth));
 
-            return [ CodeEnum::SUCCESS, '登录成功',['access_token'=>data_auth_sign($auth)]];
+            action_log('登录', '管理员'. $username .'登录成功');
+
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '登录成功','data' => ['access_token'=>data_auth_sign($auth)]];
 
         } else {
 
-            return [  CodeEnum::ERROR, empty($admin['id']) ? '用户账号不存在' : '密码输入错误'];
+            return [  'code' => CodeEnum::ERROR, 'msg' => empty($admin['id']) ? '用户账号不存在' : '密码输入错误'];
         }
     }
 
@@ -70,7 +72,7 @@ class Login extends BaseAdmin
 
         clear_admin_login_session();
 
-        return [ CodeEnum::SUCCESS, '注销成功'];
+        return [ 'code' => CodeEnum::SUCCESS, 'msg' => '注销成功'];
     }
 
     /**
@@ -85,6 +87,6 @@ class Login extends BaseAdmin
 
         \think\Cache::clear();
 
-        return [ CodeEnum::SUCCESS,  '清理成功'];
+        return [ 'code' => CodeEnum::SUCCESS, 'msg' =>  '清理成功'];
     }
 }

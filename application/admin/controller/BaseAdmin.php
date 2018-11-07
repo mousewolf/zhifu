@@ -28,6 +28,11 @@ class BaseAdmin extends Common
     // 授权过的菜单树
     protected $authMenuTree     =   [];
 
+    protected $allow_url_list   =   [
+        'index',
+        'login'
+    ];
+
     // 菜单视图
     protected $menuView         =   '';
 
@@ -59,15 +64,20 @@ class BaseAdmin extends Common
         $this->authMenuUrlList = $this->logicAuthGroupAccess->getAuthMenuUrlList($this->authMenuList);
 
         // 检查菜单权限
-        list($jump_type, $message) = $this->logicBaseAdmin->authCheck($this->request->url(), $this->authMenuUrlList);
+        list($jump_type, $message) = $this->logicBaseAdmin->authCheck(
+            strtolower($this->request->controller()."/".$this->request->action()),
+            $this->authMenuUrlList,
+            $this->allow_url_list
+        );
 
         // 权限验证不通过则跳转提示
-        CodeEnum::SUCCESS == $jump_type ?: $this->result($jump_type, $message, url('index/index'));
+        CodeEnum::SUCCESS == $jump_type ?:$this->result($jump_type, $message);
 
         // 初始化基础数据
        $this->initBaseInfo();
 
     }
+
 
     /**
      * 初始化基础数据
@@ -84,20 +94,16 @@ class BaseAdmin extends Common
         // 菜单转换为视图
         $this->menuView = $this->logicMenu->menuToView($this->authMenuTree);
 
-        // 菜单自动选择
-        $this->menuView = $this->logicMenu->selectMenu($this->menuView);
-
         // 获取默认标题
         $this->title = $this->logicMenu->getDefaultTitle();
 
         // 设置页面标题
-        $this->assign('ob_title', $this->title);
+        $this->assign('site_title', $this->title);
 
         // 菜单视图
         $this->assign('menu_view', $this->menuView);
 
-
         // 登录会员信息
-        $this->assign('member_info', session('member_info'));
+        $this->assign('admin_info', session('admin_info'));
     }
 }

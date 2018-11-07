@@ -36,15 +36,24 @@ class CheckAppkey extends ApiCheck
      */
     public function doCheck(Request $request)
     {
+
         // 获取app key Map
-        $appKeyMap = (array)$this->modelApi->appKeyMap();
-        Log::notice(json_encode($appKeyMap));
-        if (in_array(self::get('authentication'),$appKeyMap)) {
-            return;
+        $appKeyMap = (array)$this->logicApi->getAppKeyMap();
+        if (!in_array(self::get('authentication'),$appKeyMap)) {
+            throw new ParameterException([
+                'msg'=>'Invalid Request.[ Authentication Key Does Not Exist.]',
+                'errorCode'=> 400003
+            ]);
         }
-        throw new ParameterException([
-            'msg'=>'Invalid Request.[ Authentication Key Does Not Exist.]',
-            'errorCode'=> 400003
-        ]);
+
+        //支付方式判断
+        $appCodeMap = (array)$this->logicPay->getAppCodeMap();
+        if (!in_array(self::get('payload')['channel'],$appCodeMap)) {
+            throw new ParameterException([
+                'msg'=>'Invalid Request.[ Pay Code Does Not Allowed.]',
+                'errorCode'=> 400003
+            ]);
+        }
+
     }
 }

@@ -15,6 +15,7 @@ namespace app\api\logic;
 use app\common\library\exception\ParameterException;
 use app\common\library\exception\OrderException;
 use app\common\library\exception\UserException;
+use think\Log;
 
 /**
  * 下单处理
@@ -47,8 +48,17 @@ class PrePay extends BaseApi
             //等所有基本数据检查完成后  对订单进行检查数据
             $this->validateUnifiedOrder->goCheck();
 
-            //TODO 订单持久化（估计用到队列）并提交支付
-            return $this->logicOrders->createPayOrder($orderData);
+            //TODO 订单持久化（估计用到队列）
+            $order = $this->logicOrders->createPayOrder($orderData);
+
+            //写入订单超时队列
+            Log::notice('写入订单超时队列');
+            $this->logicQueue->pushJobDataToQueue('AutoOrderClose' , $order , 'AutoOrderClose');
+
+            //提交支付 选择支付路由
+            $result = $this->logicDoPay->pay($order->trade_no);  //支付
+
+            return $result;
 
         }
         throw new ParameterException([

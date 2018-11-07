@@ -100,7 +100,7 @@ class BaseModel extends Model
      * @param string $field
      * @return mixed
      */
-    final protected function stat($where = [], $stat_type = 'count', $field = 'id')
+    final public function stat($where = [], $stat_type = 'count', $field = 'id')
     {
         return $this->where($where)->$stat_type($field);
     }
@@ -192,6 +192,19 @@ class BaseModel extends Model
     final protected function getColumn($where = [], $field = '', $key = '')
     {
         return Db::name($this->name)->where($where)->column($field, $key);
+    }
+
+    /**
+     * 获取总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @return int|string
+     */
+    final protected function getCount($where = [],$field ='*'){
+        return Db::name($this->name)->where($where)->count($field);
     }
 
     /**

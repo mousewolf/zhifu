@@ -26,17 +26,15 @@ Route::domain('api', function(){
     /**
      * Notify
      */
-    Route::post('notify/qq_notify','api/Notify/qqNotify');//QQ异步通知
-    Route::rule('notify/wx_notify','api/Notify/wxNotify');//微信异步通知
-    Route::post('notify/ali_notify','api/Notify/aliNotify');//支付宝异步通知
-    Route::get('notify/ali_redirect','api/Notify/aliRedirect');//支付宝同步回调
+    Route::post('notify/wx_scan','api/Notify/wxScan');//微信异步通知
+    Route::post('notify/qq_scan','api/Notify/qqScan');//QQ异步通知
 
 
     Route::rule('test/notify','api/Test/actionNotify');
     Route::get('queue/closer/:id','api/Test/actionOrderClose');
 });
 
-Route::domain('www',function (){
+Route::domain('www',function () {
     /**
      * 首页
      */
@@ -52,19 +50,19 @@ Route::domain('www',function (){
      */
     Route::get('user','index/User/index');//商户首页
     Route::get('user/account','index/User/account');//商户基本
-    Route::rule('user/edit','index/User/edit'); //商户账户信息
+    Route::rule('user/edit','index/User/edit','GET|POST'); //商户账户信息
     Route::get('user/order','index/Order/index');
     Route::get('user/settle','index/Order/settle');
     Route::get('user/paid','index/Balance/paid');
     Route::get('user/balance','index/Balance/record');
     Route::get('user/open','index/Api/index');
+
     /**
      * 登录注册
      */
     Route::rule('login','index/Login/login');  //商户登陆
     Route::rule('register','index/Login/register'); //商户注册
     Route::rule('logout','index/Login/logout'); //商户注册
-    //API
     Route::post('validate/can-use-user','index/Login/checkUser');
     Route::post('validate/can-use-phone','index/Login/checkPhone');
     Route::post('validate/sms','index/Login/sendSmsCode');

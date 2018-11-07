@@ -42,7 +42,21 @@ class Api extends BaseAdmin
 
         $data = $this->logicApi->getApiList($where, '*', 'create_time desc', false);
 
-        $this->result($data || empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $count = $this->logicApi->getApiCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 
     /**

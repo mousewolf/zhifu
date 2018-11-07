@@ -45,9 +45,26 @@ class Balance extends BaseAdmin
         !empty($this->request->param('username')) && $where['username']
             = ['like', '%'.$this->request->param('username').'%'];
 
+        //时间搜索  时间戳搜素
+        $where['create_time'] = $this->parseRequestDate();
+
         $data = $this->logicBalance->getBalanceList($where, '*', 'create_time desc', false);
 
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $count = $this->logicBalance->getBalanceCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 
     /**
@@ -70,24 +87,31 @@ class Balance extends BaseAdmin
      */
     public function getDetails(){
         $where = [];
-        $data = [];
 
         //组合搜索
         $where['uid'] = ['eq', $this->request->param('uid')];
 
-        //组合搜索 时间搜索  时间戳搜素
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $where['create_time'] = [
-            'between', [
-                strtotime($this->request->param('start')),
-                strtotime($this->request->param('end'))
+        //时间搜索  时间戳搜素
+        $where['create_time'] = $this->parseRequestDate();
+
+        $data = $this->logicBalanceChange->getBalanceChangeList($where, true, 'create_time desc', false);
+
+        $count = $this->logicBalanceChange->getBalanceChangeCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
             ]
-        ];
+        );
 
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $data = $this->logicBalanceChange->getBalanceChangeList($where, true, 'create_time desc', false);
-
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
     }
 
     /**
@@ -109,7 +133,7 @@ class Balance extends BaseAdmin
      */
     public function settleList(){
         $where = [];
-        $data = [];
+
         //组合搜索
         !empty($this->request->param('id')) && $where['a.id|a.uid']
             = ['like', '%'.$this->request->param('id').'%'];
@@ -117,19 +141,24 @@ class Balance extends BaseAdmin
         !empty($this->request->param('cash_no')) && $where['a.cash_no']
             = ['like', '%'.$this->request->param('a.cash_no').'%'];
 
-        //时间搜索  时间戳搜素
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $where['a.create_time'] = [
-            'between', [
-                strtotime($this->request->param('start')),
-                strtotime($this->request->param('end'))
+        $data = $this->logicBalanceSettle->getOrderSettleList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
+
+        $count = $this->logicBalanceSettle->getOrderSettleCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
             ]
-        ];
+        );
 
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $data = $this->logicBalanceSettle->getOrderSettleList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
-
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
     }
 
     /**
@@ -159,18 +188,24 @@ class Balance extends BaseAdmin
         !empty($this->request->param('cash_no')) && $where['a.cash_no']
             = ['like', '%'.$this->request->param('a.cash_no').'%'];
 
-        //时间搜索  时间戳搜素
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $where['a.create_time'] = [
-            'between', [
-                strtotime($this->request->param('start')),
-                strtotime($this->request->param('end'))
-            ]
-        ];
-
         !empty($this->request->param('end')) && !empty($this->request->param('start'))
         && $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
 
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+
+        $count = $this->logicBalanceCash->getOrderCashCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 }

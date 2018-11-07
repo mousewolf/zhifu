@@ -40,4 +40,16 @@ class BalanceCash extends BaseLogic
         $this->modelBalanceCash->join = $join;
         return $this->modelBalanceCash->getList($where, $field, $order, $paginate);
     }
+
+    /**
+     * 获取打款列表总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @return mixed
+     */
+    public function getOrderCashCount($where = []){
+        return $this->modelBalanceCash->getCount($where);
+    }
 }

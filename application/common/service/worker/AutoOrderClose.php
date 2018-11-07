@@ -47,7 +47,8 @@ class AutoOrderClose
         if ($isJobDone) {
             //如果任务执行成功， 记得删除任务
             $job->delete();
-            print("<info>The Order Job  ID " . $data['id'] ."  has been done and deleted"."</info>\n");
+            print("<info>The Order Job  ID " . $data['id'] ."  has been done and deleted."."</info>\n");
+            Log::notice("The Order Job  ID " . $data['id'] ."  has been done and deleted");
         }else{
             // 也可以重新发布这个任务
             print("<info>The Order Job ID " . $data['id'] ." will be availabe again after 1 min."."</info>\n");

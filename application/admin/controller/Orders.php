@@ -27,6 +27,7 @@ class Orders extends BaseAdmin
      */
     public function index(){
 
+        $this->assign($this->logicOrders->getOrdersAllStat());
         return $this->fetch();
     }
 
@@ -37,35 +38,40 @@ class Orders extends BaseAdmin
      *
      */
     public function getList(){
-        $where = [];
-        $data = [];
+
+        //状态
+        $where['status'] = ['eq', $this->request->param('status','0')];
 
         //组合搜索
-        !empty($this->request->param('trade_no')) && $where['trade_no']
+        !empty($this->request->param('trade_no|out_trade_no')) && $where['trade_no|out_trade_no']
             = ['like', '%'.$this->request->param('trade_no').'%'];
 
-        !empty($this->request->param('out_trade_no')) && $where['out_trade_no']
-            = ['like', '%'.$this->request->param('out_trade_no').'%'];
+        !empty($this->request->param('uid')) && $where['uid']
+            = ['eq', $this->request->param('uid')];
 
         !empty($this->request->param('channel')) && $where['channel']
             = ['eq', $this->request->param('channel')];
 
-        //状态
-        $where['status'] = ['eq', $this->request->get('status','1')];
-
         //时间搜索  时间戳搜素
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $where['create_time'] = [
-            'between', [
-                strtotime($this->request->param('start',date('Y-m-d'))),
-                strtotime($this->request->param('end',date('Y-m-d h:i:s')))
+        $where['create_time'] = $this->parseRequestDate();
+
+        $data = $this->logicOrders->getOrderList($where,true, 'create_time desc',false);
+
+        $count = $this->logicOrders->getOrdersCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
             ]
-        ];
-
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $data = $this->logicOrders->getOrderList($where,true, 'create_time desc',false);
-
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        );
     }
 
     /**
@@ -80,8 +86,11 @@ class Orders extends BaseAdmin
      * @return mixed
      */
     public function details(){
-        //1.基本
-        $this->assign('order', $this->logicOrders->getOrderList(['id' =>$this->request->param('id')]));
+        $where['id'] = $this->request->param('id','0');
+        //时间搜索  时间戳搜素
+        $where['create_time'] = $this->parseRequestDate();
+
+        $this->assign('order', $this->logicOrders->getOrderList($where));
 
         return $this->fetch();
     }
@@ -133,13 +142,32 @@ class Orders extends BaseAdmin
         //组合搜索
         !empty($this->request->param('uid')) && $where['uid']
             = ['eq', $this->request->param('uid')];
+
+        //时间搜索  时间戳搜素
+        $where['create_time'] = $this->parseRequestDate();
+
         $data = $this->logicOrders->getOrderUserStat($where);
 
-        $this->result($data ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        //$this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $count = count($data);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 
     /**
-     * 商户订单统计
+     * 商户渠道统计
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -149,7 +177,7 @@ class Orders extends BaseAdmin
     }
 
     /**
-     * 商户交易统计
+     * 商户渠道统计
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -157,11 +185,28 @@ class Orders extends BaseAdmin
     public function channelList(){
         $where = [];
         //组合搜索
-        !empty($this->request->param('cnl_id')) && $where['cnl_id']
+        !empty($this->request->param('cnl_id')) && $where['a.cnl_id']
             = ['eq', $this->request->param('cnl_id')];
+
+        //时间搜索  时间戳搜素
+        $where['a.create_time'] = $this->parseRequestDate();
 
         $data = $this->logicOrders->getOrderChannelStat($where);
 
-        $this->result($data ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $count = count($data);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 }

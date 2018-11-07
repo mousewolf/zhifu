@@ -32,4 +32,17 @@ class Balance extends BaseLogic
     public function getBalanceList($where, $field, $order, $paginate){
         return $this->modelBalance->getList($where, $field, $order, $paginate);
     }
+
+    /**
+     * 获取商户资产列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getBalanceCount($where = []){
+        return $this->modelBalance->getCount($where);
+    }
+
 }

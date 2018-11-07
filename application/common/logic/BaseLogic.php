@@ -17,7 +17,7 @@ namespace app\common\logic;
 use app\common\library\enum\CodeEnum;
 use app\common\model\BaseModel;
 use app\common\service\Code;
-use think\cache\driver\Redis;
+use think\Cache;
 use think\Log;
 
 class BaseLogic extends BaseModel
@@ -34,7 +34,7 @@ class BaseLogic extends BaseModel
     public function checkFrequent($key= ''){
         //API 访问限制
         $name = !empty($key) ? $key : 'client-ip:' . request()->ip();
-        $redis = new Redis();
+        $redis = new Cache();
         $value = $redis->get($name);
         //没有数据
         if (!$value) {

@@ -52,7 +52,22 @@ class Article extends BaseAdmin
             = ['like', '%'.$this->request->param('title').'%'];
 
         $data = $this->logicArticle->getArticleList($where, true, 'create_time desc', false);
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+
+        $count = $this->logicArticle->getArticleCount($where);
+
+        $this->result($data || !empty($data) ?
+                [
+                    'code' => CodeEnum::SUCCESS,
+                    'msg'=> '',
+                    'count'=>$count,
+                    'data'=>$data
+                ] : [
+                    'code' => CodeEnum::ERROR,
+                    'msg'=> '暂无数据',
+                    'count'=>$count,
+                    'data'=>$data
+            ]
+        );
     }
 
     /**

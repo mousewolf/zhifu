@@ -18,19 +18,118 @@ use app\common\library\enum\CodeEnum;
 
 class Admin extends BaseAdmin
 {
-    public function index(){
-        return $this->fetch();
-    }
     /**
-     * 获取管理员信息
+     * 管理员列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @return mixed
      */
-    public function profile(){
-        $this->assign('info',$this->logicAdmin->getAdminInfo(['id' =>is_admin_login()]));
+    public function index(){
+        $this->userCommon();
         return $this->fetch();
+    }
+
+    /**
+     * 获取管理员列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function userList(){
+        $where = [];
+
+        //组合搜索
+        !empty($this->request->param('id')) && $where['id']
+            = ['eq', $this->request->param('id')];
+
+        !empty($this->request->param('username')) && $where['username']
+            = ['like', '%'.$this->request->param('username').'%'];
+
+        !empty($this->request->param('email')) && $where['email']
+            = ['like', '%'.$this->request->param('email').'%'];
+
+        !empty($this->request->param('role')) && $where['b.id']
+            = ['eq', $this->request->param('role')];
+
+        $data = $this->logicAdmin->getAdminList($where,true,'id asc',false);
+
+        $count = $this->logicAdmin->getAdminCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
+    }
+
+    /**
+     * 管理员添加
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function userAdd()
+    {
+        $this->userCommon();
+        $this->request->isPost() && $this->result($this->logicAdmin->seveAdminInfo($this->request->post()));
+
+        return $this->fetch('user_add');
+    }
+
+    /**
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function userEdit()
+    {
+
+        $this->request->isPost() && $this->result($this->logicAdmin->seveAdminInfo($this->request->post()));
+
+        $this->assign('info',$this->logicAdmin->getAdminInfo(['id' => $this->request->param('id')]));
+
+        return $this->fetch('user_edit');
+    }
+
+    /**
+     * 管理授权
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function userAuth()
+    {
+        $this->userCommon();
+
+        $this->request->isPost() && $this->result($this->logicAdmin->userAuth($this->request->post()));
+
+        $this->assign('id', $this->request->param('id'));
+
+        return $this->fetch();
+    }
+
+    /**
+     * 管理员删除
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $id
+     */
+    public function userDel($id = 0)
+    {
+        $this->result($this->logicAdmin->userDel(['id' => $id]));
     }
 
     /**
@@ -53,10 +152,25 @@ class Admin extends BaseAdmin
      */
     public function groupList()
     {
-        $data = $this->logicAuthGroup->getAuthGroupList();
+        $where = [];
 
-        $this->result($data || !empty($data) ? [CodeEnum::SUCCESS,'',$data] : [CodeEnum::ERROR,'暂无数据','']);
+        $data = $this->logicAuthGroup->getAuthGroupList($where);
 
+        $count = $this->logicAuthGroup->getAuthGroupCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
     }
 
     /**
@@ -69,9 +183,9 @@ class Admin extends BaseAdmin
     public function groupAdd()
     {
 
-        $this->request->isPost() && $this->result($this->logicAuthGroup->groupAdd($this->request->post()));
+        $this->groupCommon();
 
-        return $this->fetch('group_edit');
+        return $this->fetch('group_add');
     }
 
     /**
@@ -79,13 +193,11 @@ class Admin extends BaseAdmin
      */
     public function groupEdit()
     {
-        $this->request->isPost() && $this->result($this->logicAuthGroup->groupEdit($this->request->post()));
+        $this->groupCommon();
 
-        $info = $this->logicAuthGroup->getGroupInfo(['id' => $this->request->param('id')]);
+        $this->assign('info', $this->logicAuthGroup->getGroupInfo(['id' => $this->request->param('id')]));
 
-        $this->assign('info', $info);
-
-        return $this->fetch();
+        return $this->fetch('group_edit');
     }
 
     /**
@@ -101,6 +213,7 @@ class Admin extends BaseAdmin
         $this->result($this->logicAuthGroup->groupDel(['id' => $id]));
     }
 
+
     /**
      * 菜单授权
      *
@@ -113,17 +226,55 @@ class Admin extends BaseAdmin
 
         $this->request->isPost() && $this->result($this->logicAuthGroup->setGroupRules($this->request->post()));
 
-        // 获取未被过滤的菜单树
-        $menu_tree = $this->logicBaseAdmin->getListTree($this->authMenuList);
-
-        // 菜单转换为多选视图，支持无限级
-        $menu_view = $this->logicMenu->menuToCheckboxView($menu_tree);
-        //halt($menu_view);
-        $this->assign('list', $menu_view);
-
         $this->assign('id', $this->request->param('id'));
 
         return $this->fetch();
     }
 
+    /**
+     * 获取权限菜单
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function getAuthMenu(){
+
+        $data = [
+            'list' =>  $this->logicMenu->getMenuList([],'id,pid,name'),
+            'checked' => str2arr($this->logicAuthGroup->getGroupRules(['id'=>$this->request->param('id')],'rules')),
+        ];
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'data'=>$data
+            ]
+        );
+    }
+
+    /**
+     * 管理员
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    private function userCommon(){
+        $this->assign('auth',$this->logicAuthGroup->getAuthGroupList());
+    }
+
+
+    /**
+     * 权限组
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    private function groupCommon(){
+        $this->request->isPost() && $this->result($this->logicAuthGroup->saveGroupInfo($this->request->post()));
+    }
 }

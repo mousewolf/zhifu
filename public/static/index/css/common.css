@@ -1402,7 +1402,7 @@ h2.i_title{
     padding-bottom: 22px;
 }
 .vip_content .w1200{
-    width: 1055px;
+    /*width: 1055px;*/
     border-top: 1px solid #eee;
 }
 .vip_left{width: 260px;}
@@ -1479,7 +1479,7 @@ h2.i_title{
     display: none;
 }
 .vip_content .w1200>div.vip_list {
-    width: 793px;
+    width: 930px;
 }
 .vip_list>div.active{display: block}
 .vm_con{
@@ -1530,10 +1530,10 @@ h2.i_title{
     background: url("../images/bor.png") no-repeat center;
 }
 .vc_con{
-    height: 1020px;
+    /*height: 790px;*/
 }
 .vc_con table{
-    width: 748px;
+    width: 860px;
     text-align: center;
     color: #535353;
     margin:20px 20px 0;

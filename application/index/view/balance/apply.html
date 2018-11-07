@@ -1,72 +1,68 @@
-{include file="common::header"/}
-<style>
-    body{
-        background: #ffffff;
-    }
-    .page_nav{
-        line-height: 60px;
-        padding: 0 20px 0 20px;
-    }
-    .page_nav a{
-        /*text-decoration: underline;*/
-        color: #939393;
-    }
-    .page_nav a:hover{
-        color: #0d0d0d;
-        text-decoration: underline;
-    }
-</style>
-<link rel="stylesheet" href="__STATIC__/index/css/order.css">
-<div class="vip_content">
-    <div class="w1200">
-        <div class="r vip_list">
-            <div class="vs_con active">
-                <h3>卡密充值</h3>
-                <div id="phone-bd">
-                    <div id="reg_form">
-                        <div>
-                            <label>卡密密码</label>
-                            <input type="text" name="sn_pass" id="sn_pass" placeholder="请输入卡密" value="">
-                            <p class="reg_err">卡密密码错误</p>
-                        </div>
-                        <div>
-                            <label>验证码</label>
-                            <div class="phone-bd-div">
-                                <input id="reg_sms_code" type="text" placeholder="">
-                                <!--<button type="button" id="tel_yzm">获取短信验证码</button>-->
-                                <img id="reg_yzm_img" src="picture/c726c18c6a5343f9bd4eed2a18ded8d6.gif" width="101" height="42">
-                            </div>
-                            <p>验证码错误</p>
-                        </div>
-                        <div class="reg_btn">
-                            <button id="pay_card_recharge" type="button">充值</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="recharge-desc">
-                    <p>1、卡密充值需验证手机。<a href="/user/bind-phone">立即验证</a></p>
-                    <p>2、每个账号同种类型的卡密仅限使用1次。</p>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>API编辑</title>
+    <link rel="stylesheet" type="text/css" href="__LAYUI__/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/common/css/admin.css" />
+</head>
+
+<body>
+
+<!--API设置-->
+<form class="layui-form" style="width: 90%;padding-top: 20px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">提现金额：</label>
+        <div class="layui-input-block">
+            <input type="text" readonly aria-disabled="true" placeholder="提交共钥后自动生成"  disabled autocomplete="off" class="layui-input" value="{$api.key|default='提交共钥后自动生成'}">
         </div>
-        <div class="clearfix"></div>
     </div>
-</div>
-{include file="common::footer"/}
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">共钥：</label>
+        <div class="layui-input-block">
+            <textarea name="secretkey" placeholder="请输入私钥" class="layui-textarea">{$api.secretkey|default=''}</textarea>
+            <div class="layui-form-mid layui-word-aux">商户请求加密/验签公钥（私钥商户自行保留）</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="apply">申请提现</button>
+        </div>
+    </div>
+</form>
 
+<script src="__LAYUI__/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="__LAYUI__/common.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    layui.use(['form','layer'], function(){
+    //Demo
+    layui.use(['form','jquery', 'upload', 'element'], function(index) {
         var form = layui.form(),
-            layer = layui.layer;
+            $ = layui.jquery,
+            element = layui.element();
+        form.render();
 
-
-
-        //监听提交
-        form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
+        layui.upload({
+            url: '/upload',
+            success: function(res) {
+                console.log(res); //上传成功返回值，必须为json格式
+            }
+        });
+        //监听API提交
+        form.on('submit(apply)', function(data) {
+            $.post("{:url('balance/apply')}",data.field,function (res) {
+                    layer.alert(res.msg,{title: "修改状态", btn: ['确定']},function () {
+                        refresh(index);
+                    });
+                }
+            );
             return false;
         });
     });
 </script>
 </body>
+
 </html>

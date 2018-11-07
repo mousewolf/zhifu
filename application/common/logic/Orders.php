@@ -39,6 +39,19 @@ class Orders extends BaseLogic
         return $this->modelOrders->getList($where, $field, $order, $paginate);
     }
 
+
+    /**
+     * 获取单总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getOrdersCount($where = []){
+        return $this->modelOrders->getCount($where);
+    }
+
     /**
      *
      * 获取结算订单列表
@@ -55,6 +68,19 @@ class Orders extends BaseLogic
         return $this->modelBalanceSettle->getList($where, $field, $order, $paginate);
     }
 
+    /**
+     * 订单统计
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return array
+     */
+    public function getOrdersAllStat(){
+        $order = 'create_time desc';
+        return [
+            'fees' => $this->modelOrders->getInfo([],"sum(amount) as total,sum(if(status=2,amount,0)) as paid", $order, $paginate = false)
+        ];
+    }
 
     /**
      * 获取控制台统计
@@ -66,12 +92,9 @@ class Orders extends BaseLogic
     public function getWelcomeStat(){
         $order = 'create_time desc';
         return [
-            'order' => $this->modelOrders->getInfo([],"count(id) as total_orders,sum(amount) as total_fees", $order, $paginate = false),
-            'user'   => $this->modelUser->getInfo([],"count(uid) as total_users", $order, $paginate = false),
-            'paid' => $this->modelOrders->getInfo(['status' => 2],'count(id) as total_paid', $order, $paginate = false),
-            'unpaid' => $this->modelOrders->getInfo(['status' => 1],'count(id) as total_unpaid', $order, $paginate = false),
-            'uncash' => $this->modelBalanceCash->getInfo(['status' => 0],'count(id) as total_uncash', $order, $paginate = false),
-            'unuser'   => $this->modelUser->getInfo(['is_verify' => 0],"count(uid) as total_unuser", $order, $paginate = false)
+            'order' => $this->modelOrders->getInfo([],"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,sum(amount) as fees,sum(if(status=1,amount,0)) as unpaid,sum(if(status=2,amount,0)) as paid", $order, $paginate = false),
+            'user'  => $this->modelUser->getInfo([],"count(uid) as total,count(if(is_verify=0,true,null)) as failed", $order, $paginate = false),
+            'cash' => $this->modelBalanceCash->getInfo([],'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed', $order, $paginate = false)
         ];
     }
 
@@ -97,7 +120,7 @@ class Orders extends BaseLogic
      * @param int $paginate
      * @return mixed
      */
-    public function getOrderUserStat($where = [],$field = "uid,sum(amount) as total_fee,count(uid) as total_orders",$order = 'create_time desc', $paginate = 15){
+    public function getOrderUserStat($where = [],$field = "uid,count(uid) as total_orders,sum(amount) as total_fee_all,sum(if(status=1,amount,0)) as total_fee_dis,sum(if(status=2,amount,0)) as total_fee_paid",$order = 'create_time desc', $paginate = 15){
         $this->modelOrders->group = 'uid';
         return $this->modelOrders->getList($where,$field, $order, $paginate = false);
     }
@@ -113,12 +136,12 @@ class Orders extends BaseLogic
      * @param int $paginate
      * @return mixed
      */
-    public function getOrderChannelStat($where = [],$field = "a.cnl_id,count(a.cnl_id) as total_orders,sum(a.amount) as total_fee,b.id,b.name,b.remark,b.daily,b.rate",$order = 'a.create_time desc', $paginate = 15){
+    public function getOrderChannelStat($where = [],$field = "a.cnl_id,count(a.cnl_id) as total_orders,sum(a.amount) as total_fee_all,sum(if(a.status = 1,a.amount,0)) as total_fee_dis,sum(if(a.status = 2,a.amount,0)) as total_fee_paid,b.id,b.name,b.remarks,b.daily,b.rate",$order = 'a.create_time desc', $paginate = 15){
         $this->modelOrders->group = 'a.cnl_id';
         $this->modelOrders->alias('a');
 
         $join = [
-            ['channel b', ' b.id = a.cnl_id'],
+            ['pay_channel b', ' b.id = a.cnl_id'],
         ];
 
         $this->modelOrders->join = $join;
@@ -126,7 +149,7 @@ class Orders extends BaseLogic
     }
 
     /**
-     * 获取某订单支付通道配置ID
+     * 获取某订单支付通道配置
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -134,8 +157,7 @@ class Orders extends BaseLogic
      * @return mixed
      */
     public function getOrderPayConfig($order_no){
-
-        return $this->logicChannel->getChannelParam(
+        return $this->logicPay->getChannelParam(
             $this->modelOrders->getValue(
                 ['trade_no'=>$order_no],
                 'cnl_id'
@@ -171,15 +193,14 @@ class Orders extends BaseLogic
             $order->notify_url  = $orderData['notify_url'];//通知Url
             $order->extra       = json_encode(!empty($orderData['extparam']) ?$orderData['extparam']:[]);//拓展参数
             $order->save();
-           //提交支付
-            $result = $this->logicPay->pay($order->trade_no);  //支付
+
             Db::commit();
             //  余额 = 可用余额（可提现金额） + 冻结余额（待结算金额） =》 未支付金额每日清算
             //   可用余额是从冻结余额转入的
             //写入待支付金额 creatBalanceChange($uid,$amount,$remarks = '未知变动记录',$enable = false,$setDec = false)
-            $result && $this->logicBalanceChange->creatBalanceChange($order->uid,$order->amount,'商户号'.$orderData['out_trade_no'].'预下单支付金额');
+            $this->logicBalanceChange->creatBalanceChange($order->uid,$order->amount,'商户号'.$orderData['out_trade_no'].'预下单支付金额');
 
-            return $result;
+            return $order;
 
         }catch (\Exception $e){
             //记录日志

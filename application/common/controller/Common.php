@@ -16,6 +16,7 @@ namespace app\common\controller;
 
 use think\Controller;
 use think\exception\HttpResponseException;
+use think\helper\Time;
 use think\Request;
 use think\Response;
 
@@ -27,16 +28,15 @@ class Common extends Controller
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param mixed $data 返回数据
-     * @param int $code 状态码
-     * @param string $msg 消息
-     * @param string $type 数据格式
+     * @param int $code
+     * @param string $msg
+     * @param string $data
+     * @param string $type
      * @param array $header
      */
     final protected function result($code = 0, $msg = '', $data ='', $type = 'json', array $header = [])
     {
-
-        $result = is_array($code) ? $this->parseJumpArray($code) : $this->parseJumpArray([$code, $msg, $data]);
+        $result = is_array($code) ? $code : $this->parseResultArray([$code, $msg, $data]);
 
         $response = Response::create($result, $type)->header($header);
 
@@ -51,11 +51,28 @@ class Common extends Controller
      * @param array $data
      * @return array
      */
-    final protected function parseJumpArray($data = [])
+    final protected function parseResultArray($data = [])
     {
-        !isset($data[2]) && $data[2] = [];
+        return ['code' => $data[0], 'msg' => $data[1],'data' => $data[2]];
+    }
 
-        return ['code' => $data[0], 'msg' => $data[1] ,'count' => count($data[2]),'data' => $data[2]];
+    /**
+     * 解析查询请求日期
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return array
+     */
+    final protected function parseRequestDate(){
+
+        list($start,$end) = !empty($this->request->param('date'))
+            ? str2arr($this->request->param('date'),'-')
+            : Time::month();
+        return [
+            'between',!empty($this->request->param('date'))
+                ? [strtotime($start), strtotime($end)]
+                : [$start, $end]
+        ];
     }
 
     /**

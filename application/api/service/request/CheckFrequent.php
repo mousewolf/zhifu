@@ -15,7 +15,7 @@
 
 namespace app\api\service\request;
 use app\common\library\exception\ParameterException;
-use think\cache\driver\Redis;
+use think\Cache;
 use think\Log;
 use think\Request;
 
@@ -59,7 +59,7 @@ class CheckFrequent extends ApiCheck
     {
         Log::notice("Request:".json_encode($request->param()));
         $key = 'Gateways-client-ip:' . $request->ip();
-        $redis = new Redis();
+        $redis = new Cache();
         $value = $redis->get($key);
 
         if (!$value) {

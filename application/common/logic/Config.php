@@ -52,7 +52,7 @@ class Config extends BaseLogic
             $this->modelConfig->updateInfo($where, ['value' => $value]);
         }
 
-        return [CodeEnum::SUCCESS, '设置保存成功'];
+        return ['code'=>CodeEnum::SUCCESS, 'msg'=>'设置保存成功'];
     }
 
 }

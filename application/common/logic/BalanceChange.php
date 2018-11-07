@@ -33,7 +33,20 @@ class BalanceChange extends BaseLogic
      */
     public function getBalanceChangeList($where = [], $field = true, $order = 'create_time desc', $paginate = 15)
     {
+        $this->modelBalanceChange->limit = !$paginate;
         return $this->modelBalanceChange->getList($where, $field, $order, $paginate);
+    }
+
+    /**
+     * 资金变动记录总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getBalanceChangeCount($where = []){
+        return $this->modelBalanceChange->getCount($where);
     }
 
     /**

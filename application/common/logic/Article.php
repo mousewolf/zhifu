@@ -36,6 +36,18 @@ class Article extends BaseLogic
     }
 
     /**
+     * 获取文章总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getArticleCount($where = []){
+        return $this->modelArticle->getCount($where);
+    }
+
+    /**
      * 获取文章信息
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
