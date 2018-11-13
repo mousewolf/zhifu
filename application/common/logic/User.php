@@ -17,6 +17,7 @@ namespace app\common\logic;
 use app\common\library\enum\CodeEnum;
 use think\Db;
 use think\Log;
+use think\Validate;
 
 class User extends BaseLogic
 {
@@ -129,7 +130,9 @@ class User extends BaseLogic
                 }else{
                     $data['password'] = data_md5_key($data['password']);
                 }
-                //$this->modelUser->setInfo($data);
+                $this->modelUser->setInfo($data);
+
+                action_log('修改', '修改个人信息。'. arr2str($data));
 
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
@@ -137,6 +140,49 @@ class User extends BaseLogic
             Db::rollback();
             Log::error($ex->getMessage());
             return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+        }
+    }
+
+    /**
+     * 修改密码
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     *
+     * @return array
+     */
+    public function changePwd($data){
+        //数据验证'repassword'=>'require|confirm:password'
+        $rules  = [
+            'oldpassword'  => 'require',
+            'password'   => 'require',
+            'repassword' => 'require|confirm:password',
+            'vercode'   => 'require|length:4,6|checkCode'
+        ];
+        $message = [
+            'vercode.checkCode'      => '验证码不正确',
+            'vercode.require'        => '验证码不能为空',
+            'vercode.length'         => '验证码位数不正确'
+        ];
+        $validate = new Validate($rules, $message);;
+        if (!$validate->check($data)) {
+            return ['code' => CodeEnum::ERROR, 'msg' => $validate->getError()];
+        }
+        //查询用户
+        $user = $this->getUserInfo(['uid' => is_login()],'password');
+
+        //验证原密码
+        if ( $user && data_md5_key($data['oldpassword']) == $user['password']) {
+
+            $result = $this->setUserValue(['uid' => is_login()], 'password', data_md5_key($data['password']));
+
+            action_log('修改', '修改密码');
+
+            return $result && !empty($result) ? ['code' => CodeEnum::SUCCESS, 'msg' => '修改密码成功']
+                : ['code' => CodeEnum::ERROR, 'msg' => '修改失败'];
+        }else{
+            return ['code' => CodeEnum::ERROR, 'msg' => '原密码不正确'];
         }
     }
 
@@ -164,6 +210,21 @@ class User extends BaseLogic
 
 
     /**
+     * 设置管理员信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @param string $value
+     * @return mixed
+     */
+    public function setUserValue($where = [], $field = '', $value = '')
+    {
+        return $this->modelUser->setFieldValue($where, $field, $value);
+    }
+
+    /**
      * 改变商户可用性
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -175,7 +236,7 @@ class User extends BaseLogic
     public function setUserStatus($where,$value = 0){
         Db::startTrans();
         try{
-            $this->modelUser->setFieldValue($where, $field = 'status', $value);
+            $this->setUserValue($where, $field = 'status', $value);
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '修改状态成功'];
         }catch (\Exception $ex){

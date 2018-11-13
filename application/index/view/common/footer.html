@@ -1,68 +1,1 @@
-<div class="footer">
-    <div class="w1200">
-        <div class="f_con">
-            <div class="fc_top clearfix">
-                <dl>
-                    <dt>常见问题</dt>
-                    <dd>接入问题</dd>
-                    <dd>使用问题</dd>
-                </dl>
-                <dl>
-                    <dt>接入支持</dt>
-                    <dd>API开发文档</dd>
-                </dl>
-                <dl>
-                    <dt>关于我们</dt>
-                    <dd><a href="javascript:void(0);">公司介绍</a></dd>
-                    <dd><a onclick="page('服务条款','/protocol',this,'1300px','750px')">服务条款</a></dd>
-                </dl>
-                <dl>
-                    <dt>联系我们</dt>
-                    <dd>客服QQ：702154416</dd>
-                    <dd style="font-size: 14px;">（周一至周日 9:00 - 23:00）</dd>
-                    <dd>商务合作：Partner@iredcap.cn</dd>
-                </dl>
-                <div class="clearfix"></div>
-            </div>
-            <div class="fc_bottom clearfix">
-                <div class="f_logo l"><img src="__STATIC__/white-logo-200-60.png"></div>
-                <div class="fc_con r">
-                    <p>小红帽科技 · 草帽聚合支付 · 桂ICP备180004251号</p>
-                    <p>官网上所有内容的最终解释权归本公司所有</p>
-                </div>
-            </div>
-        </div>
-        <div class="f_ewm">
-            <img src="__STATIC__/qr-pub.jpg" width="100" height="100">
-            <p>小红帽科技</p>
-        </div>
-    </div>
-</div>
-
-<script src="__STATIC__/index/js/jquery.min.js"></script>
-<script src="__STATIC__/index/js/common.js"></script>
-<!--Layui-->
-<script src="__LAYUI__/layui.js"></script>
-<script src="__LAYUI__/common.js"></script>
-<script src="__STATIC__/copyright.js"></script>
-
-<script type="text/javascript">
-    $(function () {
-        //选定
-        var actionName = '{$Request.controller}{$Request.action}';
-        $("."+actionName).addClass('active');
-
-        $('.hl_admin').on('mouseover', function () {
-            $('.hl_admin ul').show();
-        }).on('mouseout', function () {
-            $('.hl_admin ul').hide();
-        });
-
-        $('.nav').on('mouseover', function (index) {
-            $('.nav ul li index').addClass('active');
-        }).on('mouseout', function () {
-            $('.nav ul li index').removeClass('active');
-        });
-
-    });
-</script>
+<div class="footer">    <div class="wrapper">        <dl class="s">            <dt>                联系我们            </dt>            <dd>                <a href="/home/index/about.html#about2">                    联系方式                    <p> QQ:702154416</p>                    <p> Email:me@iredcap.cn</p>                </a>            </dd>            <dd>                <img src="__STATIC__/logo.png" style="width: 120px" />            </dd>        </dl>        <dl>            <dt>                产品项目            </dt>            <dd>                <a href="products.html#pro1">                    聚合收款                </a>            </dd>            <dd>                <a href="products.html#pro2">                    商户系统                </a>            </dd>            <dd>                <a href="products.html#pro3">                    代付系统                </a>            </dd>            <dd>                <a href="products.html#pro4">                    二维码支付                </a>            </dd>        </dl>        <dl>            <dt>                关于公司            </dt>            <dd>                <a href="{:url('index/index/about')}">                    关于我们                </a>            </dd>            <dd>                <a href="{:url('index/index/partner')}">                    接口合作                </a>            </dd>            <dd>                <a href="{:url('index/index/partner')}">                    流量合作                </a>            </dd>        </dl>        <dl>            <dt>                开发者            </dt>            <dd>                <a href="{:url('index/index/demo')}">                    DEMO体验                </a>            </dd>            <dd>                <a href="{:url('index/index/introduce')}">                    接入指南                </a>            </dd>            <dd>                <a href="{:url('index/index/document')}">                    API开发文档                </a>            </dd>            <dd>                <a href="{:url('index/index/sdk')}">                    SDK下载                </a>            </dd>        </dl>        <dl class="s">            <dt>                扫一扫            </dt>            <dd>                <img src="__STATIC__/qr-pub.jpg" style="width: 109px;" />            </dd>        </dl>    </div></div><div class="copyright">    <div class="wrapper">        {$site.app_copyright|default="© 2018 Caomao. "} <a href="https://www.iredcap.cn" style="color: #fff;" target="_blank">小红帽科技</a> · {$site.seo_title|default="草帽聚合支付"} · 桂ICP备180004251号    </div></div><div class="sidebar">    <ul>        <!--<li><a href="#"><i class="iconfont icon-liaotian"></i></a></li>-->        <li class="sidebar-scroll">            <a href="#">                <i class="iconfont icon-shang">                </i>            </a>        </li>    </ul></div><script type="text/javascript" src="__STATIC__/index/js/jquery-1.7.2.min.js"></script><script type="text/javascript" src="__STATIC__/index/js/jquery.glide.js"></script><script type="text/javascript" src="__STATIC__/index/js/wow.min.js"></script><script type="text/javascript" src="__STATIC__/index/js/script.js"></script><script type="text/javascript">    $(function() {        //$(".home_index").addClass("on");        $('.sidebar-scroll').click(function() {            $('html ,body').animate({                scrollTop: 0            }, 1000);            return false        });        var glide = $('.list-wrper').glide({            arrows: false        }).data('api_glide');        $(".hpart-prev").click(function() {            glide.prev()        });        $(".hpart-next").click(function() {            glide.next()        })    })</script></body></html>

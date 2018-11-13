@@ -38,7 +38,7 @@ class UserAccount extends BaseLogic
         $this->modelUserAccount->alias('a');
 
         $join = [
-            ['bank b', 'a.bank = b.id'],
+            ['banker b', 'a.bank_id = b.id'],
         ];
 
         $this->modelUserAccount->join = $join;

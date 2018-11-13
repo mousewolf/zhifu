@@ -19,10 +19,13 @@ Route::domain('admin','admin');
 
 // api子域名绑定到api模块
 Route::domain('api', function(){
-    // 动态注册域名的路由规则
+    /**
+     * Pay
+     */
     Route::miss('api/Miss/index');//路由错误返回
-    Route::post('pay/unifiedorder','api/Pay/unifiedorder');//网关支付
-    Route::post('pay/orderquery','api/Pay/orderquery');//网关支付
+    Route::post('pay/unifiedorder','api/Pay/unifiedorder');//统一下单
+    Route::post('pay/orderquery','api/Pay/orderquery');//查询订单
+    Route::rule('Cashier','api/Pay/cashier');//收银台
     /**
      * Notify
      */
@@ -34,28 +37,47 @@ Route::domain('api', function(){
     Route::get('queue/closer/:id','api/Test/actionOrderClose');
 });
 
+// www子域名绑定到index模块
 Route::domain('www',function () {
+
     /**
      * 首页
      */
-    Route::get('news/:id','index/Index/news');  //行业动态
-    Route::rule('get','index/Index/get','GET|POST');  //支付API演示
-    Route::get('notice/:id','index/Index/notice'); //余呗消息
-    Route::get('pricing','index/Index/pricing'); //产品价格
-    Route::get('download','index/Index/download'); //sdk下载
-    Route::get('protocol','index/Index/protocol'); //服务条款
-    Route::get('help/:id','index/Index/help'); //服务条款
+    Route::get('products', 'index/Index/products');  //支付产品
+    Route::get('doc', 'index/Index/document');  //支付API文档
+    Route::get('demo', 'index/Index/demo');  //支付API演示
+    Route::get('introduce', 'index/Index/introduce');  //接入指南
+    Route::get('sdk', 'index/Index/sdk'); //sdk下载
+    Route::get('protocol', 'index/Index/protocol'); //服务条款
+    Route::get('help/:id', 'index/Index/help');
+
     /**
-     * //商户
+     * 商户
      */
-    Route::get('user','index/User/index');//商户首页
-    Route::get('user/account','index/User/account');//商户基本
-    Route::rule('user/edit','index/User/edit','GET|POST'); //商户账户信息
-    Route::get('user/order','index/Order/index');
-    Route::get('user/settle','index/Order/settle');
-    Route::get('user/paid','index/Balance/paid');
-    Route::get('user/balance','index/Balance/record');
-    Route::get('user/open','index/Api/index');
+    Route::get('user','index/User/index');
+    Route::rule('user/info','index/User/info','GET|POST');
+    Route::rule('user/password','index/User/password','GET|POST');
+    Route::get('user/log','index/User/log');
+    /**
+     * 资金
+     */
+    Route::get('balance','index/Balance/index');
+    Route::get('balance/account','index/Balance/account');
+    Route::get('balance/settle','index/Balance/settle');
+    Route::get('balance/paid','index/Balance/paid');
+    Route::rule('balance/apply','index/Balance/apply','GET|POST');
+    /**
+     * 订单
+     */
+    Route::get('order','index/Order/index');
+    Route::get('order/refund','index/Order/refund');
+    Route::get('order/submit','index/Order/submit');
+    /**
+     * API
+     */
+    Route::get('api','index/Api/index');
+    Route::get('api/channel','index/Api/channel');
+    Route::get('api/doc','index/Api/document');
 
     /**
      * 登录注册
@@ -69,6 +91,7 @@ Route::domain('www',function () {
     Route::rule('active/sendActive','index/Login/sendActiveCode');
     Route::get('active/:code','index/Login/checkActiveCode');
     //极验
-    Route::post('validate/gt-start','index/Login/startGeetest');
+    Route::get('validate/gt-start','index/Login/startGeetest');
     Route::post('validate/gt-verify','index/Login/checkGeetest');
+
 });

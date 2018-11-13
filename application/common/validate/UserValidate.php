@@ -47,6 +47,6 @@ class UserValidate extends BaseValidate
     // 应用场景
     protected $scene = [
         'add'  =>  ['username','password','account'],
-        'edit'      =>  ['username','account','phone','qq']
+        'edit'      =>  ['username','phone','qq']
     ];
 }

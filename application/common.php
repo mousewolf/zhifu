@@ -539,3 +539,15 @@ function uncamelize($camelCaps,$separator='_')
 {
     return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
 }
+
+/**
+ * 获取到微秒
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @return float
+ */
+function getMicroTime(){
+    list($s1, $s2) = explode(' ', microtime());
+     return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
+}

@@ -23,6 +23,20 @@ use think\Response;
 class Common extends Controller
 {
 
+    public function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+
+        $config_array = [];
+
+        foreach ($this->logicConfig->getConfigList() as $info) {
+
+            $config_array[$info['name']] = $info['value'];
+        }
+
+        $this->assign('site',$config_array);
+    }
+
     /**
      * 数据返回
      *
@@ -63,7 +77,7 @@ class Common extends Controller
      *
      * @return array
      */
-    final protected function parseRequestDate(){
+    protected function parseRequestDate(){
 
         list($start,$end) = !empty($this->request->param('date'))
             ? str2arr($this->request->param('date'),'-')
