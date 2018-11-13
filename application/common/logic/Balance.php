@@ -33,6 +33,20 @@ class Balance extends BaseLogic
         return $this->modelBalance->getList($where, $field, $order, $paginate);
     }
 
+
+    /**
+     *
+     * 获取商户资产详情
+     *
+     * @author 勇敢的小笨羊
+     * @param array $where
+     * @param bool $field
+     * @return mixed
+     */
+    public function getBalanceInfo($where = [], $field = true){
+        return $this->modelBalance->getInfo($where, $field);
+    }
+
     /**
      * 获取商户资产列表
      *

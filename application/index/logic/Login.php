@@ -52,7 +52,7 @@ class Login extends Base
             if ($user['status'] == UserStatusEnum::DISABLE){
                 return [ 'code' => CodeEnum::ERROR, 'msg' =>  '账号禁用'];
             }
-            $this->modelUser->setFieldValue(['uid' => $user['uid']], 'update_time', time());
+            $this->logicUser->setUserValue(['uid' => $user['uid']], 'update_time', time());
 
             $auth = ['uid' => $user['uid'], 'update_time'  =>  time()];
 
@@ -60,13 +60,13 @@ class Login extends Base
             session('user_auth', $auth);
             session('user_auth_sign', data_auth_sign($auth));
 
-            action_log('登录', '商户'. $username .'登录成功');
-            
+            action_log('登录', '商户'. $username . '登录成功');
+
             return [ 'code' => CodeEnum::SUCCESS, 'msg' =>  '登录成功'];
-
         } else {
-
-            return [ 'code' => CodeEnum::ERROR, 'msg' => empty($user['uid']) ? '用户账号不存在' : '密码输入错误'];
+            $msg = empty($user['uid']) ? '用户账号不存在' : '密码输入错误';
+            action_log('登录', '商户'. $username . '登录失败，' . $msg);
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $msg];
         }
     }
 

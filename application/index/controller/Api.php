@@ -31,14 +31,13 @@ class Api extends Base
     }
 
     /**
-     * 编辑接口信息
+     * 可用渠道
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @return mixed
      */
-    public function edit(){
-        $this->apiCommon();
+    public function channel(){
         return $this->fetch();
     }
 

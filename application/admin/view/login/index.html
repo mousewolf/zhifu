@@ -17,7 +17,7 @@
     <div class="layadmin-user-login-main">
         <div class="layadmin-user-login-box layadmin-user-login-header">
             <h2>聚合 · 后台管理</h2>
-            <p>欢迎使用草帽API聚合支付系统</p>
+            <p>欢迎使用{$site.seo_title|default="草帽聚合支付"}系统</p>
         </div>
         <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
             <div class="layui-form-item">
@@ -49,7 +49,7 @@
 
     <div class="layui-trans layadmin-user-login-footer">
 
-        <p>© 2018 <a href="https://www.iredcap.cn" target="_blank">小红帽科技</a> · 草帽聚合支付 · 桂ICP备180004251号</p>
+        <p>{$site.app_copyright|default="© 2018 Caomao. "} <a href="https://www.iredcap.cn" target="_blank">小红帽科技</a> · {$site.seo_title|default="草帽聚合支付"} · 桂ICP备180004251号</p>
     </div>
 
     <!--<div class="ladmin-user-login-theme">

@@ -103,6 +103,15 @@ class Admin extends BaseAdmin
 
     }
 
+    /**
+     * 修改密码
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     *
+     * @return array
+     */
     public function changeAdminPwd($data){
         //数据验证'repassword'=>'require|confirm:password'
         $rules  = [

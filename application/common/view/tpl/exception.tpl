@@ -367,7 +367,7 @@ return implode(', ', $result);
     <div style="margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;">
         <div style="width: 750px; max-width: 85%; margin: 0 auto; background-color: #fff; -webkit-box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);-moz-box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);">
             <div style="padding: 20px 10%; text-align: center; font-size: 16px;line-height: 16px;">
-                <a href="/" style="vertical-align: top;"> <img style="margin:32px auto; max-width: 95%; color: #0e2026;" src="/static/logo-black.png" /> </a>
+                <a href="/" style="vertical-align: top;"> <img style="margin:32px auto; max-width: 95%; color: #0e2026;" src="/static/cmpay_color_logo_200.png" /> </a>
             </div>
             <table width="600" style="background-color:#fff;margin:0 auto;" cellpadding="0" cellspacing="0">
                 <tbody><tr>
@@ -378,7 +378,7 @@ return implode(', ', $result);
                                 <td width="40">&nbsp;</td>
                                 <td width="520" style="line-height:20px;">
                                     <p style="text-align:center;margin:0;padding:0;">
-                                        <img src="/static/index/images/icon/wrong.png" width="32" height="32" style="margin:0 12px;vertical-align:top;">
+                                        <img src="/static/index/images/error-icon.png" width="32" height="32" style="margin:0 12px;vertical-align:top;">
                                         <span style="font-size:24px;line-height:32px;color:red;"><?php echo htmlentities($message); ?></span>
                                     </p>
                                     <p style="color:#7d7d7d;margin:10px 0px 24px 0px;font-size:14px;line-height:22px;padding:0 40px;text-align:center">
@@ -400,10 +400,10 @@ return implode(', ', $result);
                         彻底告别繁琐的支付接入流程 一次接入所有主流支付渠道和分期渠道，99.99% 系统可用性，满足你丰富的交易场景需求,为你的用户提供完美支付体验。
                     </div>
                     <div style="margin: 30px 0 0 0;">
-                        扫码加入 余呗 支付交流群
+                        扫码加入CmPay开源交流群
                     </div>
                     <div style="margin: 16px 0 32px;">
-                        <img height="119" src="/static/qr-pub.jpg" width="119" />
+                        <img height="119" src="/static/qr-qun.jpg" width="119" />
                     </div>
                     <div>
                         <span style="color: #76858c;">服务咨询请联系：</span>

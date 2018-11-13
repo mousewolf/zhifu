@@ -15,6 +15,8 @@
 namespace app\common\logic;
 
 
+use app\common\library\enum\CodeEnum;
+
 class BalanceCash extends BaseLogic
 {
 
@@ -51,5 +53,14 @@ class BalanceCash extends BaseLogic
      */
     public function getOrderCashCount($where = []){
         return $this->modelBalanceCash->getCount($where);
+    }
+
+    public function saveUserCashApply($data){
+        //TODO 数据验证
+        $validate = $this->validateBalance->check($data);
+
+        if (!$validate) {
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validateBalance->getError()];
+        }
     }
 }

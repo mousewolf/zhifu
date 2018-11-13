@@ -79,7 +79,7 @@ class Login extends Common
     public function login(){
 
         //登录检测
-        is_login() && $this->redirect(url('index/user/index'));
+        is_login() && $this->redirect(url('index/User/index'));
         $this->request->isPost() && $this->result(
             $this->logicLogin->dologin(
                 $this->request->post('username'),

@@ -153,9 +153,7 @@ return [
     'view_replace_str'       => [
         '__PUBLIC__'    =>  '/',
         '__STATIC__'    => '/static',
-        '__LAYUI__'    => '/static/layui',
-        '__TABLER__'    => '/static/tabler',
-        '__GREEVA__'    => '/static/greeva'
+        '__LAYER__'    => '/static/layer'
     ],
 
     // 默认跳转页面对应的模板文件
@@ -264,7 +262,7 @@ return [
     // | 验证码
     // +----------------------------------------------------------------------
     'captcha'                       => [
-        'seKey'    => md5('Caomao'),
+        'seKey'    => md5('CmPay'),
         // 验证码加密密钥
         'codeSet'  => '012345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY',
         // 验证码字符集合

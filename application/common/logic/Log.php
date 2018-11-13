@@ -30,18 +30,20 @@ class Log extends BaseLogic
      */
     public function logAdd($action = '', $describe = '')
     {
+        $request = request();$module = $request->module();
 
-        $request = request();
-        $module = $request->module();
-
-        $uid = session('admin_info')['id'] ?:session('user_info')['uid'];
+        if ($module == 'admin'){
+            $uid = session('admin_info')['id'];
+        }else if ($module == 'index'){
+            $uid = empty(session('user_info'))?'999999':session('user_info')['uid'];
+        }
 
         $data['uid']       = $uid;
         $data['module']    = $module;
         $data['ip']        = $request->ip();
         $data['url']       = $request->url();
         $data['action']    = $action;
-        $data['describe']  = $action . $describe;
+        $data['describe']  = $describe;
 
         $res = $this->modelActionLog->setInfo($data);
 
@@ -62,16 +64,19 @@ class Log extends BaseLogic
     }
 
     /**
-     * 获取日志列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param array $where
+     * @param bool|string $field
+     * @param string $order
+     * @param int $paginate
+     *
      * @return mixed
      */
-    public function getLogList($where = []){
-        $this->modelActionLog->limit = true;
-        return $this->modelActionLog->getList($where, true, 'create_time desc',false);
+    public function getLogList($where = [] , $field = true, $order = 'create_time desc',$paginate = 0){
+        $this->modelActionLog->limit = !$paginate;
+        return $this->modelActionLog->getList($where, $field, $order,$paginate);
     }
 
     /**
