@@ -13,7 +13,7 @@
  */
 
 return [
-    // 每日定时结算
+    // 每日定时结算  【改用think-cron】
     'app\\common\\service\\command\\AutoOrderSettle',
     'app\\common\\service\\command\\PushOrderWait'
 ];

@@ -137,4 +137,70 @@ class User extends BaseAdmin
         $this->error([ CodeEnum::ERROR,'未知错误']);
     }
 
+    /**
+     * 认证信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function auth(){
+        return $this->fetch();
+    }
+
+    /**
+     * 商户认证信息列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function getAuthList(){
+        $where = [];
+
+        //组合搜索
+        !empty($this->request->param('uid')) && $where['uid']
+            = ['eq', $this->request->param('uid')];
+
+        $where['status'] = ['eq', $this->request->get('status','1')];
+
+        //时间搜索  时间戳搜素
+        $where['create_time'] = $this->parseRequestDate();
+
+        $data = $this->logicUser->getUserAuthList($where, true, 'create_time desc', false);
+
+        $count = $this->logicUser->getUserAuthCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]
+        );
+    }
+
+    /**
+     * 认证详细信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function userAuthInfo(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result($this->logicUser->saveUserAuth($this->request->post()));
+        //获取认证详细信息
+        $auth = $this->logicUser->getUserAuthInfo(['uid' =>$this->request->param('id')]);
+        $auth['card'] = json_decode($auth['card'],true);
+        //halt($auth);
+        $this->assign('auth',$auth);
+
+        return $this->fetch();
+    }
 }

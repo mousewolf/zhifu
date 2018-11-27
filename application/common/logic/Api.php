@@ -83,12 +83,13 @@ class Api extends BaseLogic
     public function editApi($data){
 
         //TODO  验证数据
-        $validate = $this->validateApi->scene('edit')->check($data);
+        $validate = $this->validateApiValidate->scene('edit')->check($data);
 
         if (!$validate) {
 
-            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateApi->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateApiValidate->getError()];
         }
+
         //TODO 修改数据
         Db::startTrans();
         try{
@@ -98,7 +99,11 @@ class Api extends BaseLogic
             $this->saveRsaPublickKey($data);
             //提交保存
             $this->modelApi->setInfo($data);
+
             Db::commit();
+
+            action_log('修改', '修改接口信息，接口公钥修改');
+
             return [ 'code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();

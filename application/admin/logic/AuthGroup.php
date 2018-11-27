@@ -70,10 +70,10 @@ class AuthGroup extends BaseAdmin
         }
         Db::startTrans();
         try{
-            //$data['uid'] = is_admin_login();
-            $this->modelAuthGroup->setInfo($data);
 
-            action_log('编辑', '权限组' . $data['id']);
+            $res = $this->modelAuthGroup->setInfo($data);
+
+            action_log('编辑', '权限组新增Or编辑' . $res);
 
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' =>  '权限组编辑成功'];

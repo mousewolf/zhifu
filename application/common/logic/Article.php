@@ -36,6 +36,23 @@ class Article extends BaseLogic
     }
 
     /**
+     * 获取通知列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @param string $order
+     * @param int $paginate
+     *
+     * @return mixed
+     */
+    public function getNoticeList($where = [], $field = true, $order = 'create_time desc',$paginate = 15)
+    {
+        return $this->modelNotice->getList($where, $field, $order,$paginate);
+    }
+
+    /**
      * 获取文章总数
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -45,6 +62,18 @@ class Article extends BaseLogic
      */
     public function getArticleCount($where = []){
         return $this->modelArticle->getCount($where);
+    }
+
+    /**
+     * 获取知总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getNoticeCount($where = []){
+        return $this->modelNotice->getCount($where);
     }
 
     /**
@@ -58,8 +87,21 @@ class Article extends BaseLogic
      */
     public function getArticleInfo($where = [], $field = true)
     {
-        
         return $this->modelArticle->getInfo($where, $field);
+    }
+
+    /**
+     * 获取通知信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @return mixed
+     */
+    public function getNoticeInfo($where = [], $field = true)
+    {
+        return $this->modelNotice->getInfo($where, $field);
     }
 
     /**
@@ -70,7 +112,7 @@ class Article extends BaseLogic
      * @param array $data
      * @return array|string
      */
-    public function editArticle($data = [])
+    public function saveArticle($data = [])
     {
 
         //数据验证
@@ -78,7 +120,7 @@ class Article extends BaseLogic
 
         if (!$validate) {
 
-            return [ CodeEnum::ERROR,$this->validateArticle->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateArticle->getError()];
         }
 
         Db::startTrans();
@@ -86,11 +128,45 @@ class Article extends BaseLogic
 
             $this->modelArticle->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'文章编辑成功'];
+            return [ 'code' =>  CodeEnum::SUCCESS, 'msg' => '文章编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR,'未知错误'];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+        }
+
+    }
+
+    /**
+     * 通知信息编辑
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $data
+     * @return array|string
+     */
+    public function saveNotice($data = [])
+    {
+        //数据验证
+        $validate = $this->validateNotice->check($data);
+
+        if (!$validate) {
+
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateNotice->getError()];
+        }
+
+        Db::startTrans();
+        try{
+            //数据处理
+            if(!empty($data['attachments']))  $data['attachments'] = json_encode(array_values($data['attachments']));
+
+            $this->modelNotice->setInfo($data);
+            Db::commit();
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '通知编辑成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return [ 'code' => CodeEnum::ERROR, 'msg' => '未知错误'];
         }
 
     }

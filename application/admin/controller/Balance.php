@@ -94,7 +94,7 @@ class Balance extends BaseAdmin
         //时间搜索  时间戳搜素
         $where['create_time'] = $this->parseRequestDate();
 
-        $data = $this->logicBalanceChange->getBalanceChangeList($where, true, 'create_time desc', false);
+        $data = $this->logicBalanceChange->getBalanceChangeList($where, true, 'id desc', false);
 
         $count = $this->logicBalanceChange->getBalanceChangeCount($where);
 

@@ -28,6 +28,7 @@ class Orders extends BaseAdmin
     public function index(){
 
         $this->assign($this->logicOrders->getOrdersAllStat());
+        $this->assign('code', $this->logicPay->getCodeList());
         return $this->fetch();
     }
 
@@ -173,6 +174,7 @@ class Orders extends BaseAdmin
      *
      */
     public function channel(){
+        $this->assign('channel', $this->logicPay->getChannelList());
         return $this->fetch();
     }
 

@@ -35,7 +35,32 @@ class User extends BaseLogic
     public function getUserList($where = [], $field = '*', $order = '', $paginate = 20)
     {
         $this->modelUser->limit = !$paginate;
+        $this->modelUserAccount->alias('a');
+
+        $join = [
+            ['admin_group b', 'a.uid = b.id'],
+        ];
+
+        $this->modelUserAccount->join = $join;
         return $this->modelUser->getList($where, $field, $order, $paginate);
+    }
+
+    /**
+     * 获取商户认证列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @param string $order
+     * @param int $paginate
+     *
+     * @return mixed
+     */
+    public function getUserAuthList($where = [], $field = '*', $order = '', $paginate = 20)
+    {
+        $this->modelUserAuth->limit = !$paginate;
+        return $this->modelUserAuth->getList($where, $field, $order, $paginate);
     }
 
     /**
@@ -48,6 +73,18 @@ class User extends BaseLogic
      */
     public function getUserCount($where = []){
         return $this->modelUser->getCount($where);
+    }
+
+    /**
+     * 获取用户认证数据总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getUserAuthCount($where = []){
+        return $this->modelUserAuth->getCount($where);
     }
 
     /**
@@ -64,6 +101,19 @@ class User extends BaseLogic
         return $this->modelUser->getInfo($where, $field);
     }
 
+    /**
+     * 获取认证信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     *
+     * @return mixed
+     */
+    public function getUserAuthInfo($where = [], $field = true){
+        return $this->modelUserAuth->getInfo($where, $field);
+    }
 
     /**
      * 添加一个商户
@@ -81,10 +131,17 @@ class User extends BaseLogic
         //TODO 添加数据
         Db::startTrans();
         try{
+            //密码
             $data['password'] = data_md5_key($data['password']);
+            //生成安全码
+            $data['code']   = getRandChar();
+            //基本信息
             $user = $this->modelUser->setInfo($data);
+            //账户记录
             $this->modelUserAccount->setInfo(['uid'  => $user ]);
+            //资金记录
             $this->modelBalance->setInfo(['uid'  => $user ]);
+            //生成API记录
             $this->modelApi->setInfo([
                 'uid'  => $user,
                 'domain' =>  $data['siteurl'],
@@ -93,9 +150,13 @@ class User extends BaseLogic
 
             //加入邮件队列
             $jobData = $this->getUserInfo(['uid'=>$user],'uid,account,username');
+
             //邮件场景
             $jobData['scene']   = 'register';
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
+
+            action_log('新增', '新增商户。UID:'. $user);
+
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '添加商户成功'];
         }catch (\Exception $ex){
@@ -144,6 +205,43 @@ class User extends BaseLogic
     }
 
     /**
+     * 认证信息保存
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     *
+     * @return array
+     */
+    public function saveUserAuth($data){
+        //TODO  验证数据
+        $validate = $this->validateUserAuth->check($data);
+
+        if (!$validate) {
+
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validateUserAuth->getError()];
+        }
+        //TODO 修改数据
+        Db::startTrans();
+        try{
+
+            if(!empty($data['card']))  $data['card'] = json_encode(array_values($data['card']));
+
+            $this->modelUserAuth->setInfo($data);
+
+            action_log('提交', '个人信息认证。');
+
+            Db::commit();
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+        }
+    }
+
+
+    /**
      * 修改密码
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -153,22 +251,14 @@ class User extends BaseLogic
      * @return array
      */
     public function changePwd($data){
-        //数据验证'repassword'=>'require|confirm:password'
-        $rules  = [
-            'oldpassword'  => 'require',
-            'password'   => 'require',
-            'repassword' => 'require|confirm:password',
-            'vercode'   => 'require|length:4,6|checkCode'
-        ];
-        $message = [
-            'vercode.checkCode'      => '验证码不正确',
-            'vercode.require'        => '验证码不能为空',
-            'vercode.length'         => '验证码位数不正确'
-        ];
-        $validate = new Validate($rules, $message);;
-        if (!$validate->check($data)) {
-            return ['code' => CodeEnum::ERROR, 'msg' => $validate->getError()];
+        //TODO  验证数据
+        $validate = $this->validatePassword->check($data);
+
+        if (!$validate) {
+
+            return ['code' => CodeEnum::ERROR, 'msg' => $this->validatePassword->getError()];
         }
+
         //查询用户
         $user = $this->getUserInfo(['uid' => is_login()],'password');
 

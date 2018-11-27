@@ -14,6 +14,9 @@
 
 use think\Route;
 
+Route::get('notify/person/api/setting','api/Notify/person');//个人收款异步通知
+
+
 // admin子域名绑定到admin模块
 Route::domain('admin','admin');
 
@@ -29,8 +32,7 @@ Route::domain('api', function(){
     /**
      * Notify
      */
-    Route::post('notify/wx_scan','api/Notify/wxScan');//微信异步通知
-    Route::post('notify/qq_scan','api/Notify/qqScan');//QQ异步通知
+    Route::post('notify/:channel','api/Notify/handle');//异步通知
 
 
     Route::rule('test/notify','api/Test/actionNotify');
@@ -50,19 +52,24 @@ Route::domain('www',function () {
     Route::get('sdk', 'index/Index/sdk'); //sdk下载
     Route::get('protocol', 'index/Index/protocol'); //服务条款
     Route::get('help/:id', 'index/Index/help');
+    Route::post('vercode','index/Index/sendVerCode'); //【测试】
 
+    Route::get('user/getOrderStat','index/User/getOrderStat');
     /**
      * 商户
      */
     Route::get('user','index/User/index');
     Route::rule('user/info','index/User/info','GET|POST');
+    Route::rule('user/auth','index/User/auth','GET|POST');
     Route::rule('user/password','index/User/password','GET|POST');
     Route::get('user/log','index/User/log');
+    Route::get('user/notice/:id','index/User/notice');
     /**
      * 资金
      */
     Route::get('balance','index/Balance/index');
     Route::get('balance/account','index/Balance/account');
+    Route::rule('account/add','index/Balance/addAccount','GET|POST');
     Route::get('balance/settle','index/Balance/settle');
     Route::get('balance/paid','index/Balance/paid');
     Route::rule('balance/apply','index/Balance/apply','GET|POST');
@@ -75,7 +82,7 @@ Route::domain('www',function () {
     /**
      * API
      */
-    Route::get('api','index/Api/index');
+    Route::rule('api','index/Api/index','GET|POST');
     Route::get('api/channel','index/Api/channel');
     Route::get('api/doc','index/Api/document');
 
@@ -93,5 +100,6 @@ Route::domain('www',function () {
     //极验
     Route::get('validate/gt-start','index/Login/startGeetest');
     Route::post('validate/gt-verify','index/Login/checkGeetest');
+
 
 });

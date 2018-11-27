@@ -15,6 +15,8 @@
 
 namespace app\api\service\response;
 
+use app\common\library\HttpHeader;
+
 class BuildHeader extends ApiSend
 {
 
@@ -30,9 +32,9 @@ class BuildHeader extends ApiSend
     {
         // 构建头信息
         $header = [
-            'noncestr'  =>  self::get('noncestr'),
-            'timestamp' =>  self::get('timestamp'),
-            'signature' =>  self::get('signature')
+            HttpHeader::X_CA_NONCE_STR  =>  self::get( HttpHeader::X_CA_NONCE_STR),
+            HttpHeader::X_CA_TIMESTAMP  =>  self::get(HttpHeader::X_CA_TIMESTAMP),
+            HttpHeader::X_CA_SIGNATURE  =>  self::get(HttpHeader::X_CA_SIGNATURE)
         ];
         //记录本次签名
         self::set('header',$header);

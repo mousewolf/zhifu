@@ -1,5 +1,17 @@
 <?php
 /**
+ *  +----------------------------------------------------------------------
+ *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+ *  +----------------------------------------------------------------------
+ *  | Author: Brian Waring <BrianWaring98@gmail.com>
+ *  +----------------------------------------------------------------------
+ */
+
+/**
  * +---------------------------------------------------------------------+
  * | Yubei         | [ WE CAN DO IT JUST THINK ]
  * +---------------------------------------------------------------------+
@@ -28,7 +40,7 @@ class PayChannel extends BaseModel
      * @return array|bool
      */
     public function getChannelMap($CodeId){
-        $appChannelMap = self::where(['code_id'=> $CodeId,'status'=> 1])->cache(true,'60')->column('id,action,param');
+        $appChannelMap = self::where(['id' => ['in',$CodeId],'status' => 1])->column('id,action,param');
         if ($appChannelMap){
             //随机ID参数返回
             return [
@@ -37,6 +49,6 @@ class PayChannel extends BaseModel
                 'param'=>json_decode($appChannelMap[$key]['param'],true)
             ];
         }
-        return false;
+        return $this->getChannelMap($CodeId);
     }
 }

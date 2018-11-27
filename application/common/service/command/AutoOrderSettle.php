@@ -49,14 +49,17 @@ class AutoOrderSettle extends Command
         // 输出到日志文件
         $output->writeln("AutoOrderSettle start");
         // 定时器需要执行的内容
-
         try{
-            $resArr =Db::table('cm_orders')->alias('a')
-                ->join([['cm_channel n','a.cnl_id= n.id']])->where(['a.status'   => 2 ])->whereTime('a.create_time','d')
-                ->field('a.uid,truncate(sum(a.amount),2) as amount,truncate(sum(a.amount * n.rate),2) as fee,truncate(sum(a.amount - a.amount * n.rate),2) as actual,n.rate')
-                ->group('a.uid')->select();
+            $subQuery = Db::table('cm_orders')->alias('a')
+                ->join([['cm_pay_channel n','a.cnl_id = n.id']])->where(['a.status'   => 2 ])->whereTime('a.create_time','d')
+                ->field('a.uid,a.cnl_id,truncate(sum(a.amount),2) as amount,truncate(sum(a.amount * n.rate),2) as fee,truncate(sum(a.amount - a.amount * n.rate),2) as actual,n.rate')
+                ->group('cnl_id')->buildSql();
+            $resArr =Db::table($subQuery.' a')
+                ->field('a.uid,truncate(sum(a.amount),2) as amount,truncate(sum(a.fee),2) as fee,truncate(sum(a.actual),2) as actual') //,truncate(avg(a.rate),3) as rate
+                ->group('a.uid')
+                ->select();
+
             foreach ($resArr as $v){
-                Log::notice("Auto Settle List:". json_encode($v));
                 (new BalanceSettle())->settleBalanceToCash($v);
             }
 
@@ -67,4 +70,5 @@ class AutoOrderSettle extends Command
         // .....
         $output->writeln("AutoOrderSettle end....");
     }
+
 }

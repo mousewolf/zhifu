@@ -40,25 +40,24 @@ class Notify extends BaseApi
             $trade_no = $data['out_trade_no'];
             //查找订单
             $order = $this->modelOrders->where(['trade_no'=>$trade_no])->lock(true)->find();
-            Log::notice('查找订单');
-            //判断状态
-            if ($order->status == 1) {
+            //超时判断 （超时10分钟当作失败订单）  判断状态
+            if ($order->status == 1 && bcsub(time(), $order->create_time) <= 600) {
                 Log::notice('更新订单状态');
                 //更新订单状态
                 $this->updateOrderStatus($order->id, true);
                 Log::notice('自增商户资金');
                 //自增商户资金
-                $this->changeBalanceValue($order->uid, $order->amount,$trade_no);
+                $this->changeBalanceValue($order->uid, $order->amount,$order->out_trade_no);
                 //异步消息商户
                 Log::notice('异步消息商户');
                 $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
 
-            }else{
-                //更新订单状态
-                $this->updateOrderStatus($order->id, false);
+                //提交更改
+                Db::commit();
+
+                return true;
             }
-            //提交更改
-            Db::commit();
+            Log::error('单号' . $trade_no . '超时处理');
             return false;
         } catch (Exception $ex) {
             Db::rollback();
@@ -87,20 +86,20 @@ class Notify extends BaseApi
 
 
     /**
-     * 更新商户账户余额  交易前disable 交易完成enable <之间系统当日结算次日打款> 打款从balance 提取
+     * 更新商户账户余额
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $uid
      * @param $fee
-     * @param $trade_no
+     * @param $out_trade_no
      */
-    public function changeBalanceValue($uid, $fee,$trade_no)
+    private function changeBalanceValue($uid, $fee,$out_trade_no)
     {
         //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
-        $this->logicBalanceChange->creatBalanceChange($uid,$fee,$trade_no . '支付成功，转移至待结算金额',false,true);
+        $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，转移至待结算金额','disable',true);
         //支付成功  写入待结算金额
-        $this->logicBalanceChange->creatBalanceChange($uid,$fee,$trade_no . '支付成功，待支付金额转入',true,false);
+        $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，待支付金额转入','enable',false);
 
     }
 }

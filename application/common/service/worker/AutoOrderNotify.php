@@ -13,8 +13,9 @@
 
 namespace app\common\service\worker;
 
+use app\common\library\HttpHeader;
+use app\common\model\OrdersNotify;
 use app\api\service\Rest;
-use app\common\library\RsaUtils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use think\Log;
@@ -55,14 +56,14 @@ class AutoOrderNotify
             $job->delete();
             print("<info>The Order Job ID " . $data['id'] ." has been done and deleted"."</info>\n");
         }else{
-            //通过这个方法可以检查这个任务已经重试了几次了
+
             if ($job->attempts() > 5) {
-                print("<warn>The Order Job ID " . $data['id'] ." has been deleted and retried more than 5 times!"."</warn>\n");
+                //超过5次  停止发送
+                print("<warn>The Order Job ID " . $data['id'] . " has been deleted and retried more than 5 times!" . "</warn>\n");
                 $job->delete();
             }else{
-                // 也可以重新发布这个任务
-                print("<info>The Order Job ID " . $data['id'] ." will be availabe again after ". (time() - $data['create_time']  + self::$delay) ." s."."</info>\n");
-                $job->release(time() - $data['create_time'] + self::$delay); //$delay为延迟时间，表示该任务延迟2秒后再执行
+                print("<info>The Order Job ID " . $data['id'] ." will be availabe again after ". $job->attempts() * self::$delay ." s."."</info>\n");
+                $job->release($job->attempts() * self::$delay); //$delay为延迟时间，表示该任务延迟2秒后再执行
 
             }
 
@@ -100,13 +101,13 @@ class AutoOrderNotify
 
             //签名头部
             $header = [
-                'user-agent'    =>  "Iredcap Inc/1.0 Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36",
+                'user-agent'    =>  "Mozilla/4.0 (compatible; MSIE 7.0; Cmpay SDK SV1; Trident/4.0; SV1; .NET4.0C; .NET4.0E; SE 2.X MetaSr 1.0)",
                 'content-type'  =>  "application/json; charset=UTF-8",
-                'noncestr'      =>  Rest::createUniqid(),
-                'timestamp'     =>  Rest::getMicroTime()
+                HttpHeader::X_CA_NONCE_STR     =>  Rest::createUniqid(),
+                HttpHeader::X_CA_TIMESTAMP     =>  Rest::getMicroTime()
             ];
             //签名串
-            $header['signature'] =  $this->buildSignStr($to_sign_data,$header);
+            $header[HttpHeader::X_CA_SIGNATURE] =  $this->buildSignStr(json_encode($to_sign_data['charge']), $header);
 
             try{
 
@@ -121,13 +122,18 @@ class AutoOrderNotify
                     ]
                 );
 
-                if ( $response->getStatusCode() == 200){
+                $contents = $response->getBody()->getContents();
+
+                if ( $response->getStatusCode() == 200 && !is_null(json_decode($contents))){
+
                     // 转换对象
-                    $resObj =  json_decode($response->getBody()->getContents());
+                    $resObj =  json_decode($contents);
+                    Log::notice('商户回调:' . json_encode($resObj));
                     //判断放回是否正确
                     if ($resObj->result_code == "OK" && $resObj->result_msg == "SUCCESS"){
                         //TODO 处理数据库数据（暂不处理）
-
+                        Log::notice('商户回调正确:' . json_encode($resObj));
+                        //(new OrdersNotify())->save();
                         return true;
                     }
                     return false;
@@ -147,12 +153,13 @@ class AutoOrderNotify
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $data
-     * @return string
+     * @return array
      */
     private function buildResponseData($data){
         //除去不需要字段
         unset($data['id']);
         unset($data['uid']);
+        unset($data['cnl_id']);
         unset($data['trade_no']);
         unset($data['status']);
 
@@ -160,8 +167,8 @@ class AutoOrderNotify
         $payload['result_code'] = 'OK';
         $payload['result_msg'] = 'SUCCESS';
         $payload['charge'] = $data;
-        //返回string
-        return json_encode($payload);
+        //返回
+        return $payload;
     }
     /**
      * 生成签名串
@@ -173,14 +180,11 @@ class AutoOrderNotify
      * @return string
      */
     private function buildSignStr($to_sign_data,$header){
-        $_to_sign_data = utf8_encode($header['noncestr'])
-            ."\n" . utf8_encode($header['timestamp'])
+        $_to_sign_data = utf8_encode($header[HttpHeader::X_CA_NONCE_STR])
+            ."\n" . utf8_encode($header[HttpHeader::X_CA_TIMESTAMP])
             ."\n" . utf8_encode($to_sign_data);
-        //生成签名并记录本次签名上下文
-        $Rsa = new RsaUtils();
-        //公钥生成签名
-        $Rsa->setPrivateKey(CRET_PATH . 'rsa_private_key.pem');
-        return $Rsa->sign($_to_sign_data);
+
+        return Rest::sign($_to_sign_data);
     }
 
 }

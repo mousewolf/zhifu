@@ -17,6 +17,7 @@ namespace app\api\controller;
 use app\common\controller\Common;
 use app\api\service\ApiRequest;
 
+
 class BaseApi extends Common
 {
 
@@ -27,7 +28,7 @@ class BaseApi extends Common
      *
      */
     protected function checkRequestParam(){
-        ApiRequest::check();
+       ApiRequest::check();
     }
 
     /**

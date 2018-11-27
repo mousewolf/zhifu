@@ -15,9 +15,14 @@
 return [
 
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => true,
     // 应用Trace
     'app_trace'              => false,
+
+    // 默认控制器名
+    'default_controller'     => 'Pay',
+    // 默认操作名
+    'default_action'         => 'unifiedorder',
 
     // 默认输出类型
     'default_return_type'    => 'json',
@@ -40,8 +45,8 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 分部日志
-        'apart_level'   =>  ['info','notice','error'],
+        'apart_level'   =>  ['notice','error'],
         // 日志记录级别
-        'level'     => ['info','notice','error'],
+        'level'     => ['notice','error'],
     ],
 ];

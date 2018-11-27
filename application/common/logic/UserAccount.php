@@ -79,25 +79,25 @@ class UserAccount extends BaseLogic
      * @param $data
      * @return array
      */
-    public function editAccount($data){
+    public function saveUserAccount($data){
 
         //TODO  验证数据
-        $validate = $this->validateAccountValidate->check($data);
+        $validate = $this->validateAccountValidate->scene($data['scene'])->check($data);
 
         if (!$validate) {
 
-            return [ CodeEnum::ERROR,$this->validateAccountValidate->getError()];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateAccountValidate->getError()];
         }
         //TODO 修改数据
         Db::startTrans();
         try{
             $this->modelUserAccount->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'编辑成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR,config('app_debug')?$ex->getMessage():'未知错误'];
+            return [ 'code' => CodeEnum::ERROR, 'msg' => config('app_debug')?$ex->getMessage():'未知错误'];
         }
     }
 }

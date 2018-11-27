@@ -2,6 +2,18 @@
 
 <!DOCTYPE html>
 <!--
+  ~  +----------------------------------------------------------------------
+  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+  ~  +----------------------------------------------------------------------
+  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+  ~  +----------------------------------------------------------------------
+  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+  ~  +----------------------------------------------------------------------
+  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
+  ~  +----------------------------------------------------------------------
+  -->
+
+<!--
   ~ +---------------------------------------------------------------------+
   ~ | Yubei         | [ WE CAN DO IT JUST THINK ]
   ~ +---------------------------------------------------------------------+
@@ -27,16 +39,6 @@
 <body>
 
 <div class="layui-form" style="padding: 20px 30px 0 0;">
-    <div class="layui-form-item">
-        <label class="layui-form-label">支付方式：</label>
-        <div class="layui-input-inline">
-            <select name="code_id" lay-verify="required">
-                {volist name='code' id='vo'}
-                <option value="{$vo.id}">{$vo.name}</option>
-                {/volist}
-            </select>
-        </div>
-    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">渠道名称：</label>
         <div class="layui-input-inline">

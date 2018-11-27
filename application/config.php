@@ -4,7 +4,7 @@
  *  +----------------------------------------------------------------------
  *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
  *  +----------------------------------------------------------------------
- *  | Copyright (c) 2018 http://www.CmPay.cn All rights reserved.
+ *  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
  *  +----------------------------------------------------------------------
  *  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
  *  +----------------------------------------------------------------------
@@ -22,9 +22,9 @@ return [
     // 应用命名空间
     'app_namespace'          => 'app',
     // 应用调试模式
-    'app_debug'              => Env::get('app.debug',false),
+    'app_debug'              => true,
     // 应用Trace
-    'app_trace'              => Env::get('app.trace',false),
+    'app_trace'              => false,
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
@@ -94,7 +94,7 @@ return [
     // URL参数方式 0 按名称成对解析 1 按顺序解析
     'url_param_type'         => 0,
     // 是否开启路由
-    'url_route_on'           => Env::get('app.route_on',false),
+    'url_route_on'           => true,
     // 路由使用完整匹配
     'route_complete_match'   => true,
     // 路由配置文件（支持配置多个）
@@ -104,7 +104,7 @@ return [
     // 域名部署
     'url_domain_deploy'      => true,
     // 域名根，如thinkphp.cn
-    'url_domain_root'        => Env::get('app.domain_root','thinkphp.cn'),
+    'url_domain_root'        => 'caomao.com',
     // 是否自动转换URL中的控制器和操作名
     'url_convert'            => true,
     // 默认的访问控制器层
@@ -187,9 +187,9 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 分部日志
-        'apart_level'   =>  ['notice','error'],
+        'apart_level'   =>   ['notice','error'],
         // 日志记录级别
-        'level'     => ['notice','error'],
+        'level'     =>  ['notice','error'],
     ],
 
     // +----------------------------------------------------------------------
@@ -197,7 +197,7 @@ return [
     // +----------------------------------------------------------------------
     'trace'                  => [
         // 内置Html Console 支持扩展
-        'type' => 'Console',
+        'type' => 'Html',
     ],
 
     // +----------------------------------------------------------------------
@@ -240,7 +240,7 @@ return [
         // cookie 保存路径
         'path'      => '/',
         // cookie 有效域名
-        'domain'    => '*'.Env::get('app.domain_root','thinkphp.cn'),
+        'domain'    => '',
         //  cookie 启用安全传输
         'secure'    => false,
         // httponly设置

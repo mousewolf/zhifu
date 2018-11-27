@@ -16,6 +16,7 @@ namespace app\common\logic;
 
 
 use app\common\library\enum\CodeEnum;
+use think\Db;
 
 class BalanceCash extends BaseLogic
 {
@@ -55,12 +56,40 @@ class BalanceCash extends BaseLogic
         return $this->modelBalanceCash->getCount($where);
     }
 
+    /**
+     * 新增提现申请记录
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     *
+     * @return array
+     */
     public function saveUserCashApply($data){
         //TODO 数据验证
         $validate = $this->validateBalance->check($data);
 
         if (!$validate) {
             return ['code' => CodeEnum::ERROR, 'msg' => $this->validateBalance->getError()];
+        }
+        //TODO 添加数据
+        Db::startTrans();
+        try{
+            $data['cash_no'] = create_order_no();
+            //提现
+            $this->modelBalanceCash->setInfo($data);
+            //资金变动 - 资金记录
+           $this->logicBalanceChange->creatBalanceChange($data['uid'],$data['amount'],$remarks = '提现扣减可用金额', 'balance', true);
+
+            Db::commit();
+
+            action_log('新增', '个人提交提现申请'. $data['remarks']);
+
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '新增提现申请成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            return ['code' => CodeEnum::ERROR, 'msg' => config('app_debug') ? $ex->getMessage()
+                : '新增提现申请出现错误' ];
         }
     }
 }

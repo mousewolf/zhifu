@@ -468,28 +468,6 @@ function getRandChar($length = '4',$format = 'ALL')
 }
 
 /**
- * 获取相应费率 【测试】
- *
- * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
- *
- * @param $sum
- * @return float
- */
-function get_settle_fee($sum)
-{
-    if($sum < 5000){
-        $fee = 0.04;
-    }else if($sum >= 10000 && $sum < 100000){
-        $fee = 0.06;
-    }else if($sum > 100000){
-        $fee = 0.08;
-    }else{
-        $fee = 0.04;
-    }
-    return $fee;
-}
-
-/**
  * 月赋值
  *
  * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -550,4 +528,24 @@ function uncamelize($camelCaps,$separator='_')
 function getMicroTime(){
     list($s1, $s2) = explode(' ', microtime());
      return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
+}
+
+/**
+ * url参数转化成数组
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @param $query
+ *
+ * @return array
+ */
+function convertUrlArray($query)
+{
+    $queryParts = explode('&', $query);
+    $params = array();
+    foreach ($queryParts as $param) {
+        $item = explode('=', $param);
+        $params[$item[0]] = $item[1];
+    }
+    return $params;
 }

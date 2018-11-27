@@ -37,6 +37,7 @@ class Balance extends Base
         $captcha = new Captcha($config);
         return $captcha->entry();
     }
+
     /**
      * 资金详情与变动记录
      *
@@ -51,7 +52,7 @@ class Balance extends Base
         $this->common($where);
 
         //变动记录
-        $this->assign('list', $this->logicBalanceChange->getBalanceChangeList($where,true, 'create_time desc', 4));
+        $this->assign('list', $this->logicBalanceChange->getBalanceChangeList($where,true, 'id desc', 10));
 
         return $this->fetch();
     }
@@ -73,13 +74,34 @@ class Balance extends Base
             = ['eq', $this->request->get('banker')];
 
         //状态
-        $where['a.status'] = ['eq', $this->request->get('status','1')];
+        $where['a.status'] = ['eq', $this->request->get('status','')];
         //收款账户
         $this->assign('list', $this->logicUserAccount->getAccountList($where,'a.*,b.id as b_id,b.name as banker', 'create_time desc'));
 
         return $this->fetch();
     }
 
+    /**
+     * 新增
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function addAccount(){
+
+        if($this->request->isPost()){
+            if ($this->request->post('b/a')['uid'] == is_login()){
+                $this->result($this->logicUserAccount->saveUserAccount($this->request->post('b/a')));
+            }else{
+                $this->result(0,'非法操作，请重试！');
+            }
+        }
+        //银行
+        $this->assign('banker', $this->logicBanker->getBankerList());
+
+        return $this->fetch();
+    }
     /**
      * 结算记录
      *
@@ -90,7 +112,11 @@ class Balance extends Base
     public function settle(){
         $where = ['a.uid' => is_login()];
 
-        $this->assign('list', $this->logicBalanceCash->getOrderCashList($where));
+        //时间搜索  时间戳搜素
+        $where['a.create_time'] = $this->parseRequestDate();
+
+        $this->assign('list', $this->logicBalanceSettle->getOrderSettleList($where));
+
         return $this->fetch();
     }
 
@@ -104,6 +130,10 @@ class Balance extends Base
     public function paid(){
         $where = ['a.uid' => is_login()];
 
+        //时间搜索  时间戳搜素
+        $where['a.create_time'] = $this->parseRequestDate();
+
+        //列表
         $this->assign('list', $this->logicBalanceCash->getOrderCashList($where));
 
         return $this->fetch();
@@ -118,7 +148,13 @@ class Balance extends Base
      */
     public function apply(){
 
-        $this->request->isPost() && $this->result($this->logicBalanceCash->saveUserCashApply($this->request->post()));
+        if($this->request->isPost()){
+            if ($this->request->post('b/a')['uid'] == is_login()){
+                $this->result($this->logicBalanceCash->saveUserCashApply($this->request->post('b/a')));
+            }else{
+                $this->result(0,'非法操作，请重试！');
+            }
+        }
         //详情
         $this->common();
         //收款账户

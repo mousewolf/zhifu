@@ -39,6 +39,19 @@ class Orders extends BaseLogic
         return $this->modelOrders->getList($where, $field, $order, $paginate);
     }
 
+    /**
+     * 获取订单信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     *
+     * @return mixed
+     */
+    public function getOrderInfo($where = [], $field = true){
+        return $this->modelOrders->getInfo($where, $field);
+    }
 
     /**
      * 获取单总数
@@ -73,12 +86,12 @@ class Orders extends BaseLogic
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
+     * @param array $where
      * @return array
      */
-    public function getOrdersAllStat(){
-        $order = 'create_time desc';
+    public function getOrdersAllStat($where = []){
         return [
-            'fees' => $this->modelOrders->getInfo([],"sum(amount) as total,sum(if(status=2,amount,0)) as paid", $order, $paginate = false)
+            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid")
         ];
     }
 
@@ -87,14 +100,16 @@ class Orders extends BaseLogic
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
+     * @param array $where
      * @return array
      */
-    public function getWelcomeStat(){
+    public function getWelcomeStat($where = []){
         $order = 'create_time desc';
         return [
-            'order' => $this->modelOrders->getInfo([],"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,sum(amount) as fees,sum(if(status=1,amount,0)) as unpaid,sum(if(status=2,amount,0)) as paid", $order, $paginate = false),
-            'user'  => $this->modelUser->getInfo([],"count(uid) as total,count(if(is_verify=0,true,null)) as failed", $order, $paginate = false),
-            'cash' => $this->modelBalanceCash->getInfo([],'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed', $order, $paginate = false)
+            'order' => $this->modelOrders->getInfo($where,"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,sum(amount) as fees,sum(if(status=1,amount,0)) as unpaid,sum(if(status=2,amount,0)) as paid", $order, $paginate = false),
+            'user'  => $this->modelUser->getInfo($where,"count(uid) as total,count(if(is_verify=0,true,null)) as failed", $order, $paginate = false),
+            'cash' => $this->modelBalanceCash->getInfo($where,'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed,sum(if(status=1,amount,0)) as paid', $order, $paginate = false),
+            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid")
         ];
     }
 
@@ -103,10 +118,12 @@ class Orders extends BaseLogic
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
+     * @param array $where
+     * @return array|mixed
      */
-    public function getOrdersMonthStat(){
+    public function getOrdersMonthStat($where = []){
         $this->modelOrders->group = 'month';
-        return $this->modelOrders->getList([],"count(id) as total_orders,sum(`amount`) as total_amount,FROM_UNIXTIME(create_time,'%m') as month",false,false);
+        return $this->modelOrders->getList($where,"count(id) as total_orders,sum(`amount`) as total_amount,FROM_UNIXTIME(create_time,'%m') as month",false,false);
     }
 
     /**
@@ -158,11 +175,8 @@ class Orders extends BaseLogic
      */
     public function getOrderPayConfig($order_no){
         return $this->logicPay->getChannelParam(
-            $this->modelOrders->getValue(
-                ['trade_no'=>$order_no],
-                'cnl_id'
-            )
-        )[1];
+            $this->modelOrders->getValue(['trade_no'=>$order_no], 'cnl_id')
+        );
     }
 
     /**
@@ -197,8 +211,8 @@ class Orders extends BaseLogic
             Db::commit();
             //  余额 = 可用余额（可提现金额） + 冻结余额（待结算金额） =》 未支付金额每日清算
             //   可用余额是从冻结余额转入的
-            //写入待支付金额 creatBalanceChange($uid,$amount,$remarks = '未知变动记录',$enable = false,$setDec = false)
-            $this->logicBalanceChange->creatBalanceChange($order->uid,$order->amount,'商户号'.$orderData['out_trade_no'].'预下单支付金额');
+            //写入待支付金额 creatBalanceChange('100001','100',$remarks = '记录资金变动测试','字段',$setDec = true);
+            $this->logicBalanceChange->creatBalanceChange($order->uid,$order->amount,'单号'.$orderData['out_trade_no'].'预下单支付金额','disable');
 
             return $order;
 

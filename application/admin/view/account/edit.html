@@ -12,14 +12,14 @@
 
 
 <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
-
     <input type="text" hidden disabled name="id" value="{$account.id|default=''}">
+    <input type="text" hidden disabled name="scene" value="edit">
     <div class="layui-form-item">
         <label class="layui-form-label">开户银行：</label>
         <div class="layui-input-inline">
-            <select name="bank" lay-verify="required">
+            <select name="banker" lay-verify="required">
                 {volist name="bank" id="vo"}
-                <option {$account.bank == $vo.id ?'selected':''}{$vo.default == 1 ?'selected':''} value="{$vo.id}">{$vo.name}</option>
+                <option {$account.bank_id == $vo.id ?'selected':''}{$vo.default == 1 ?'selected':''} value="{$vo.id}">{$vo.name}</option>
                 {/volist}
             </select>
         </div>

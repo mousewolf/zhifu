@@ -11,6 +11,13 @@
 
 // [ 应用入口文件 ]
 
+
+//检测安装
+if(!file_exists(__DIR__ . '/../data/install.lock')){
+    // 绑定安装模块
+    define('BIND_MODULE', 'install');
+}
+
 // 定义项目路径
 define('APP_PATH', __DIR__ . '/../application/');
 // 定义上传路径

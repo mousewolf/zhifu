@@ -33,7 +33,6 @@ class Common extends Controller
 
             $config_array[$info['name']] = $info['value'];
         }
-
         $this->assign('site',$config_array);
     }
 
@@ -79,12 +78,10 @@ class Common extends Controller
      */
     protected function parseRequestDate(){
 
-        list($start,$end) = !empty($this->request->param('date'))
-            ? str2arr($this->request->param('date'),'-')
-            : Time::month();
+        list($start,$end) = Time::month();
         return [
-            'between',!empty($this->request->param('date'))
-                ? [strtotime($start), strtotime($end)]
+            'between',!empty($this->request->param('end'))
+                ? [strtotime($this->request->param('start')), strtotime($this->request->param('end'))]
                 : [$start, $end]
         ];
     }

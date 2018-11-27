@@ -207,7 +207,7 @@ class Rest extends Common
      * @param $to_sign_data
      * @return string
      */
-    protected static function sign($to_sign_data){
+    public static function sign($to_sign_data){
         $Rsa = new RsaUtils();
         //平台私钥生成签名
         $Rsa->setPrivateKey(CRET_PATH . 'rsa_private_key.pem');
@@ -224,7 +224,7 @@ class Rest extends Common
      * @param string $key  请求key
      * @return bool
      */
-    protected static function verify($data, $sign, $key){
+    public static function verify($data, $sign, $key){
         $Rsa = new RsaUtils();
         //指定商户公钥验证签名
         $Rsa->setPublicKey(CRET_PATH . $key . DS .'rsa_public_key.pem');

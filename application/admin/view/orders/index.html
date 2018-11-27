@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+  ~  +----------------------------------------------------------------------
+  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+  ~  +----------------------------------------------------------------------
+  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+  ~  +----------------------------------------------------------------------
+  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+  ~  +----------------------------------------------------------------------
+  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
+  ~  +----------------------------------------------------------------------
+  -->
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -29,23 +41,15 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">日期范围</label>
+                    <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-block">
-                        <input type="text" name="date" class="layui-input" id="app-laydate-range-date" placeholder=" - ">
+                        <input type="text" name="start" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">支付方式：</label>
+                    <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-block">
-                        <select name="type">
-                            <option value=""></option>
-                            <option value="0">前端工程师</option>
-                            <option value="1">Node.js工程师</option>
-                            <option value="2">PHP工程师</option>
-                            <option value="3">Java工程师</option>
-                            <option value="4">运维</option>
-                            <option value="4">视觉设计师</option>
-                        </select>
+                        <input type="text" name="end" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -53,9 +57,9 @@
                     <div class="layui-input-block">
                         <select name="channel" lay-filter="channel">
                             <option value="">请选择一个支付渠道</option>
-                            <option {$Request.get.channel == 'wx_scan' ? 'selected' : '' } value="wx_scan">wx_scan</option>
-                            <option {$Request.get.channel == 'qq_scan' ? 'selected' : '' } value="qq_scan">qq_scan</option>
-                            <option {$Request.get.channel == 'ali_web' ? 'selected' : '' } value="ali_web">ali_web</option>
+                            {volist name="code" id="vo"}
+                            <option {$Request.get.channel == $vo.code ? 'selected' : '' } value="{$vo.code}">{$vo.name}</option>
+                            {/volist}
                         </select>
                     </div>
                 </div>
@@ -88,8 +92,6 @@
                 <blockquote class="layui-elem-quote layui-quote-nm">
                     交易总流水：<span class="layui-badge layui-bg-green">{$fees.total}</span> 元
                     成交总金额：<span class="layui-badge layui-bg-black">{$fees.paid}</span> 元
-                    平台总利润：<span class="layui-badge layui-bg-red">999.999</span> 元
-                    商户总收入：<span class="layui-badge layui-bg-orange">5575.12</span> 元
                 </blockquote>
             </div>
             <table id="app-order-list" lay-filter="app-order-list"></table>
@@ -122,12 +124,13 @@
             ,table = layui.table;
 
 
-        laydate.render({
-            elem: '#app-laydate-range-date'
-            ,range: '-'
-            ,trigger: 'click'
-            ,format: 'yyyy/MM/dd'
-            ,btns: ['confirm']
+        //同时绑定多个日期
+        lay('.app-laydate-item').each(function(){
+            laydate.render({
+                elem: this
+                ,value: new Date()
+                ,trigger: 'click'
+            });
         });
 
         //监听搜索

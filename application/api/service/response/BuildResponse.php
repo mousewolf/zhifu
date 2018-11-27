@@ -32,7 +32,7 @@ class BuildResponse extends ApiSend
     {
         http_response_code(200);    //设置返回头部
         $return['result_code'] = 'OK';
-        $return['result_msg'] = 'SUCCESS';
+        $return['result_msg'] = empty($chargeRespose)?'FAIL':'SUCCESS';
         $return['charge'] =  self::get('ApiResposeData');
 
         Log::notice('Response Data:'.json_encode($return));

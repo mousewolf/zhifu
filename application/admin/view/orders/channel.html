@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+  ~  +----------------------------------------------------------------------
+  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+  ~  +----------------------------------------------------------------------
+  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+  ~  +----------------------------------------------------------------------
+  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+  ~  +----------------------------------------------------------------------
+  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
+  ~  +----------------------------------------------------------------------
+  -->
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -17,15 +29,26 @@
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">渠道ID</label>
+                    <label class="layui-form-label">选择渠道</label>
                     <div class="layui-input-block">
-                        <input type="text" name="cnl_id" placeholder="请输入渠道ID" autocomplete="off" class="layui-input">
+                        <select name="cnl_id" lay-filter="channel">
+                            <option value="">请选择一个支付渠道</option>
+                            {volist name="channel" id="vo"}
+                            <option {$Request.get.channel == $vo.id ? 'selected' : '' } value="{$vo.id}">{$vo.name}</option>
+                            {/volist}
+                        </select>
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">日期范围</label>
+                    <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-block">
-                        <input type="text" name="date" class="layui-input" id="app-laydate-range-date" placeholder=" - ">
+                        <input type="text" name="start" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="end" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -54,6 +77,14 @@
             ,laydate = layui.laydate
             ,table = layui.table;
 
+        //同时绑定多个日期
+        lay('.app-laydate-item').each(function(){
+            laydate.render({
+                elem: this
+                ,value: new Date()
+                ,trigger: 'click'
+            });
+        });
         //监听搜索
         form.on('submit(app-order-channel-search)', function(data){
             var field = data.field;
@@ -62,14 +93,6 @@
             table.reload('app-order-channel', {
                 where: field
             });
-        });
-
-        laydate.render({
-            elem: '#app-laydate-range-date'
-            ,range: '-'
-            ,trigger: 'click'
-            ,format: 'yyyy/MM/dd'
-            ,btns: ['confirm']
         });
 
         //初始化表格

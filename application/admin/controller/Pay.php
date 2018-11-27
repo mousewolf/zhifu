@@ -1,5 +1,17 @@
 <?php
 /**
+ *  +----------------------------------------------------------------------
+ *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+ *  +----------------------------------------------------------------------
+ *  | Author: Brian Waring <BrianWaring98@gmail.com>
+ *  +----------------------------------------------------------------------
+ */
+
+/**
  * +---------------------------------------------------------------------+
  * | Yubei         | [ WE CAN DO IT JUST THINK ]
  * +---------------------------------------------------------------------+
@@ -98,8 +110,12 @@ class Pay extends BaseAdmin
 
         $where = [];
         //组合搜索
-        !empty($this->request->param('keywords')) && $where['id|name']
-            = ['like', '%'.$this->request->param('keywords').'%'];
+        !empty($this->request->param('id')) && $where['id']
+            = ['eq', $this->request->param('id')];
+        //name
+        !empty($this->request->param('name')) && $where['name']
+            = ['like', '%'.$this->request->param('name').'%'];
+
 
         $data = $this->logicPay->getChannelList($where,true, 'create_time desc',false);
 
@@ -132,9 +148,9 @@ class Pay extends BaseAdmin
         !empty($this->request->param('keywords')) && $where['id|name']
             = ['like', '%'.$this->request->param('keywords').'%'];
 
-        $data = $this->logicBank->getBankerList($where,true, 'create_time desc',false);
+        $data = $this->logicBanker->getBankerList($where,true, 'create_time desc',false);
 
-        $count = $this->logicBank->getBankerCount($where);
+        $count = $this->logicBanker->getBankerCount($where);
 
         $this->result($data || !empty($data) ?
             [
@@ -161,9 +177,6 @@ class Pay extends BaseAdmin
     {
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->addChannel($this->request->post()));
-        //交易方式列表
-        $this->assign('code',$this->logicPay->getCodeList([]));
-
         return $this->fetch();
     }
 
@@ -207,8 +220,6 @@ class Pay extends BaseAdmin
     public function editChannel(){
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->editChannel($this->request->post()));
-        //交易方式列表
-        $this->assign('code',$this->logicPay->getCodeList([]));
         //获取渠道详细信息
         $this->assign('channel',$this->logicPay->getChannelInfo(['id' =>$this->request->param('id')]));
 
@@ -225,6 +236,8 @@ class Pay extends BaseAdmin
     public function editCode(){
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->editCode($this->request->post()));
+        //支持渠道列表
+        $this->assign('channel',$this->logicPay->getChannelList([],'id,name','id asc'));
         //获取支付方式详细信息
         $this->assign('code',$this->logicPay->getCodeInfo(['id' =>$this->request->param('id')]));
 

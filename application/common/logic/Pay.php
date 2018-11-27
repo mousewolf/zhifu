@@ -1,5 +1,17 @@
 <?php
 /**
+ *  +----------------------------------------------------------------------
+ *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
+ *  +----------------------------------------------------------------------
+ *  | Author: Brian Waring <BrianWaring98@gmail.com>
+ *  +----------------------------------------------------------------------
+ */
+
+/**
  * +---------------------------------------------------------------------+
  * | Yubei         | [ WE CAN DO IT JUST THINK ]
  * +---------------------------------------------------------------------+
@@ -94,7 +106,7 @@ class Pay extends BaseLogic
      * @return mixed
      */
     public function getChannelParam($id){
-        return [ CodeEnum::SUCCESS , $this->modelPayChannel->getValue(['id'=>$id],'param')];
+        return $this->modelPayChannel->getValue(['id'=>$id],'param');
     }
 
     /**
@@ -138,18 +150,18 @@ class Pay extends BaseLogic
         $validate = $this->validatePayChannel->check($data);
 
         if (!$validate) {
-            return [ CodeEnum::ERROR, $this->validatePayChannel->getError()];
+            return [  'code' => CodeEnum::ERROR,  'msg' => $this->validatePayChannel->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
         try{
             $this->modelPayChannel->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'添加渠道成功'];
+            return ['code' =>  CodeEnum::SUCCESS,  'msg' => '添加渠道成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
 
     }
@@ -167,18 +179,18 @@ class Pay extends BaseLogic
         $validate = $this->validatePayCode->check($data);
 
         if (!$validate) {
-            return [ CodeEnum::ERROR, $this->validatePayCode->getError()];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => $this->validatePayCode->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
         try{
             $this->modelPayCode->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'添加方式成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '添加方式成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
 
     }
@@ -197,18 +209,20 @@ class Pay extends BaseLogic
         $validate = $this->validatePayChannel->check($data);
 
         if (!$validate) {
-            return [ CodeEnum::ERROR, $this->validatePayChannel->getError()];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => $this->validatePayChannel->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
         try{
+
             $this->modelPayChannel->setInfo($data);
+
             Db::commit();
-            return [ CodeEnum::SUCCESS,'渠道修改成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '渠道修改成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
@@ -226,18 +240,22 @@ class Pay extends BaseLogic
         $validate = $this->validatePayCode->check($data);
 
         if (!$validate) {
-            return [ CodeEnum::ERROR, $this->validatePayCode->getError()];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => $this->validatePayCode->getError()];
         }
         //TODO 添加数据
         Db::startTrans();
         try{
+
+            //支付渠道
+            $data['cnl_id'] = arr2str($data['cnl_id'],',');
+
             $this->modelPayCode->setInfo($data);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'修改成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '修改成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
@@ -255,11 +273,11 @@ class Pay extends BaseLogic
         try{
             $this->modelPayChannel->setFieldValue($where, $field = 'status', $value);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'修改状态成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '修改状态成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
@@ -276,11 +294,11 @@ class Pay extends BaseLogic
         try{
             $this->modelPayChannel->deleteInfo($where);
             Db::commit();
-            return [ CodeEnum::SUCCESS,'删除渠道成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '删除渠道成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 }
