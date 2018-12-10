@@ -185,6 +185,33 @@ class Article extends BaseAdmin
         return $this->fetch();
     }
 
+
+    /**
+     * 删除文章
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $id
+     *
+     */
+    public function delArticle($id = 0) {
+
+        $this->result($this->logicArticle->delArticle(['id' => $id]));
+    }
+
+    /**
+     * 删除通知
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param int $id
+     *
+     */
+    public function delNotice($id = 0) {
+
+        $this->result($this->logicArticle->delNotice(['id' => $id]));
+    }
+
     /**
      * 文章添加与编辑通用方法
      *

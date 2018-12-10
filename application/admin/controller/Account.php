@@ -77,4 +77,24 @@ class Account extends BaseAdmin
 
         return $this->fetch();
     }
+
+
+    /**
+     * 删除商户账户信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     */
+    public function del(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result(
+            $this->logicUserAccount->delAccount(
+                [
+                    'id' => $this->request->param('id')
+                ])
+        );
+        // get 直接报错
+        $this->error([ CodeEnum::ERROR,'未知错误']);
+    }
 }

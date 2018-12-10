@@ -65,7 +65,7 @@ class CheckArguments extends ApiCheck
      */
     public function doCheck(Request $request)
     {
-        Log::notice('Header:' . json_encode($request->header()));
+
         // 创建上下文
         self::createContext();
         self::set(HttpHeader::X_CA_AUTH,$request->header('x-ca-auth'));

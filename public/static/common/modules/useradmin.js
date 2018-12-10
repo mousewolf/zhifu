@@ -70,13 +70,22 @@ layui.define(["table", "form"],
                         formType: 1,
                         title: "敏感操作，请验证口令"
                     },
-                    function(t, i) {
+                    function(d, i) {
                         layer.close(i),
                             layer.confirm("确定删除此管理员？",
-                                function(t) {
+                                function(d) {
                                     console.log(e),
-                                        e.del(),
-                                        layer.close(t)
+                                        t.ajax({
+                                            url:'/admin/userDel?id='+ e.data.id,
+                                            method:'POST',
+                                            success:function (res) {
+                                                if (res.code == 1){
+                                                    e.del()
+                                                }
+                                                layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                                layer.close(d); //关闭弹层
+                                            }
+                                        });
                                 })
                     });
                 else if ("auth" === e.event) {
@@ -182,9 +191,18 @@ layui.define(["table", "form"],
             function(e) {
                 var d = e.data;
                 if ("del" === e.event) layer.confirm("确定删除此角色？",
-                    function(t) {
-                        e.del(),
-                            layer.close(t)
+                    function(d) {
+                        t.ajax({
+                            url:'/admin/groupDel?id='+ e.data.id,
+                            method:'POST',
+                            success:function (res) {
+                                if (res.code == 1){
+                                    e.del()
+                                }
+                                layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                layer.close(d); //关闭弹层
+                            }
+                        });
                     });
                 else if ("auth" === e.event) {
                     t(e.tr);

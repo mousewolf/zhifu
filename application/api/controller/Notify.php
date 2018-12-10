@@ -14,9 +14,10 @@
 
 namespace app\api\controller;;
 
+use app\api\service\ApiPayment;
+use app\common\controller\BaseApi;
 use app\common\library\exception\ForbiddenException;
-use Yansongda\Pay\Exceptions\Exception;
-use Yansongda\Pay\Pay;
+use app\common\library\exception\OrderException;
 use think\Log;
 
 class Notify extends BaseApi
@@ -43,88 +44,51 @@ class Notify extends BaseApi
      * @return mixed
      * @throws ForbiddenException
      */
-    public function handle($channel = 'wechat'){
+    public function handle($channel = 'wxpay'){
+
+
         try{
-            $pay = Pay::$channel(self::getOrderPayConfig($channel));
+            //配置
+            $configMap = self::getOrderPayConfig($channel);
 
-            $data = $pay->verify(); //验签
+            list(,$action,$config) = array_values($configMap);
 
-            $this->logicNotify->handle($data);
+            //配置载入
+            $appConfig = !empty(config('pay.' . $channel))
+                ? array_merge(config('pay.' . $channel), $config)
+                : $config;
 
-            return  $pay->success()->send();
+             //支付分发
+            $result = ApiPayment::$action($appConfig)->$channel('',true);
 
-        } catch (Exception $e) {
-            Log::error('微信支付验签失败:['. $e->getMessage() .']');
+            $this->logicNotify->handle($result);
+
+            return $result;
+        } catch (OrderException $e) {
+            Log::error('支付验签失败:['. $e->getMessage() .']');
             throw new ForbiddenException([
                 'errcode'   => '100003',
-                'msg'   => '微信支付验签失败，请检查数据'
+                'msg'   => '支付验签失败，请检查数据'
             ]);
         }
     }
 
-
-//    /**
-//     * Wechat
-//     *
-//     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-//     *
-//     * @return \Symfony\Component\HttpFoundation\Response
-//     * @throws ForbiddenException
-//     */
-//    public function wechat()
-//    {
-//        try{
-//            $wechat = Pay::wechat(self::getWxOrderPayConfig());
-//
-//            $data = $wechat->verify(); // 是的，验签就这么简单！
-//
-//            $this->logicNotify->handle($data);
-//
-//            return  $wechat->success()->send();
-//
-//        } catch (Exception $e) {
-//            Log::error('微信支付验签失败:['. $e->getMessage() .']');
-//            throw new ForbiddenException([
-//                'errcode'   => '100003',
-//                'msg'   => '微信支付验签失败，请检查数据'
-//            ]);
-//        }
-//    }
-
-//    /**
-//     * Alipay
-//     *
-//     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-//     *
-//     * @return \Symfony\Component\HttpFoundation\Response
-//     * @throws ForbiddenException
-//     */
-//    public function alipay(){
-//
-//
-//        try{
-//            $alipay = Pay::alipay(self::getAliOrderPayConfig());
-//
-//            $data = $alipay->verify(); // 是的，验签就这么简单！
-//
-//            $this->logicNotify->handle($data);
-//
-//            return $alipay->success()->send();
-//        } catch (Exception $e) {
-//            Log::error('支付宝验签失败:['. $e->getMessage() .']');
-//            throw new ForbiddenException([
-//                'errcode'   => '100003',
-//                'msg'   => '支付宝验签失败，请检查数据'
-//            ]);
-//        }
-//    }
-
+    /**
+     * 配置获取
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $channel
+     *
+     * @return array|bool|mixed
+     */
     private function getOrderPayConfig($channel){
         if (empty($channel)){
             return false;
         }
         switch ($channel){
-            case 'wechat':
+            case 'wxpay':
+            case 'qqpay':
                 $config = self::getWxPayConfig();
                 break;
             case 'alipay':
@@ -144,15 +108,13 @@ class Notify extends BaseApi
      */
     private function getWxPayConfig()
     {
-        //支付宝异步通知POST XML返回数据
+
         libxml_disable_entity_loader(true);
         //Object  对象
-        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE));
+        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE),true);
         Log::notice("WxNotify:" . json_encode($response));
-        $wx_config = json_decode($this->logicOrders->getOrderPayConfig($response->out_trade_no), true);
-        //配置载入
-        $wx_config = array_merge(config('pay.wechat'), $wx_config);
-        return  $wx_config;
+        //获取配置
+        return  self::getConfig($response);
 
     }
 
@@ -166,11 +128,28 @@ class Notify extends BaseApi
     private function getAliPayConfig()
     {
         $response = convertUrlArray(file_get_contents('php://input')); //支付宝异步通知POST返回数据
-
         Log::notice("AliNotify:" . json_encode($response));
-        $ali_config = json_decode($this->logicOrders->getOrderPayConfig($response['out_trade_no']), true);
+
+        return  self::getConfig($response);
+    }
+
+    /**
+     * 依据订单获取配置
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $response
+     *
+     * @return mixed
+     */
+    private function getConfig($response = []){
+        //获取配置
+        $wx_config =$this->logicOrders->getOrderPayConfig($response['out_trade_no']);
+
+        $config =  reset($wx_config);
         //配置载入
-        $ali_config = array_merge(config('pay.alipay'), $ali_config);
-        return  $ali_config;
+        $config['param'] = json_decode($config['param'], true);
+
+        return $config;
     }
 }

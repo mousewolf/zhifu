@@ -14,9 +14,6 @@
 
 use think\Route;
 
-Route::get('notify/person/api/setting','api/Notify/person');//个人收款异步通知
-
-
 // admin子域名绑定到admin模块
 Route::domain('admin','admin');
 
@@ -28,20 +25,16 @@ Route::domain('api', function(){
     Route::miss('api/Miss/index');//路由错误返回
     Route::post('pay/unifiedorder','api/Pay/unifiedorder');//统一下单
     Route::post('pay/orderquery','api/Pay/orderquery');//查询订单
-    Route::rule('Cashier','api/Pay/cashier');//收银台
     /**
      * Notify
      */
-    Route::post('notify/:channel','api/Notify/handle');//异步通知
+    Route::post('notify/:channel','api/Notify/handle');//官方异步通知
+    Route::post('notify/person/:channel','api/Notify/handle');//个人码异步通知
 
-
-    Route::rule('test/notify','api/Test/actionNotify');
-    Route::get('queue/closer/:id','api/Test/actionOrderClose');
 });
 
 // www子域名绑定到index模块
 Route::domain('www',function () {
-
     /**
      * 首页
      */
@@ -53,7 +46,6 @@ Route::domain('www',function () {
     Route::get('protocol', 'index/Index/protocol'); //服务条款
     Route::get('help/:id', 'index/Index/help');
     Route::post('vercode','index/Index/sendVerCode'); //【测试】
-
     Route::get('user/getOrderStat','index/User/getOrderStat');
     /**
      * 商户
@@ -63,7 +55,10 @@ Route::domain('www',function () {
     Route::rule('user/auth','index/User/auth','GET|POST');
     Route::rule('user/password','index/User/password','GET|POST');
     Route::get('user/log','index/User/log');
-    Route::get('user/notice/:id','index/User/notice');
+    Route::get('notice/:id','index/User/notice');
+    Route::get('agent','index/Agent/index');
+    Route::get('agent/order','index/Agent/order');
+    Route::get('agent/profit','index/Agent/profit');
     /**
      * 资金
      */

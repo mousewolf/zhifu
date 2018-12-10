@@ -1,17 +1,5 @@
 <!DOCTYPE html>
 
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -27,27 +15,48 @@
     <input type="text" name="id" hidden disabled value="{$channel.id}">
     <div class="layui-form-item">
         <label class="layui-form-label">渠道名称：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="name" required lay-verify="required" placeholder="请输入渠道名称" autocomplete="off" class="layui-input" value="{$channel.name}">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">操作控制：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="action" required lay-verify="required" placeholder="请输入操作控制器" autocomplete="off" class="layui-input" value="{$channel.action}">
             <div class="layui-form-mid layui-word-aux">注：执行相关控制器类名称</div>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">渠道费率：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="rate" required lay-verify="required" placeholder="请输入渠道费率" autocomplete="off" class="layui-input" value="{$channel.rate}">
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">单笔限额：</label>
+        <div class="layui-input-block">
+            <input type="text" name="single" required lay-verify="required" placeholder="请输入渠道单笔限额" autocomplete="off" class="layui-input" value="{$channel.single}">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">日限额：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="daily" required lay-verify="required" placeholder="请输入渠道日限额" autocomplete="off" class="layui-input" value="{$channel.daily}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">时间段：</label>
+        <div class="layui-input-block">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" name="timeslot[start]" id="channel-timeslot-start" lay-verify="time" value="{$channel.timeslot.start}" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="start">
+                </div>
+            </div>-
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" name="timeslot[end]" id="channel-timeslot-end" lay-verify="time" value="{$channel.timeslot.end}" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="end">
+                </div>
+            </div>
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -60,8 +69,8 @@
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">状态：</label>
-        <div class="layui-input-inline">
-            <div class="layui-input-inline">
+        <div class="layui-input-block">
+            <div class="layui-input-block">
                 <input type="radio" name="status" value="1" title="启用" {$channel.status == 1?'checked':''}>
                 <input type="radio" name="status" value="0" title="禁用" {$channel.status == 0?'checked':''}>
             </div>
@@ -85,9 +94,23 @@
         base: '__STATIC__/common/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'form'], function(){
+    }).use(['index','laydate', 'form'], function(){
         var $ = layui.$
+            ,laydate = layui.laydate
             ,form = layui.form;
+
+        //时间选择器
+        laydate.render({
+            elem: '#channel-timeslot-start'
+            ,type: 'time'
+            ,format: 'H:m'
+        });
+        laydate.render({
+            elem: '#channel-timeslot-end'
+            ,type: 'time'
+            ,format: 'H:m'
+        });
+
 
     })
 </script>

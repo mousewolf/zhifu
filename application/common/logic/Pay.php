@@ -11,20 +11,6 @@
  *  +----------------------------------------------------------------------
  */
 
-/**
- * +---------------------------------------------------------------------+
- * | Yubei         | [ WE CAN DO IT JUST THINK ]
- * +---------------------------------------------------------------------+
- * | Licensed    | http://www.apache.org/licenses/LICENSE-2.0 )
- * +---------------------------------------------------------------------+
- * | Author       | Brian Waring <BrianWaring98@gmail.com>
- * +---------------------------------------------------------------------+
- * | Company   | 小红帽科技      <Iredcap. Inc.>
- * +---------------------------------------------------------------------+
- * | Repository | https://github.com/BrianWaring/Yubei
- * +---------------------------------------------------------------------+
- */
-
 namespace app\common\logic;
 
 use app\common\library\enum\CodeEnum;
@@ -106,7 +92,7 @@ class Pay extends BaseLogic
      * @return mixed
      */
     public function getChannelParam($id){
-        return $this->modelPayChannel->getValue(['id'=>$id],'param');
+        return $this->modelPayChannel->getColumn(['id' => $id], 'id,action,param');
     }
 
     /**
@@ -145,19 +131,29 @@ class Pay extends BaseLogic
      * @param $data
      * @return array|string
      */
-    public function addChannel($data){
+    public function saveChannelInfo($data){
         //TODO 数据验证
         $validate = $this->validatePayChannel->check($data);
 
         if (!$validate) {
             return [  'code' => CodeEnum::ERROR,  'msg' => $this->validatePayChannel->getError()];
         }
+
         //TODO 添加数据
         Db::startTrans();
         try{
+
+            //时间存储
+            $data['timeslot'] = json_encode($data['timeslot']);
+
             $this->modelPayChannel->setInfo($data);
+
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action,  '支付渠道,data:' . http_build_query($data) );
+
             Db::commit();
-            return ['code' =>  CodeEnum::SUCCESS,  'msg' => '添加渠道成功'];
+            return ['code' =>  CodeEnum::SUCCESS,  'msg' => $action . '渠道成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
@@ -174,68 +170,7 @@ class Pay extends BaseLogic
      * @param $data
      * @return array|string
      */
-    public function addCode($data){
-        //TODO 数据验证
-        $validate = $this->validatePayCode->check($data);
-
-        if (!$validate) {
-            return [ 'code' => CodeEnum::ERROR,  'msg' => $this->validatePayCode->getError()];
-        }
-        //TODO 添加数据
-        Db::startTrans();
-        try{
-            $this->modelPayCode->setInfo($data);
-            Db::commit();
-            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '添加方式成功'];
-        }catch (\Exception $ex){
-            Db::rollback();
-            Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
-        }
-
-    }
-
-    /**
-     * 编辑渠道
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $data
-     * @return array|string
-     */
-    public function editChannel($data){
-
-        //TODO 数据验证
-        $validate = $this->validatePayChannel->check($data);
-
-        if (!$validate) {
-            return [ 'code' => CodeEnum::ERROR,  'msg' => $this->validatePayChannel->getError()];
-        }
-        //TODO 添加数据
-        Db::startTrans();
-        try{
-
-            $this->modelPayChannel->setInfo($data);
-
-            Db::commit();
-            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '渠道修改成功'];
-        }catch (\Exception $ex){
-            Db::rollback();
-            Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
-        }
-    }
-
-    /**
-     * 编辑支付方式
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $data
-     * @return array|string
-     */
-    public function editCode($data){
-
+    public function saveCodeInfo($data){
         //TODO 数据验证
         $validate = $this->validatePayCode->check($data);
 
@@ -246,18 +181,24 @@ class Pay extends BaseLogic
         Db::startTrans();
         try{
 
-            //支付渠道
-            $data['cnl_id'] = arr2str($data['cnl_id'],',');
+            if (isset($data['cnl_id'])) $data['cnl_id'] = arr2str($data['cnl_id'],',');
 
             $this->modelPayCode->setInfo($data);
+
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action,  '支付方式,data:' . http_build_query($data) );
+
             Db::commit();
-            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '修改成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => $action . '方式成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
             return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
+
     }
+
 
     /**
      * 改变渠道可用性
@@ -282,6 +223,28 @@ class Pay extends BaseLogic
     }
 
     /**
+     * 删除一个方式
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return array
+     */
+    public function delCode($where){
+        Db::startTrans();
+        try{
+            $this->modelPayCode->deleteInfo($where);
+            action_log('删除', '删除支付方式，ID：'. $where['id']);
+            Db::commit();
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '删除方式成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
+        }
+    }
+
+    /**
      * 删除一个渠道
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -293,6 +256,7 @@ class Pay extends BaseLogic
         Db::startTrans();
         try{
             $this->modelPayChannel->deleteInfo($where);
+            action_log('删除', '删除支付渠道，ID：'. $where['id']);
             Db::commit();
             return [ 'code' => CodeEnum::SUCCESS, 'msg' => '删除渠道成功'];
         }catch (\Exception $ex){

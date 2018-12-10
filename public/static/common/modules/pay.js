@@ -16,6 +16,7 @@ layui.define(["table", "form"],
             i = layui.table,
             u = layui.util,
             n = layui.form;
+        //方式
         i.render({
             elem: "#app-pay-code-list",
             url: "/pay/getCodeList",
@@ -64,9 +65,18 @@ layui.define(["table", "form"],
                 function(e) {
                     var d = e.data;
                     if ("del" === e.event) layer.confirm("确定删除此支付方式？",
-                        function(t) {
-                            e.del(),
-                                layer.close(t)
+                        function(d) {
+                            t.ajax({
+                                url:'/pay/delCode?id='+ e.data.id,
+                                method:'POST',
+                                success:function (res) {
+                                    if (res.code == 1){
+                                        e.del()
+                                    }
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                    layer.close(d); //关闭弹层
+                                }
+                            });
                         });
                     else if ("edit" === e.event) {
                         t(e.tr);
@@ -106,6 +116,7 @@ layui.define(["table", "form"],
                         })
                     }
                 }),
+            //渠道
         i.render({
             elem: "#app-pay-channel-list",
             url: '/pay/getChannelList',
@@ -181,9 +192,18 @@ layui.define(["table", "form"],
                 function(e) {
                 var s = e;
                     if ("del" === e.event) layer.confirm("确定删除此支付渠道？",
-                        function(t) {
-                            e.del(),
-                                layer.close(t)
+                        function(d) {
+                            t.ajax({
+                                url:'/pay/delChannel?id='+ e.data.id,
+                                method:'POST',
+                                success:function (res) {
+                                    if (res.code == 1){
+                                        e.del()
+                                    }
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                    layer.close(d); //关闭弹层
+                                }
+                            });
                         });
                     else if ("edit" === e.event) {
                         t(e.tr);
@@ -225,6 +245,7 @@ layui.define(["table", "form"],
                         })
                     }
                 }),
+            //银行
         i.render({
             elem: "#app-pay-bank-list",
             url: '/pay/getBankList',
@@ -290,9 +311,18 @@ layui.define(["table", "form"],
                 function(e) {
                 var s = e;
                     if ("del" === e.event) layer.confirm("确定删除此支付渠道？",
-                        function(t) {
-                            e.del(),
-                                layer.close(t)
+                        function(d) {
+                            t.ajax({
+                                url:'/pay/delBank?id='+ e.data.id,
+                                method:'POST',
+                                success:function (res) {
+                                    if (res.code == 1){
+                                        e.del()
+                                    }
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                    layer.close(d); //关闭弹层
+                                }
+                            });
                         });
                     else if ("edit" === e.event) {
                         t(e.tr);

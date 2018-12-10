@@ -23,11 +23,11 @@
         "topthink/think-image": "1.*",
         "topthink/think-queue": "2.*",
         "topthink/think-migration": "1.*",
-        "yansongda/pay": "^2.1",
         "endroid/qrcode": "^2.5",
         "jiguang/jsms": "^1.0",
         "qcloudsms/qcloudsms_php": "^0.1.4",
-        "topthink/think-helper": "^1.0"
+        "topthink/think-helper": "^1.0",
+        "paypal/rest-api-sdk-php": "^1.13"
     },
     "autoload": {
         "psr-4": {

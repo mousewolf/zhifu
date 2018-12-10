@@ -108,19 +108,7 @@ layui.define(["table", "form"],
         }),
             i.on("tool(app-api-list)",
                 function(e) {
-                    if ("del" === e.event) layer.prompt({
-                            formType: 1,
-                            title: "敏感操作，请验证口令"
-                        },
-                        function(t, i) {
-                            layer.close(i),
-                                layer.confirm("真的删除行么",
-                                    function(t) {
-                                        e.del(),
-                                            layer.close(t)
-                                    })
-                        });
-                    else if ("edit" === e.event) {
+                     if ("edit" === e.event) {
                         t(e.tr);
                         layer.open({
                             type: 2,

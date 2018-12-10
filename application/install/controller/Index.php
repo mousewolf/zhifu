@@ -11,16 +11,6 @@
  *  +----------------------------------------------------------------------
  */
 
-// +---------------------------------------------------------------------+
-// | OneBase    | [ WE CAN DO IT JUST THINK ]                            |
-// +---------------------------------------------------------------------+
-// | Licensed   | http://www.apache.org/licenses/LICENSE-2.0 )           |
-// +---------------------------------------------------------------------+
-// | Author     | Bigotry <3162875@qq.com>                               |
-// +---------------------------------------------------------------------+
-// | Repository | https://gitee.com/Bigotry/OneBase                      |
-// +---------------------------------------------------------------------+
-
 namespace app\install\controller;
 
 use app\common\library\enum\CodeEnum;
@@ -33,6 +23,8 @@ use think\Controller;
 class Index extends Controller
 {
 
+    protected $install;
+
     /**
      * Index constructor.
      */
@@ -40,7 +32,7 @@ class Index extends Controller
     {
         // 执行父类构造方法
         parent::__construct();
-        
+        $this->install = new Install();
         'complete' != $this->request->action() && $this->checkInstall();
     }
 
@@ -74,32 +66,52 @@ class Index extends Controller
 
         return $this->fetch();
     }
-    
-    /**
-     * 安装成功页
-     */
-    public function complete()
-    {
 
-        return $this->fetch('complete');
-    }
 
     /**
-     * 安装数据写入
+     * 站点数据写入
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param null $site
+     * @param null $admin
+     *
+     * @return array|mixed
      */
-    public function step1($db = null, $admin = null)
+    public function step1($site = null, $admin = null)
     {
 
         if ($this->request->isPost()) {
 
-            $install = new Install();
-            // 检查安装数据
-            $install->check($db, $admin);
+            $this->install->checkSiteConfig($site,$admin);
 
-            // 开始安装
-            return $install->install($db, $admin);
+            return  [ 'code' => CodeEnum::SUCCESS, 'msg' => '保存数据成功'];
 
         }
         return $this->fetch();
     }
+
+    /**
+     * 安装数据写入
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param null $db
+     *
+     * @return array|bool|mixed
+     */
+    public function step2($db = null)
+    {
+
+        if ($this->request->isPost()) {
+            // 检查安装数据
+            $this->install->checkDbConfig($db);
+
+            // 开始安装
+            return $this->install->install();
+
+        }
+        return $this->fetch();
+    }
+
 }

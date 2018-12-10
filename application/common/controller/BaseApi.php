@@ -12,13 +12,13 @@
  *  +----------------------------------------------------------------------
  */
 
-namespace app\api\controller;
+namespace app\common\controller;
 
-use app\common\controller\Common;
 use app\api\service\ApiRequest;
+use think\Controller;
 
 
-class BaseApi extends Common
+class BaseApi extends Controller
 {
 
     /**
@@ -75,5 +75,4 @@ class BaseApi extends Common
 
         return $layer;
     }
-
 }

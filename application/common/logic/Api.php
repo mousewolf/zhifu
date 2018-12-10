@@ -33,6 +33,26 @@ class Api extends BaseLogic
     }
 
     /**
+     * 获取所有支持的商户请求识标
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function getallowedIpMap(){
+
+        $allowedIpMap =  $this->modelApi->getColumn([], 'id,auth_ips');
+        $checkAllowedIpMap = [];
+        foreach ($allowedIpMap as $v) {
+            $allowedIp = explode(',',$v);
+            for ($i=0;$i< count($allowedIp);$i++){
+                $checkAllowedIpMap[] = $allowedIp[$i];
+            }
+        }
+        return $checkAllowedIpMap;
+    }
+
+    /**
      * 获取商户API列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -95,8 +115,8 @@ class Api extends BaseLogic
         try{
             //加密KEY
             $data['key']    = data_md5_key($data['secretkey']);
-            //应该写入文件  文件名为key 内容为pem内容
-            $this->saveRsaPublickKey($data);
+            //应该写入文件  文件名为key 内容为pem内容   【20181209  修改读取数据库  不再写入】
+            //$this->saveRsaPublickKey($data);
             //提交保存
             $this->modelApi->setInfo($data);
 
@@ -108,9 +128,10 @@ class Api extends BaseLogic
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR , 'msg' => '未知错误'];
+            return [ 'code' => CodeEnum::ERROR , config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
+
 
     /**
      * 保存上传的key
@@ -124,7 +145,8 @@ class Api extends BaseLogic
         $content = "-----BEGIN PUBLIC KEY-----".PHP_EOL
             .$pem."-----END PUBLIC KEY-----".PHP_EOL;
         //return [ CodeEnum::SUCCESS ,CRET_PATH.$data['key'],$content];
-        if (!is_dir(CRET_PATH . $data['key'])) mkdir(CRET_PATH . $data['key'], 0777);
-        file_put_contents(CRET_PATH."{$data['key']}/rsa_public_key.pem",$content);
+        if (!is_dir(CRET_PATH . $data['key']))
+            mkdir(CRET_PATH . $data['key'], 0777);
+        file_put_contents(CRET_PATH  . "{$data['key']}/rsa_public_key.pem",$content);
     }
 }

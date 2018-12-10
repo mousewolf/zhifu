@@ -182,7 +182,7 @@ class BaseModel extends Model
 
         } else {
 
-            $return_data = $this->setFieldValue($where, 'status', -1);
+            $return_data = $this->setFieldValue($where, 'status', '-1');
         }
 
         return $return_data;
@@ -200,7 +200,7 @@ class BaseModel extends Model
      */
     final protected function getColumn($where = [], $field = '', $key = '')
     {
-        return Db::name($this->name)->where($where)->column($field, $key);
+        return Db::name($this->name)->where($where)->cache(true,300)->column($field, $key);
     }
 
     /**

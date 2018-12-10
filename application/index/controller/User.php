@@ -54,7 +54,8 @@ class User extends Base
      * @param $id
      * @return mixed
      */
-    public function notice($id = 1){
+    public function notice($id){
+        //halt($this->logicArticle->getNoticeInfo(['id' => $id]));
         $this->assign('notice',$this->logicArticle->getNoticeInfo(['id' => $id]));
         $this->assign('list', $this->logicArticle->getNoticeList([], true, 'create_time desc', 10));
         return $this->fetch();

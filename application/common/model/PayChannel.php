@@ -11,19 +11,6 @@
  *  +----------------------------------------------------------------------
  */
 
-/**
- * +---------------------------------------------------------------------+
- * | Yubei         | [ WE CAN DO IT JUST THINK ]
- * +---------------------------------------------------------------------+
- * | Licensed    | http://www.apache.org/licenses/LICENSE-2.0 )
- * +---------------------------------------------------------------------+
- * | Author       | Brian Waring <BrianWaring98@gmail.com>
- * +---------------------------------------------------------------------+
- * | Company   | 小红帽科技      <Iredcap. Inc.>
- * +---------------------------------------------------------------------+
- * | Repository | https://github.com/BrianWaring/Yubei
- * +---------------------------------------------------------------------+
- */
 
 namespace app\common\model;
 
@@ -40,14 +27,9 @@ class PayChannel extends BaseModel
      * @return array|bool
      */
     public function getChannelMap($CodeId){
-        $appChannelMap = self::where(['id' => ['in',$CodeId],'status' => 1])->column('id,action,param');
+        $appChannelMap = self::where(['id' => ['in',$CodeId],'status' => 1])->column('id,action,param,single,timeslot');
         if ($appChannelMap){
-            //随机ID参数返回
-            return [
-                'id'=> $key = array_rand($appChannelMap),
-                'action'=> $appChannelMap[$key]['action'],
-                'param'=>json_decode($appChannelMap[$key]['param'],true)
-            ];
+            return $appChannelMap;
         }
         return $this->getChannelMap($CodeId);
     }

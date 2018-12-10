@@ -1,17 +1,4 @@
 <!DOCTYPE html>
-
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -24,7 +11,7 @@
 <body>
 
 
-<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
     <form class="layui-form" action="" lay-filter="component-form-element">
         <input type="text" hidden disabled name="id" value="{$api.id|default=''}">
         <div class="layui-form-item">
@@ -58,20 +45,28 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">IP白名单：</label>
+            <div class="layui-input-block">
+                <textarea name="auth_ips" placeholder="IP白名单" class="layui-textarea">{$api.auth_ips|default='127.0.0.1'}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">角色权限：</label>
             <div class="layui-input-inline">
                 <select name="role" lay-verify="required">
-                    <option value="0" {$api.role == '0' ?? 'checked'}>普通商户</option>
-                    <option value="1" {$api.role == '1' ?? 'checked'}>代理商户</option>
-                    <option value="2" {$api.role == '2' ?? 'checked'}>特约商户</option>
+                    <option value="0" {$api.role == '0' ?? 'selected'}>普通商户</option>
+                    <option value="1" {$api.role == '1' ?? 'selected'}>代理商户</option>
+                    <option value="2" {$api.role == '2' ?? 'selected'}>特约商户</option>
                 </select>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">允许访问：</label>
-            <div class="layui-input-inline">
-                <input type="radio" name="status" value="1" title="允许" {$api.status|default='1' == 1?'checked':''}>
-                <input type="radio" name="status" value="0" title="禁用" {$api.status|default='0' == 0?'checked':''}>
+            <div class="layui-input-block">
+                <select name="status" lay-verify="required">
+                    <option value="0" {$api.status == '0'?'selected':''}>禁止</option>
+                    <option value="1" {$api.status == '1'?'selected':''}>允许</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item layui-hide">

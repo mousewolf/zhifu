@@ -50,7 +50,7 @@ class User extends BaseAdmin
         !empty($this->request->param('email')) && $where['account']
             = ['like', '%'.$this->request->param('email').'%'];
 
-        $where['status'] = ['eq', $this->request->get('status','1')];
+        $where['status'] = ['eq', $this->request->get('status','2')];
 
         //时间搜索  时间戳搜素
         $where['create_time'] = $this->parseRequestDate();
@@ -198,8 +198,27 @@ class User extends BaseAdmin
         //获取认证详细信息
         $auth = $this->logicUser->getUserAuthInfo(['uid' =>$this->request->param('id')]);
         $auth['card'] = json_decode($auth['card'],true);
-        //halt($auth);
+
         $this->assign('auth',$auth);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 分润设置
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return mixed
+     */
+    public function profit(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result($this->logicUser->saveUserProfit($this->request->post()));
+        //获取认证详细信息
+        $profit = $this->logicUser->getUserProfitList(['uid' =>$this->request->param('id')]);
+
+        $this->assign('list',$profit);
 
         return $this->fetch();
     }

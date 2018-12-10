@@ -1,16 +1,4 @@
 <!DOCTYPE html>
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -66,6 +54,9 @@
         </div>
         <!--数据表-->
         <div class="layui-card-body">
+            <div class="app-admin-log-list" style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-useradmin layui-btn-warm layui-btn-sm" data-type="batchdel">清空日志</button>
+            </div>
             <table id="app-admin-log-list" lay-filter="app-admin-log-list"></table>
             <script type="text/html" id="table-system-order">
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
@@ -103,6 +94,38 @@
             table.reload('app-admin-log-list', {
                 where: field
             });
+        });
+
+        //事件
+        var active = {
+            batchdel: function(){
+                layer.prompt({
+                    formType: 1
+                    ,title: '敏感操作，请验证口令'
+                }, function(value, index){
+                    layer.close(index);
+                    layer.confirm('确定清空日志吗？', function(index) {
+
+                        //执行 Ajax 后重载
+                        $.ajax({
+                            url:'/log/logClean',
+                            method:'POST',
+                            success:function (res) {
+                                if (res.code == 1){
+                                    table.reload('app-admin-log-list');
+                                }
+                                layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                layer.close(index); //关闭弹层
+                            }
+                        });
+                    });
+                });
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
         });
     });
 </script>

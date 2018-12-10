@@ -110,12 +110,21 @@ layui.define(["table", "form"],
                             formType: 1,
                             title: "敏感操作，请验证口令"
                         },
-                        function(t, i) {
+                        function(d, i) {
                             layer.close(i),
-                                layer.confirm("真的删除行么", function(t) {
-                                    e.del(),
-                                        layer.close(t)
-                                })
+                                layer.confirm("真的删除此账户？", function(d) {
+                                        t.ajax({
+                                            url:'/account/del?id='+ e.data.id,
+                                            method:'POST',
+                                            success:function (res) {
+                                                if (res.code == 1){
+                                                    e.del()
+                                                }
+                                                layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                                layer.close(d); //关闭弹层
+                                            }
+                                        });
+                                    })
                         });
                     else if ("edit" === e.event) {
                         t(e.tr);

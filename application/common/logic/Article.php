@@ -127,12 +127,17 @@ class Article extends BaseLogic
         try{
 
             $this->modelArticle->setInfo($data);
+
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action, $action . '站点文章。标题：'. $data['title']);
+
             Db::commit();
             return [ 'code' =>  CodeEnum::SUCCESS, 'msg' => '文章编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+            return [ 'code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
 
     }
@@ -161,12 +166,17 @@ class Article extends BaseLogic
             if(!empty($data['attachments']))  $data['attachments'] = json_encode(array_values($data['attachments']));
 
             $this->modelNotice->setInfo($data);
+
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action, $action . '站点通知。标题：'. $data['title']);
+
             Db::commit();
-            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '通知编辑成功'];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => $action . '通知成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+            return [ 'code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
 
     }
@@ -184,34 +194,43 @@ class Article extends BaseLogic
         Db::startTrans();
         try{
             $this->modelArticle->deleteInfo($where);
+
             Db::commit();
-            return [1,'文章删除成功'];
+
+            action_log('删除', '删除站点文章。ID：'. $where['id']);
+
+            return ['code' => CodeEnum::SUCCESS, 'msg' =>'文章删除成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [0,'未知错误'];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
     /**
-     * 改变文章状态
+     * 通知删除
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param string $id 文章ID
-     * @param int $value 状态值
+     * @param array $where
      * @return array|string
      */
-    public function setChannelStatus($id,$value = 0){
+    public function delNotice($where = [])
+    {
         Db::startTrans();
         try{
-            $this->modelArticle->setFieldValue(['id'=>$id], $field = 'status', $value);
+            $this->modelNotice->deleteInfo($where);
+
             Db::commit();
-            return [1,'修改成功'];
+
+            action_log('删除', '删除站点通知。ID：'. $where['id']);
+
+            return ['code' => CodeEnum::SUCCESS, 'msg' =>'通知删除成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [0,'未知错误'];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
+
 }

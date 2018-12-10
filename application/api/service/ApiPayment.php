@@ -31,7 +31,7 @@ class ApiPayment
      *
      * @param array $config
      */
-    public function __construct(array $config = [])
+    private function __construct(array $config = [])
     {
         $this->config = $config;
     }

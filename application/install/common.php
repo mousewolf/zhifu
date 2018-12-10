@@ -118,9 +118,9 @@ function check_func()
     $items = array(
         array('pdo','支持','check','类'),
         array('pdo_mysql','支持','check','模块'),
+        array('redis','支持','check','模块'),
         array('openssl_sign','支持','check','函数'),
         array('file_get_contents', '支持', 'check','函数'),
-        array('mb_strlen','支持', 'check','函数'),
     );
 
     foreach ($items as &$val) {
@@ -151,11 +151,9 @@ function create_tables($db_object, $prefix = '')
     $result = true;
     
     //读取SQL文件
-//    $sql = file_get_contents(DATA_PATH . '/sql/cmpay_base.sql');//
     $sql = file_get_contents(__DIR__ . '/data/install.sql');
     $sql = str_replace("\r", "\n", $sql);
     $sql = explode(";\n", $sql);
-
     //替换表前缀
     $orginal = 'cm_';
 
@@ -191,6 +189,26 @@ function build_auth_key()
    $chars .= '`~!@#$%^&*()_+-=[]{};:"|,.<>/?';
    $chars  = str_shuffle($chars);
    return substr($chars, 0, 40);
+}
+
+
+/**
+ * 站点配置
+ *
+ * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+ *
+ * @param $db_object
+ * @param $prefix
+ * @param $site
+ *
+ * @return bool
+ */
+function create_config($db_object, $prefix, $site){
+   foreach ($site as $k => $v){
+       $sql ="UPDATE ". $prefix ."config SET value = '". $v . "' WHERE name = '". $k ."'";
+       $db_object->execute($sql);
+   }
+   return true;
 }
 
 /**
@@ -234,7 +252,7 @@ function create_admin($db_object, $prefix, $admin)
 function write_config($config)
 {
 
-    //读取配置内容
+    //读取数据库配置内容
     $conf = file_get_contents(__DIR__ . '/data/database.tpl');
 
     //替换配置项
@@ -243,10 +261,10 @@ function write_config($config)
         $conf = str_replace("[{$name}]", $value, $conf);
     }
 
-    if (file_put_contents(APP_PATH . 'database.php', $conf)) {
+    if (file_put_contents(APP_PATH .'database.php', $conf)) {
 
         // 写入安装锁定文件(只能在最后一步写入锁定文件，因为锁定文件写入后安装模块将无法访问)
-        file_put_contents(DATA_PATH . 'install.lock', 'install lock');
+        file_put_contents(DATA_PATH . 'install.lock',  ' install lock');
 
         return true;
     }

@@ -1,18 +1,6 @@
 
 
 <!DOCTYPE html>
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -94,7 +82,7 @@
         base: '__STATIC__/common/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'notice', 'laydate', 'table'], function(){
+    }).use(['index', 'article', 'laydate', 'table'], function(){
         var table = layui.table
             ,laydate = layui.laydate
             ,form = layui.form;
@@ -140,7 +128,7 @@
                     ,title: '添加通知'
                     ,content: '/article/addNotice'
                     ,maxmin: true
-                    ,area: ['950px', '700px']
+                    ,area: ['710px', '480px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
                         var iframeWindow = window['layui-layer-iframe'+ index]

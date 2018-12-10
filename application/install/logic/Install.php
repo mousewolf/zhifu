@@ -11,16 +11,6 @@
  *  +----------------------------------------------------------------------
  */
 
-// +---------------------------------------------------------------------+
-// | OneBase    | [ WE CAN DO IT JUST THINK ]                            |
-// +---------------------------------------------------------------------+
-// | Licensed   | http://www.apache.org/licenses/LICENSE-2.0 )           |
-// +---------------------------------------------------------------------+
-// | Author     | Bigotry <3162875@qq.com>                               |
-// +---------------------------------------------------------------------+
-// | Repository | https://gitee.com/Bigotry/OneBase                      |
-// +---------------------------------------------------------------------+
-
 namespace app\install\logic;
 
 use app\common\library\enum\CodeEnum;
@@ -35,16 +25,16 @@ class Install extends BaseLogic
 {
 
     /**
-     * 检查安装数据
+     * 检查站点安装数据
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param null $db
+     * @param null $site
      * @param null $admin
      *
      * @return bool|array
      */
-    public function check($db = null, $admin = null)
+    public function checkSiteConfig($site = null, $admin = null)
     {
 
         // 检测管理员信息
@@ -56,13 +46,29 @@ class Install extends BaseLogic
 
             return [ 'code' => CodeEnum::ERROR, 'msg' => '确认密码和密码不一致'];
         }
-        
+        session('site', $site);session('admin', $admin);
+
+        return true;
+    }
+
+
+    /**
+     * 检查数据库安装数据
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param null $db
+     *
+     * @return bool|array
+     */
+    public function checkDbConfig($db = null)
+    {
         // 检测数据库配置
         if (!is_array($db) || empty($db['hostname']) ||  empty($db['hostport']) || empty($db['database']) || empty($db['username'])) {
 
             return [ 'code' => CodeEnum::ERROR, 'msg' => '请填写完整的数据库配置'];
         }
-        
+        session('db', $db);
         return true;
     }
 
@@ -71,14 +77,14 @@ class Install extends BaseLogic
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param null $db
-     * @param null $admin
-     *
      * @return bool|array
      */
-    public function install($db = null, $admin = null)
+    public function install()
     {
 
+        $site = session('site');
+        $admin = session('admin');
+        $db = session('db');
         try{
             //创建数据库
             $dbname = $db['database'];
@@ -103,6 +109,10 @@ class Install extends BaseLogic
 
                 return [ 'code' => CodeEnum::ERROR, 'msg' => '创建数据表失败'];
             }
+            //写入数据库站点配置
+            if (!create_config($db_object, $db['prefix'], $site)) {
+                return [ 'code' => CodeEnum::ERROR, 'msg' => '写入数据库站点配置失败'];
+            }
 
             //注册超级帐号
             if (!create_admin($db_object, $db['prefix'], $admin)) {
@@ -113,7 +123,6 @@ class Install extends BaseLogic
             if (!write_config($db)) {
                 return [ 'code' => CodeEnum::ERROR, 'msg' => '创建配置文件失败'];
             }
-
             return [ 'code' => CodeEnum::SUCCESS, 'msg' => '安装成功'];
         }catch (\Exception $e){
             Log::error('安装出现问题：' . $e->getMessage());

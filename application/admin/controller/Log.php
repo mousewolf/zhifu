@@ -70,4 +70,20 @@ class Log extends BaseAdmin
         );
     }
 
+    /**
+     * 日志删除
+     */
+    public function logDel($id = 0)
+    {
+        $this->result($this->logicLog->logDel(['id' => $id]));
+    }
+
+    /**
+     * 日志清空
+     */
+    public function logClean()
+    {
+        $this->result($this->logicLog->logDel(['status' => '1']));
+    }
+
 }

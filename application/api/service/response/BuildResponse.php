@@ -41,7 +41,6 @@ class BuildResponse extends ApiSend
         $response = Response::create(json_encode($return))->header(self::get('header'));
         // 销毁请求上下文
         self::destoryContext();
-        Log::notice("结束时间：".microtime());
         // 抛数据
         throw new HttpResponseException($response);
     }

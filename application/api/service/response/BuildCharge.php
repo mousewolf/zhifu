@@ -51,28 +51,10 @@ class BuildCharge extends ApiSend
                 'extparam' => !empty($payload['extparam']) ? $payload['extparam']:[],
                 'credential' => []
             ];
-
-            //分割支付方式
-            $channel =  explode('.', $payload['channel']);
-            $payment = $channel[0];
-
             if (!empty($chargeRespose)){
-                switch ($payment){
-                    case 'wx':
-                    case 'qq':
-                        $ApiResposeData['credential'] = [
-                            'prepay_id'=>$chargeRespose['prepay_id'],
-                            'order_qr'=>$chargeRespose['code_url']
-                        ];
-                        break;
-                    case 'ali':
-                        $ApiResposeData['credential'] = [
-                            'order_qr'=>$chargeRespose['qr_code']
-                        ];
-                        break;
-                    //其他第三/四方自行接入，不会可以找我，付费服务
-                }
+                $ApiResposeData['credential'] = $chargeRespose;
             }
+
         }
         // 设置上下文支付包
         self::set('ApiResposeData',$ApiResposeData);

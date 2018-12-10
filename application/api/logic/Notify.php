@@ -50,6 +50,8 @@ class Notify extends BaseApi
                 $this->changeBalanceValue($order->uid, $order->amount,$order->out_trade_no);
                 //异步消息商户
                 Log::notice('异步消息商户');
+                $this->logicOrdersNotify->saveOrderNotify($order);
+                Log::notice('提交队列');
                 $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
 
                 //提交更改
@@ -83,7 +85,6 @@ class Notify extends BaseApi
             'id'=>$id
         ]);
     }
-
 
     /**
      * 更新商户账户余额

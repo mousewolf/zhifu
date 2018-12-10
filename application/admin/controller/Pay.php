@@ -11,20 +11,6 @@
  *  +----------------------------------------------------------------------
  */
 
-/**
- * +---------------------------------------------------------------------+
- * | Yubei         | [ WE CAN DO IT JUST THINK ]
- * +---------------------------------------------------------------------+
- * | Licensed    | http://www.apache.org/licenses/LICENSE-2.0 )
- * +---------------------------------------------------------------------+
- * | Author       | Brian Waring <BrianWaring98@gmail.com>
- * +---------------------------------------------------------------------+
- * | Company   | 小红帽科技      <Iredcap. Inc.>
- * +---------------------------------------------------------------------+
- * | Repository | https://github.com/BrianWaring/Yubei
- * +---------------------------------------------------------------------+
- */
-
 namespace app\admin\controller;
 
 
@@ -176,7 +162,7 @@ class Pay extends BaseAdmin
     public function addChannel()
     {
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicPay->addChannel($this->request->post()));
+        $this->request->isPost() && $this->result($this->logicPay->saveChannelInfo($this->request->post()));
         return $this->fetch();
     }
 
@@ -190,7 +176,7 @@ class Pay extends BaseAdmin
     public function addCode()
     {
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicPay->addCode($this->request->post()));
+        $this->request->isPost() && $this->result($this->logicPay->saveCodeInfo($this->request->post()));
 
         return $this->fetch();
     }
@@ -219,9 +205,13 @@ class Pay extends BaseAdmin
      */
     public function editChannel(){
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicPay->editChannel($this->request->post()));
+        $this->request->isPost() && $this->result($this->logicPay->saveChannelInfo($this->request->post()));
         //获取渠道详细信息
-        $this->assign('channel',$this->logicPay->getChannelInfo(['id' =>$this->request->param('id')]));
+        $channel = $this->logicPay->getChannelInfo(['id' =>$this->request->param('id')]);
+        //时间转换
+        $channel['timeslot'] = json_decode($channel['timeslot'],true);
+
+        $this->assign('channel',$channel);
 
         return $this->fetch();
     }
@@ -235,7 +225,7 @@ class Pay extends BaseAdmin
      */
     public function editCode(){
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicPay->editCode($this->request->post()));
+        $this->request->isPost() && $this->result($this->logicPay->saveCodeInfo($this->request->post()));
         //支持渠道列表
         $this->assign('channel',$this->logicPay->getChannelList([],'id,name','id asc'));
         //获取支付方式详细信息
@@ -258,6 +248,25 @@ class Pay extends BaseAdmin
         $this->assign('bank',$this->logicBank->getBankerInfo(['id' =>$this->request->param('id')]));
 
         return $this->fetch();
+    }
+
+    /**
+     * 删除支付方式
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function delCode(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result(
+            $this->logicPay->delCode(
+                [
+                    'id' => $this->request->param('id')
+                ])
+        );
+
+        // get 直接报错
+        $this->error('未知错误');
     }
 
     /**

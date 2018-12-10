@@ -12,7 +12,7 @@
 
 layui.define(["table", "form", "element"],
     function(e) {
-        var t = layui.$
+        var q = layui.$
             ,u = layui.util
             ,i = layui.table;
         // 表格初始化
@@ -81,8 +81,28 @@ layui.define(["table", "form", "element"],
         }),
             i.on("tool(app-admin-log-list)",
             function(e) {
-                if ("del" === e.event) {
-                    layer.alert(e.data);
+                if ("del" === e.event){
+                    layer.prompt({
+                            formType: 1,
+                            title: "敏感操作，请验证口令"
+                        },
+                        function(t, i) {
+                            layer.close(i),
+                                layer.confirm("真的删除么",
+                                    function(t) {
+                                        q.ajax({
+                                            url:'/log/logDel?id='+ e.data.id,
+                                            method:'POST',
+                                            success:function (res) {
+                                                if (res.code == 1){
+                                                    e.del()
+                                                }
+                                                layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                                layer.close(t); //关闭弹层
+                                            }
+                                        });
+                                    })
+                        });
                 }
             });
         e("actionlog", {})

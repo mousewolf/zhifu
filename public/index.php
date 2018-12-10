@@ -24,7 +24,7 @@ define('APP_PATH', __DIR__ . '/../application/');
 define('UPLOAD_PATH', __DIR__ . '/uploads/');
 // 定义数据目录
 define('DATA_PATH', __DIR__ . '/../data/');
-// 定义配置目录
+// 定义证书目录
 define('CRET_PATH', DATA_PATH . 'cret/');
 // 定义EXTEND目录
 define('EXTEND_PATH', DATA_PATH . 'extend/');

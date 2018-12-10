@@ -50,15 +50,17 @@ class AutoOrderSettle extends Command
         $output->writeln("AutoOrderSettle start");
         // 定时器需要执行的内容
         try{
+            //查渠道订单
             $subQuery = Db::table('cm_orders')->alias('a')
-                ->join([['cm_pay_channel n','a.cnl_id = n.id']])->where(['a.status'   => 2 ])->whereTime('a.create_time','d')
-                ->field('a.uid,a.cnl_id,truncate(sum(a.amount),2) as amount,truncate(sum(a.amount * n.rate),2) as fee,truncate(sum(a.amount - a.amount * n.rate),2) as actual,n.rate')
+                ->join([['cm_pay_channel n','a.cnl_id = n.id'],['cm_user_profit p','n.id = p.cnl_id']])->where(['a.status'   => 2 ])->whereTime('a.create_time','d')
+                ->field('a.uid,a.cnl_id,truncate(sum(a.amount),3) as amount,truncate(sum(a.amount * (n.rate +(1-p.uprice))),3) as fee,truncate(sum(a.amount * (1 - n.rate) * p.uprice),3) as actual')
                 ->group('cnl_id')->buildSql();
+            //查用户对应渠道费率
+            //查用户订单
             $resArr =Db::table($subQuery.' a')
-                ->field('a.uid,truncate(sum(a.amount),2) as amount,truncate(sum(a.fee),2) as fee,truncate(sum(a.actual),2) as actual') //,truncate(avg(a.rate),3) as rate
+                ->field('a.uid,truncate(sum(a.amount),3) as amount,truncate(sum(a.fee),3) as fee,truncate(sum(a.actual),3) as actual') //,truncate(avg(a.rate),3) as rate
                 ->group('a.uid')
                 ->select();
-
             foreach ($resArr as $v){
                 (new BalanceSettle())->settleBalanceToCash($v);
             }

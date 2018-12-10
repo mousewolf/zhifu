@@ -80,10 +80,19 @@ layui.define(["treeGrid","table", "form"],
             i.on('tool(app-admin-menu-list)',
                 function (e) {
                     var d = e.data;
-                    if ("del" === e.event) layer.confirm("确定删除此角色？",
-                        function(t) {
-                            e.del(),
-                                layer.close(t)
+                    if ("del" === e.event) layer.confirm("确定删除此菜单？",
+                        function(d) {
+                            t.ajax({
+                                url:'/menu/menuDel?id='+ e.data.id,
+                                method:'POST',
+                                success:function (res) {
+                                    if (res.code == 1){
+                                        e.del()
+                                    }
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                    layer.close(d); //关闭弹层
+                                }
+                            });
                         });
                     else if ("add" === e.event) {
                         t(e.tr);

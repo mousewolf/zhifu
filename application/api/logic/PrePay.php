@@ -52,7 +52,6 @@ class PrePay extends BaseApi
             $order = $this->logicOrders->createPayOrder($orderData);
 
             //写入订单超时队列
-            Log::notice('写入订单超时队列');
             $this->logicQueue->pushJobDataToQueue('AutoOrderClose' , $order , 'AutoOrderClose');
 
             //提交支付 选择支付路由
@@ -89,7 +88,7 @@ class PrePay extends BaseApi
             ],[
                 'trade_no','out_trade_no','subject','body','extra','amount','channel','currency','client_ip','status'
             ]);
-            //状态修改
+            //状态修改  -  可以用模型处理
             switch ($order['status']){
                 case '0':
                     $order['status'] = 'CLSOE';

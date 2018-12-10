@@ -57,16 +57,14 @@ class CheckFrequent extends ApiCheck
      */
     public function doCheck(Request $request)
     {
-        Log::notice("Request:".json_encode($request->param()));
-        $key = 'Gateways-client-ip:' . $request->ip();
+        $key = 'ClientIp:' . $request->ip(1);
         $cache = new Cache();
         $value = $cache->get($key);
-
         if (!$value) {
-            $cache->set($key, 0,$this->timeScope);
+            $cache->set($key, 0, $this->timeScope);
         }
         if ($value >= $this->times) {
-            Log::error($key);
+            Log::error($key . '[ Trigger Restriction And Flow Control.]');
             throw new ParameterException([
                 'msg'=>"Invalid Request.[ Trigger Restriction And Flow Control.]",
                 'errorCode'=>100000

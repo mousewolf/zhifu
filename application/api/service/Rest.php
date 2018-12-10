@@ -14,11 +14,11 @@
 
 namespace app\api\service;
 
-use app\common\controller\Common;
+use app\common\controller\BaseApi;
 use app\common\library\exception\ParameterException;
 use app\common\library\RsaUtils;
 
-class Rest extends Common
+class Rest extends BaseApi
 {
     /**
      * 请求参数

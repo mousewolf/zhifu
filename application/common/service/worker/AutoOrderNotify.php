@@ -14,10 +14,10 @@
 namespace app\common\service\worker;
 
 use app\common\library\HttpHeader;
-use app\common\model\OrdersNotify;
 use app\api\service\Rest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use think\Db;
 use think\Log;
 use think\queue\Job;
 
@@ -39,7 +39,10 @@ class AutoOrderNotify
      *
      * @param Job $job
      * @param $data
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \think\Exception
+     * @throws \think\exception\DbException
      */
     public function fire(Job $job,$data){
         // 如有必要,可以根据业务需求和数据库中的最新数据,判断该任务是否仍有必要执行.
@@ -48,15 +51,22 @@ class AutoOrderNotify
             $job->delete();
             return;
         }
+        //查单
+        $order = Db::table('cm_orders_notify')->where(['order_id' => $data['id']]);
         //处理队列
-        $isJobDone = $this->doJob($data);
+        $result = $this->doJob($data);
 
-        if ($isJobDone) {
+        if ($result) {
+            //成功记录数据
+            $order->update($result);
             //如果任务执行成功， 记得删除任务
             $job->delete();
             print("<info>The Order Job ID " . $data['id'] ." has been done and deleted"."</info>\n");
         }else{
-
+            //失败记录数据
+            $order->update([
+                'times'   => $job->attempts()
+            ]);
             if ($job->attempts() > 5) {
                 //超过5次  停止发送
                 print("<warn>The Order Job ID " . $data['id'] . " has been deleted and retried more than 5 times!" . "</warn>\n");
@@ -87,8 +97,9 @@ class AutoOrderNotify
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param array|mixed $data  入列数据
-     * @return bool
+     * @param $data
+     *
+     * @return array|bool
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function doJob($data) {
@@ -122,19 +133,21 @@ class AutoOrderNotify
                     ]
                 );
 
+                $statusCode = $response->getStatusCode();
                 $contents = $response->getBody()->getContents();
 
-                if ( $response->getStatusCode() == 200 && !is_null(json_decode($contents))){
+                if ( $statusCode == 200 && !is_null(json_decode($contents))){
 
                     // 转换对象
                     $resObj =  json_decode($contents);
-                    Log::notice('商户回调:' . json_encode($resObj));
+
                     //判断放回是否正确
                     if ($resObj->result_code == "OK" && $resObj->result_msg == "SUCCESS"){
-                        //TODO 处理数据库数据（暂不处理）
-                        Log::notice('商户回调正确:' . json_encode($resObj));
-                        //(new OrdersNotify())->save();
-                        return true;
+                        //TODO 更新写入数据
+                        return [
+                            'result'   => $contents,
+                            'is_status'   => $statusCode
+                        ];
                     }
                     return false;
                 }

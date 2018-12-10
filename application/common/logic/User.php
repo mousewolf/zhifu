@@ -116,6 +116,30 @@ class User extends BaseLogic
     }
 
     /**
+     * 获取费率详情
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @param string $order
+     * @param int $paginate
+     *
+     * @return mixed
+     */
+    public function getUserProfitList($where = [], $field = '*', $order = '', $paginate = 20){
+        $this->modelUserProfit->alias('a');
+
+        $join = [
+            ['pay_channel b', 'a.cnl_id = b.id'],
+        ];
+
+        $this->modelUserProfit->join = $join;
+
+        return $this->modelUserProfit->getList($where, $field, $order, $paginate);
+    }
+
+    /**
      * 添加一个商户
      * @author 勇敢的小笨羊
      * @param $data
@@ -155,13 +179,14 @@ class User extends BaseLogic
             $jobData['scene']   = 'register';
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
 
+
             action_log('新增', '新增商户。UID:'. $user);
 
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '添加商户成功'];
         }catch (\Exception $ex){
             Db::rollback();
-            return ['code' => CodeEnum::ERROR, 'msg' => $ex->getMessage()];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
 
     }
@@ -191,16 +216,21 @@ class User extends BaseLogic
                 }else{
                     $data['password'] = data_md5_key($data['password']);
                 }
+                if (empty($data['auth_code'])){
+                    unset($data['auth_code']);
+                }else{
+                    $data['auth_code'] = data_md5_key($data['auth_code']);
+                }
                 $this->modelUser->setInfo($data);
 
-                action_log('修改', '修改个人信息。'. arr2str($data));
+                action_log('修改', '修改商户信息。UID:'. $data['uid']);
 
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
@@ -229,14 +259,16 @@ class User extends BaseLogic
 
             $this->modelUserAuth->setInfo($data);
 
-            action_log('提交', '个人信息认证。');
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action, $action . '个人信息认证。ID:'. $data['id']);
 
             Db::commit();
-            return ['code' => CodeEnum::SUCCESS, 'msg' => '编辑成功'];
+            return ['code' => CodeEnum::SUCCESS, 'msg' => $action . '个人认证信息成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
@@ -289,18 +321,22 @@ class User extends BaseLogic
             $this->modelUserAccount->deleteInfo($where);
             $this->modelBalance->deleteInfo($where);
             $this->modelApi->deleteInfo($where);
+
             Db::commit();
-            return ['code' => CodeEnum::SUCCESS, 'msg' => '会员删除成功'];
+
+            action_log('删除', '删除商户'. $where['uid']);
+
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '删除商户成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
     }
 
 
     /**
-     * 设置管理员信息
+     * 设置信息
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -314,25 +350,4 @@ class User extends BaseLogic
         return $this->modelUser->setFieldValue($where, $field, $value);
     }
 
-    /**
-     * 改变商户可用性
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $where
-     * @param int $value
-     * @return array
-     */
-    public function setUserStatus($where,$value = 0){
-        Db::startTrans();
-        try{
-            $this->setUserValue($where, $field = 'status', $value);
-            Db::commit();
-            return ['code' => CodeEnum::SUCCESS, 'msg' => '修改状态成功'];
-        }catch (\Exception $ex){
-            Db::rollback();
-            Log::error($ex->getMessage());
-            return ['code' => CodeEnum::ERROR, 'msg' => '未知错误'];
-        }
-    }
 }

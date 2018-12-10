@@ -13,9 +13,10 @@
  */
 
 namespace app\api\logic;
+use app\api\service\ApiPayment;
 use app\common\library\exception\OrderException;
+use think\Exception;
 use think\Log;
-use Yansongda\Pay\Pay;
 
 /**
  * 支付处理类  （优化方案：提出单个支付类  抽象类对象处理方法 便于管理）
@@ -44,7 +45,7 @@ class DoPay extends BaseApi
     }
 
     /**
-     * 支付分发  【使用Yansongda/pay支付类库】
+     * 支付分发
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -55,46 +56,69 @@ class DoPay extends BaseApi
      */
     public function prePayOrder($order)
     {
+        //随机支付渠道 -- 返回支付方式ID
+        $appChannelMap = $this->modelPayChannel->getChannelMap($this->modelPayCode->getCodeId($order['channel']));
+        //规则参数返回
+        $configMap = $this->fetchConfig($order, $appChannelMap);
+        //添加订单支付通道ID
+        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $configMap['id']);
+
+        //获取支付渠道
+        list($payment,$action) = str2arr($order['channel'] . '.' .  $configMap['action'],'.');
+
+        //配置载入
+        $appConfig = !empty(config('pay.' . $payment))
+            ? array_merge(config('pay.' . $payment), $configMap['param'])
+            : $configMap['param'];
+
         try {
-            //随机支付渠道 -- 返回支付方式ID
-            $config = $this->modelPayChannel->getChannelMap($this->modelPayCode->getCodeId($order['channel']));
-            //获取支付渠道
-            $action = $config['action'];
-            //添加订单支付通道ID
-            $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $config['id']);
-            //分割支付方式
-            $channel =  explode('.', $order['channel']);
-            $payment = $channel[0];  $pay = $channel[1];
-            //配置载入
-            $config = array_merge(config('pay.' . $action), $config['param']);
-            //构建支付数据
-            $orderData = [
-                'out_trade_no' => $order['trade_no'],      //平台支付单号trade_no   商户订单 out_trade_no
-            ];
-            switch ($payment){
-                case 'wx':
-                case 'qq':
-                    $orderData ['total_fee'] = bcmul(100, $order['amount']);  //支付金额 分
-                    $orderData ['body'] = $order['subject'];  //支付金额 分
-                    break;
-                case 'ali':
-                    $orderData ['total_amount'] = $order['amount'];//支付金额 元
-                    $orderData ['subject'] = $order['subject'];  //支付金额 分
-                    break;
-                //其他第三/四方自行接入  -- 推荐写在app\api\service\payment下面  继承父类ApiPayment
-                //不会可以找我，付费服务
-            }
-            //分发
-            return Pay::$action($config)->$pay($orderData);
 
+            //支付分发
+            $result = ApiPayment::$action($appConfig)->$payment($order);
 
-        } catch (\Exception $e) {
+            return $result;
+
+        } catch (Exception $e) {
             Log::error('Create Pay Order Fail:[' . $e->getMessage() . ']');
             throw new OrderException([
                 'errorCode' => '200008',
-                'msg' => 'Create Pay Order Fail:[ Channel Error .]'
+                'msg' => 'Create Pay Order Fail:[ Please wait for a moment to try.]'
             ]);
         }
     }
 
+    /**
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     * @param $appChannelMap
+     *
+     * @return mixed
+     * @throws OrderException
+     */
+    private function fetchConfig($order, $appChannelMap){
+
+        $configMap = [];
+        foreach ($appChannelMap as $key => $val){
+            $timeslot = json_decode($val['timeslot'],true);
+
+            if ($order['amount'] < $val['single']
+                && strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+                $configMap[] = $val;
+            }
+        }
+        if (!empty($configMap)){
+            $key = array_rand($configMap);
+            return  [
+                'id'=>  $configMap[$key]['id'],
+                'action'=> $configMap[$key]['action'],
+                'param'=>json_decode($configMap[$key]['param'],true)
+            ];
+        }
+        Log::error('暂无可用渠道，请稍后尝试');
+        throw new OrderException([
+            'msg' => '暂无可用渠道，请稍后尝试'
+        ]);
+    }
 }
