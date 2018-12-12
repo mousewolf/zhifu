@@ -50,9 +50,9 @@ project                             应用部署目录
 
 ## **在线演示**
 
-后台 ：https://crm.iredcap.cn  (nouser 123456) 
+后台 ：https://crm.pay.iredcap.cn  (nouser nouser ) 
 
-前台 ：https://www.iredcap.cn (nouser@iredcap.cn 123456) 
+前台 ：https://pay.iredcap.cn (nouser@iredcap.cn nouser ) 
 
 提　示：演示站点暂停访问
 
@@ -128,3 +128,8 @@ All rights reserved。
 ## 若对您有帮助，支持下吧
 
 ![赞赏](https://sirhe.cn/wp-content/uploads/2018/06/打赏.jpg)
+
+
+称呼|方式 |金额
+------- | ------- | -------
+*二云 |支付宝收款码 |￥200.00
