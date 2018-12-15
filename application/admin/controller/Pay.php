@@ -243,9 +243,9 @@ class Pay extends BaseAdmin
      */
     public function editBank(){
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicBank->savelogicBank->saveBankerInfo($this->request->post()));
+        $this->request->isPost() && $this->result($this->logicBanker->savelogicBank->saveBankerInfo($this->request->post()));
         //获取支付方式详细信息
-        $this->assign('bank',$this->logicBank->getBankerInfo(['id' =>$this->request->param('id')]));
+        $this->assign('bank',$this->logicBanker->getBankerInfo(['id' =>$this->request->param('id')]));
 
         return $this->fetch();
     }

@@ -219,7 +219,7 @@ class User extends BaseLogic
                 if (empty($data['auth_code'])){
                     unset($data['auth_code']);
                 }else{
-                    $data['auth_code'] = data_md5_key($data['auth_code']);
+                    $data['auth_code'] = data_md5($data['auth_code']);
                 }
                 $this->modelUser->setInfo($data);
 

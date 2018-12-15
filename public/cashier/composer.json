@@ -6,12 +6,6 @@
         "framework"
     ],
     "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "liu21st",
-            "email": "liu21st@gmail.com"
-        }
-    ],
     "require": {
         "php": ">=7.0.0",
         "filp/whoops": "^2.3",

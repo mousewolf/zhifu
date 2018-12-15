@@ -35,6 +35,18 @@ class Notify extends BaseApi
     }
 
     /**
+     * 同步回调
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param string $channel
+     *
+     */
+    public function callback($channel = 'wxpay'){
+
+    }
+
+    /**
      * 统一异步通知
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -44,7 +56,7 @@ class Notify extends BaseApi
      * @return mixed
      * @throws ForbiddenException
      */
-    public function handle($channel = 'wxpay'){
+    public function notify($channel = 'wxpay'){
 
 
         try{

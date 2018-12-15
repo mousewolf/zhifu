@@ -31,6 +31,6 @@ class PayChannel extends BaseModel
         if ($appChannelMap){
             return $appChannelMap;
         }
-        return $this->getChannelMap($CodeId);
+        return [];
     }
 }

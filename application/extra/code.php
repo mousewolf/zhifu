@@ -21,9 +21,9 @@ return [
         'debug'       => '0',// SMTP调试功能 0=>关闭 1 => 错误和消息 2 => 消息
         'host'        => 'smtp.mxhichina.com',
         'port'        => '465',
-        'username'    => 'service@98imo.com',
+        'username'    => 'service@iredcap.cn',
         'password'    => 'xzx595...',
-        'address'     => 'service@98imo.com',
+        'address'     => 'service@iredcap.cn',
         'name'        => '小红帽'
     ],
 

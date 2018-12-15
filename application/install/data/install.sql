@@ -475,7 +475,7 @@ CREATE TABLE `cm_pay_code` (
 INSERT INTO `cm_pay_code` VALUES ('1', '1', '微信扫码支付', 'wxpay', '微信扫码支付', '1', '1535983487', '1544369237');
 INSERT INTO `cm_pay_code` VALUES ('2', '2', '支付宝扫码', 'alipay', '支付宝扫码', '1', '1544173543', '1544349532');
 INSERT INTO `cm_pay_code` VALUES ('3', '3', 'QQ扫码', 'qqpay', '微信扫码', '1', '1544264177', '1544349972');
-INSERT INTO `cm_pay_code` VALUES ('4', null, 'Paypal支付', 'paypal', '返回支付地址', '1', '1544363537', '1544364423');
+INSERT INTO `cm_pay_code` VALUES ('4', '4', 'Paypal支付', 'paypal', '返回支付地址', '1', '1544363537', '1544364423');
 
 -- ----------------------------
 -- Table structure for cm_transaction

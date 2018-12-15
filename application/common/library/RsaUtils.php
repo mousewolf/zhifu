@@ -42,10 +42,10 @@ class RsaUtils
     public function __construct($public_key_file = '', $private_key_file = '')
     {
         if (!empty($public_key_file)) {
-            $this->setPublicKey($public_key_file);
+            $this->_setPublicKey($public_key_file);
         }
         if (!empty($private_key_file)) {
-            $this->setPrivateKey($private_key_file);
+            $this->_setPrivateKey($private_key_file);
         }
     }
 
@@ -138,15 +138,16 @@ class RsaUtils
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $file
+     *
      * @return bool|string
+     * @throws \Exception
      */
     private function _readFile($file)
     {
-        $ret = false;
-        if (file_exists($file)) {
-            $ret = file_get_contents($file);
+        if (!file_exists($file)) {
+            throw new \Exception('File not exists');
         }
-        return $ret;
+        return file_get_contents($file);
     }
 
     /**
@@ -168,9 +169,11 @@ class RsaUtils
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param  $file
+     * @param $file
+     *
+     * @throws \Exception
      */
-    public function setPublicKey($file)
+    private function _setPublicKey($file)
     {
         $key_content = $this->_readFile($file);
         if ($key_content) {
@@ -184,13 +187,16 @@ class RsaUtils
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $file
+     *
+     * @throws \Exception
      */
-    public function setPrivateKey($file)
+    private function _setPrivateKey($file)
     {
         $key_content = $this->_readFile($file);
         if ($key_content) {
             $this->priKey = openssl_pkey_get_private($key_content);
         }
+
     }
 
 
@@ -282,5 +288,33 @@ class RsaUtils
             }
         }
         return $ret;
+    }
+
+    /**
+     * 生成证书
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     */
+    public function exportOpenSSLFile(){
+        $config = array(
+            "config" => "F:\phpStudy\PHPTutorial\Apache\conf\openssl.cnf",
+            "digest_alg" => "sha512",
+            "private_key_bits" => 2048, //字节数    512 1024  2048   4096 等
+            "private_key_type" => OPENSSL_KEYTYPE_RSA, //加密类型
+        );
+        //创建公钥和私钥   返回资源
+        $res = openssl_pkey_new($config);
+        //从得到的资源中获取私钥，把私钥赋给$privKey
+        openssl_pkey_export($res, $private_key, null, $config);
+        //从得到的资源中获取公钥，返回公钥$pubKey
+        $pubKey = openssl_pkey_get_details($res);
+        $public_key = $pubKey["key"];
+        //输出文件
+        if (!is_dir(CRET_PATH . "/export/"))  mkdir(CRET_PATH . "/export/", 0777);
+        file_put_contents(CRET_PATH . "/export/". date('Ymd') ."_public.pem", $public_key);
+        file_put_contents(CRET_PATH . "/export/". date('Ymd') ."_private.pem", $private_key);
+        openssl_free_key($res);
     }
 }

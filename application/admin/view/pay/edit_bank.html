@@ -26,7 +26,7 @@
     <input type="text" name="id" hidden disabled value="{$bank.id}">
     <div class="layui-form-item">
         <label class="layui-form-label">银行名称：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="name" required lay-verify="required" placeholder="请输入银行名称" autocomplete="off" class="layui-input" value="{$bank.name}">
         </div>
     </div>
@@ -38,20 +38,16 @@
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">默认：</label>
-        <div class="layui-input-inline">
-            <div class="layui-input-inline">
-                <input type="radio" name="default" value="1" title="启用" {$bank.default == 1?'checked':''}>
-                <input type="radio" name="default" value="0" title="禁用" {$bank.default == 0?'checked':''}>
-            </div>
+        <div class="layui-input-block">
+            <input type="radio" name="default" value="1" title="启用" {$bank.default == 1?'checked':''}>
+            <input type="radio" name="default" value="0" title="禁用" {$bank.default == 0?'checked':''}>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">状态：</label>
-        <div class="layui-input-inline">
-            <div class="layui-input-inline">
-                <input type="radio" name="status" value="1" title="启用" {$bank.status == 1?'checked':''}>
-                <input type="radio" name="status" value="0" title="禁用" {$bank.status == 0?'checked':''}>
-            </div>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="启用" {$bank.status == 1?'checked':''}>
+            <input type="radio" name="status" value="0" title="禁用" {$bank.status == 0?'checked':''}>
         </div>
     </div>
     <div class="layui-form-item layui-hide">

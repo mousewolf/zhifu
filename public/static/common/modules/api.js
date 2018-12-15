@@ -115,7 +115,7 @@ layui.define(["table", "form"],
                             title: "编辑账号",
                             content: "/api/edit.html?id=" + e.data.id,
                             maxmin: !0,
-                            area: ['600px', '600px'],
+                            area: ['80%', '60%'],
                             btn: ["确定", "取消"],
                             yes: function(f, t) {
                                 var l = window["layui-layer-iframe" + f],

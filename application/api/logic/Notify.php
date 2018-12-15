@@ -18,7 +18,6 @@ namespace app\api\logic;
 use think\Db;
 use think\Exception;
 use think\Log;
-use Yansongda\Pay\Pay;
 use app\common\library\enum\OrderStatusEnum;
 
 class Notify extends BaseApi
@@ -33,7 +32,7 @@ class Notify extends BaseApi
      * @return bool
      *
      */
-    public function handle($data){
+    public function notify($data){
         Db::startTrans();
         try{
             //获取支付订单号

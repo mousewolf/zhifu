@@ -63,7 +63,7 @@ class Payment
             "subject" => $param['body'],
             "body" => $param['body'],
             "amount" => $param['sum'],
-            "currency" =>'CNY',
+            "currency" =>'USD',
             "channel" => strtolower($param['channel']), //支付方式小写
             "extparam" => [
                 "nocestr" => $this->getRandChar()

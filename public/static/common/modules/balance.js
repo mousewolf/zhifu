@@ -97,7 +97,7 @@ layui.define(["table", "form"],
                             title: "账户明细",
                             content: "/balance/details.html?id=" + e.data.uid,
                             maxmin: !0,
-                            area: ['1070px', '600px'],
+                            area:  ['80%', '60%'],
                             yes: function(f, t) {},
                             success: function(e, t) {}
                         })

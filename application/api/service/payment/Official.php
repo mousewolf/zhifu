@@ -3,6 +3,18 @@
 
 namespace app\api\service\payment;
 
+use PayPal\Api\Amount;
+use PayPal\Api\Details;
+use PayPal\Api\Item;
+use PayPal\Api\ItemList;
+use PayPal\Api\Payer;
+use PayPal\Api\Payment;
+use PayPal\Api\RedirectUrls;
+use PayPal\Api\Transaction;
+use PayPal\Api\ShippingAddress;
+use PayPal\Exception\PayPalConnectionException;
+use PayPal\Rest\ApiContext;
+use PayPal\Auth\OAuthTokenCredential;
 
 use app\api\service\ApiPayment;
 use app\common\library\exception\OrderException;
@@ -163,6 +175,76 @@ class Official extends ApiPayment
         ];
     }
 
+
+    /**
+     *
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     * @param bool $notify
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function paypal($order, $notify = false){
+        // 下面为申请app获得的clientId和clientSecret，必填项，否则无法生成token。
+        $clientId = 'AeQoPWrmDu_FqEn-v49hPkakimNj6Q5LlPIk6DqoNbwS10ZSoRaK42Dv9BC6UTVQ6mIpyz3zBs4XmIbu';
+        $clientSecret = 'EHLGtJUY_vpWbOBR2ZKM5ck3smCiD7LGYetb01k2kemFbLyxlz7n0hnh-2w_eONoq4DcnfyalzqUPU8d';
+        $apiContext = new ApiContext(
+            new OAuthTokenCredential(
+                $this->config['client_id'] ,
+                $this->config['client_secret']
+            )
+        );
+        // Create new payer and method
+        $payer = new Payer();
+        $payer->setPaymentMethod("paypal");
+
+        // Set redirect URLs
+        $redirectUrls = new RedirectUrls();
+        $redirectUrls->setReturnUrl($this->config['return_url'] . '?success=true')
+            ->setCancelUrl($this->config['cancel_url'] . '?success=false');
+
+        // Set payment amount
+        $amount = new Amount();
+        $amount->setCurrency('USD')
+            ->setTotal($order['amount']);
+
+        // Set transaction object
+        $transaction = new Transaction();
+        $transaction->setAmount($amount)
+            ->setDescription($order['subject'])
+            ->setInvoiceNumber($order['trade_no']);
+
+        // Create the full payment object
+        $payment = new Payment();
+        $payment->setIntent('sale')
+            ->setPayer($payer)
+            ->setRedirectUrls($redirectUrls)
+            ->setTransactions(array($transaction));
+
+        // Create payment with valid API context
+        try {
+            $payment->create($apiContext);
+
+            // Get PayPal redirect URL and redirect the customer
+            $approvalUrl = $payment->getApprovalLink();
+
+            // Redirect the customer to $approvalUrl
+        } catch (PayPalConnectionException $ex) {
+            Log::error('Create Paypal API Error:'. $ex->getCode().' : '.$ex->getMessage());
+            throw new OrderException([
+                'msg'   => 'Create Paypal API Error:'. $ex->getCode().' : '.$ex->getMessage(),
+                'errCode'   => 200009
+            ]);
+        }
+
+        return [
+            'order_qr' => $approvalUrl
+        ];
+    }
+    
     /******************微信***********************************/
 
     /**
@@ -389,4 +471,7 @@ class Official extends ApiPayment
         }
         return $data;
     }
+
+
+    /**********************Paypal*********************/
 }

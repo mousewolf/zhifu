@@ -33,7 +33,7 @@ class User extends Base
         //资金 资产信息
         $this->assign('wallet', $this->logicBalance->getBalanceInfo($where));
 
-        $this->assign('stat',$this->logicOrders->getWelcomeStat());
+        $this->assign('stat',$this->logicOrders->getWelcomeStat($where));
         //当月时间
         list($start, $end) = Time::month();
         $where['create_time'] = ['between time', [$start,$end]];
@@ -55,7 +55,7 @@ class User extends Base
      * @return mixed
      */
     public function notice($id){
-        //halt($this->logicArticle->getNoticeInfo(['id' => $id]));
+
         $this->assign('notice',$this->logicArticle->getNoticeInfo(['id' => $id]));
         $this->assign('list', $this->logicArticle->getNoticeList([], true, 'create_time desc', 10));
         return $this->fetch();

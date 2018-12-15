@@ -99,6 +99,7 @@ class DoPay extends BaseApi
      */
     private function fetchConfig($order, $appChannelMap){
 
+
         $configMap = [];
         foreach ($appChannelMap as $key => $val){
             $timeslot = json_decode($val['timeslot'],true);

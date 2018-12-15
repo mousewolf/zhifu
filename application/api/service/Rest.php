@@ -200,18 +200,27 @@ class Rest extends BaseApi
     }
 
     /**
-     * 生成签名字符串
+     * 生成平台签名字符串
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $to_sign_data
+     *
      * @return string
+     * @throws ParameterException
      */
     public static function sign($to_sign_data){
-        $Rsa = new RsaUtils();
-        //平台私钥生成签名
-        $Rsa->setPrivateKey(CRET_PATH . 'rsa_private_key.pem');
-        return $Rsa->sign($to_sign_data);
+        if (is_array($to_sign_data)){
+            $to_sign_data = json_encode($to_sign_data);
+        }
+        try{
+            $Rsa = new RsaUtils('', CRET_PATH . 'rsa1_private_key.pem');
+            return $Rsa->sign($to_sign_data);
+        }catch (\Exception $e){
+            throw new ParameterException([
+                'msg'   => 'Sign Build Failure.[ Platform Sign Key File Not Exists.]'
+            ]);
+        }
     }
 
     /**
@@ -219,15 +228,24 @@ class Rest extends BaseApi
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param string $data 验签数据
-     * @param string $sign 签名串
-     * @param string $key  请求key
+     * @param $data
+     * @param $sign
+     * @param $key
+     *
      * @return bool
+     * @throws ParameterException
      */
     public static function verify($data, $sign, $key){
-        $Rsa = new RsaUtils();
-        //指定商户公钥验证签名
-        $Rsa->setPublicKey(CRET_PATH . $key . DS .'rsa_public_key.pem');
-        return $Rsa->verify($data, $sign, $code = 'base64');
+        if (is_array($data)){
+            $data = json_encode($data);
+        }
+        try{
+            $Rsa = new RsaUtils(CRET_PATH . $key . DS .'rsa_public_key.pem');
+            return $Rsa->verify($data, $sign, $code = 'base64');
+        }catch (\Exception $e){
+            throw new ParameterException([
+                'msg'   => 'Sign Verify Failure.[ Platform Sign Key File Not Exists.]'
+            ]);
+        }
     }
 }

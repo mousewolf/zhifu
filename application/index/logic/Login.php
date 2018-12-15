@@ -46,6 +46,7 @@ class Login extends Base
         if (!empty($user['password']) && data_md5_key($password) == $user['password']) {
             //激活判断
             if ($user['is_verify'] == UserStatusEnum::DISABLE){
+                action_log('登录', '商户'. $username . '账号未激活');
                 return [ 'code' => CodeEnum::ERROR, 'msg' =>  '账号未激活,<span onclick="page(\'发送激活邮件\',\'/active/sendActive\',this,\'440px\',\'180px\')">点击发送激活邮件</span>'];
             }
             //禁用判断
@@ -187,13 +188,25 @@ class Login extends Base
             if(($user['status'] && $user['is_verify'] ) == UserStatusEnum::ENABLE){
                 return ['code' => CodeEnum::SUCCESS, 'msg'=>'商户已经激活过了 :-)'];
             }else{
+                ///生成随机安全码
+                $auth_code = getRandChar(8,'NUM');
+                //加入注册成功邮件  发送安全码
+                $jobData = $user;
+                $jobData ['auth_code'] = $auth_code;
+                //邮件场景
+                $jobData['scene']   = 'regcallback';
+                $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
+
+                //数据处理
                 $this->modelUser->updateInfo(
                     ['uid'=>$Verification->uid],
                     [
                         'status' => UserStatusEnum::ENABLE,
                         'is_verify' => UserStatusEnum::ENABLE,
-                        'is_verify_phone' => UserStatusEnum::ENABLE
+                        'is_verify_phone' => UserStatusEnum::ENABLE,
+                        'auth_code' => data_md5($auth_code)
                     ]);
+
                 return ['code' => CodeEnum::SUCCESS, 'msg'=>'商户激活成功！'];
             }
 

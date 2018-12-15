@@ -2,16 +2,17 @@
 
 require_once "pay.php";
 
-if(isPost()) {
+if(!isPost()) {
     $data = [
         "order_no" => date('Ydmhis') . time(),
-        "body" =>$_POST['subject'],
+        "body" => '测试',
         "sum" => '0.66',
-        "channel" => strtolower($_POST['method']) //渠道  官方的official
+        "channel" => strtolower('alipay') //渠道  官方的official
     ];
 
     $pay = new Payment($config);
     $result = $pay->pay($data);  // ->pay(); ->callback();
+    var_dump($result);die;
     exit(json_encode($result));
 }
 
@@ -107,6 +108,11 @@ function isPost() {
                                         <li class="" data-type="alipay" title="支付宝支付">
                                             <span class="ep-icon ep-icon-alipay"></span>
                                             <span class="ep-pay-method-name"> 支付宝支付</span>
+                                            <!---->
+                                        </li>
+                                        <li class="" data-type="paypal" title="Paypal支付">
+                                            <span class="ep-icon ep-icon-alipay"></span>
+                                            <span class="ep-pay-method-name"> Paypal支付</span>
                                             <!---->
                                         </li>
                                     </ul>

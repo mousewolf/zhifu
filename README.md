@@ -1,4 +1,4 @@
-Cmpay_2018v1.0.1(测试版本)
+Cmpay_2018v1.0.0_Beta(测试版本)
 ===============
 
 ### 项目介绍
@@ -6,7 +6,7 @@ Cmpay_2018v1.0.1(测试版本)
 
 - `Cmpay聚合支付` Cmpay草帽聚合支付使用ThinkPHP框架开发，已接入微信、支付宝等主流支付渠道。
 
-- 目前已经接入支付渠道：QQ/微信(扫码支付)、支付宝(扫码支付)；
+- 目前已经接入支付渠道：微信(扫码支付)、支付宝(电脑网站支付、手机网站支付)；
 
 > [小红帽科技：https://www.iredcap.cn](https://www.iredcap.cn "小红帽科技")
 
@@ -50,9 +50,9 @@ project                             应用部署目录
 
 ## **在线演示**
 
-后台 ：https://crm.pay.iredcap.cn  (nouser nouser ) 
+后台 ：https://crm.iredcap.cn  (nouser 123456) 
 
-前台 ：https://pay.iredcap.cn (nouser@iredcap.cn nouser ) 
+前台 ：https://www.iredcap.cn (nouser@iredcap.cn 123456) 
 
 提　示：演示站点暂停访问
 
@@ -76,7 +76,6 @@ project                             应用部署目录
 
 版本 |日期 |描述
 ------- | ------- | -------
-V1.0.0 |2018-12-10 |更新部分，修复BUG
 V1.0.0 |2018-11-12 |更换前端页面，完善部分功能，商户端开发进行中...
 V1.0.0 |2018-11-06 |修复部分Bug,完善后台权限管理，数据统计，其他
 V1.0.0 |2018-10-23 |最初版本
@@ -128,8 +127,3 @@ All rights reserved。
 ## 若对您有帮助，支持下吧
 
 ![赞赏](https://sirhe.cn/wp-content/uploads/2018/06/打赏.jpg)
-
-
-称呼|方式 |金额
-------- | ------- | -------
-*二云 |支付宝收款码 |￥200.00

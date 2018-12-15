@@ -147,6 +147,7 @@ class Balance extends Base
      * @return mixed
      */
     public function apply(){
+        $where = ['uid' => is_login()];
 
         if($this->request->isPost()){
             if ($this->request->post('b/a')['uid'] == is_login()){
@@ -156,7 +157,7 @@ class Balance extends Base
             }
         }
         //详情
-        $this->common();
+        $this->common($where);
         //收款账户
         $this->assign('list', $this->logicUserAccount->getAccountList(['a.uid' => is_login(),'a.status' => 1],'a.*,b.id as b_id,b.name as banker', 'a.create_time desc'));
 

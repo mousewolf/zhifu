@@ -84,7 +84,7 @@ layui.define(["table", "form"],
                             type: 2,
                             title: "编辑支付方式",
                             content: "/pay/editCode.html?id="+ d.id,
-                            area: ["470px", "450px"],
+                            area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(d, f) {
                                 var l = window["layui-layer-iframe" + d],
@@ -211,7 +211,7 @@ layui.define(["table", "form"],
                             type: 2,
                             title: "编辑渠道",
                             content: "/pay/editChannel?id=" + e.data.id,
-                            area: ["800px", "700px"],
+                            area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {
                                 var r = window["layui-layer-iframe" + e],
@@ -310,7 +310,7 @@ layui.define(["table", "form"],
             i.on("tool(app-pay-bank-list)",
                 function(e) {
                 var s = e;
-                    if ("del" === e.event) layer.confirm("确定删除此支付渠道？",
+                    if ("del" === e.event) layer.confirm("确定删除此银行？",
                         function(d) {
                             t.ajax({
                                 url:'/pay/delBank?id='+ e.data.id,
@@ -328,9 +328,9 @@ layui.define(["table", "form"],
                         t(e.tr);
                         layer.open({
                             type: 2,
-                            title: "编辑渠道",
+                            title: "编辑银行",
                             content: "/pay/editBank?id=" + e.data.id,
-                            area: ["540px", "440px"],
+                            area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {
                                 var r = window["layui-layer-iframe" + e],

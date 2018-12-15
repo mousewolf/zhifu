@@ -28,7 +28,8 @@ Route::domain('api', function(){
     /**
      * Notify
      */
-    Route::post('notify/:channel','api/Notify/handle');//官方异步通知
+    Route::post('notify/:channel','api/Notify/notify');//官方异步通知
+    Route::get('callback/:channel','api/Notify/callback');//官方同步通知
     Route::post('notify/person/:channel','api/Notify/handle');//个人码异步通知
 
 });

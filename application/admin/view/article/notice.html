@@ -114,7 +114,6 @@
                 if(checkData.length === 0){
                     return layer.msg('请选择数据');
                 }
-                console.log();
                 layer.confirm('确定删除吗？', function(index) {
 
                     //执行 Ajax 后重载
@@ -128,7 +127,7 @@
                     ,title: '添加通知'
                     ,content: '/article/addNotice'
                     ,maxmin: true
-                    ,area: ['710px', '480px']
+                    ,area: ['80%','60%']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
                         var iframeWindow = window['layui-layer-iframe'+ index]
