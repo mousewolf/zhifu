@@ -115,8 +115,6 @@ class Api extends BaseLogic
         try{
             //加密KEY
             $data['key']    = data_md5_key($data['secretkey']);
-            //应该写入文件  文件名为key 内容为pem内容   【20181209  修改读取数据库  不再写入】
-            //$this->saveRsaPublickKey($data);
             //提交保存
             $this->modelApi->setInfo($data);
 
@@ -130,23 +128,5 @@ class Api extends BaseLogic
             Log::error($ex->getMessage());
             return [ 'code' => CodeEnum::ERROR , config('app_debug') ? $ex->getMessage() : '未知错误'];
         }
-    }
-
-
-    /**
-     * 保存上传的key
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $data
-     */
-    public function saveRsaPublickKey($data){
-        $pem = chunk_split($data['secretkey'],64,"\n");//转换为pem格式的公钥
-        $content = "-----BEGIN PUBLIC KEY-----".PHP_EOL
-            .$pem."-----END PUBLIC KEY-----".PHP_EOL;
-        //return [ CodeEnum::SUCCESS ,CRET_PATH.$data['key'],$content];
-        if (!is_dir(CRET_PATH . $data['key']))
-            mkdir(CRET_PATH . $data['key'], 0777);
-        file_put_contents(CRET_PATH  . "{$data['key']}/rsa_public_key.pem",$content);
     }
 }

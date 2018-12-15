@@ -26,7 +26,9 @@ class BuildCharge extends ApiSend
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $chargeRespose
+     *
      * @return mixed|void
+     * @throws \app\common\library\exception\ParameterException
      */
     public function doBuild($chargeRespose)
     {

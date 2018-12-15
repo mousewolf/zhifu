@@ -1,4 +1,4 @@
-Cmpay_2018v1.0.0_Beta(测试版本)
+Cmpay_v20181215(测试版本)
 ===============
 
 ### 项目介绍
@@ -50,11 +50,10 @@ project                             应用部署目录
 
 ## **在线演示**
 
-后台 ：https://crm.iredcap.cn  (nouser 123456) 
+后台 ：https://crm.pay.iredcap.cn  (nouser nouser) 
 
-前台 ：https://www.iredcap.cn (nouser@iredcap.cn 123456) 
+前台 ：https://www.pay.iredcap.cn (nouser@iredcap.cn nouser) 
 
-提　示：演示站点暂停访问
 
 ## **运营截图**
 
@@ -76,6 +75,8 @@ project                             应用部署目录
 
 版本 |日期 |描述
 ------- | ------- | -------
+V1.0.2 | 2018-12-15 | 更新SDK接入，修复部分BUG
+V1.0.1 | 2018-12-10 | 更新部分，修复BUG
 V1.0.0 |2018-11-12 |更换前端页面，完善部分功能，商户端开发进行中...
 V1.0.0 |2018-11-06 |修复部分Bug,完善后台权限管理，数据统计，其他
 V1.0.0 |2018-10-23 |最初版本

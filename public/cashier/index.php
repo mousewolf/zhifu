@@ -2,7 +2,7 @@
 
 require_once "pay.php";
 
-if(!isPost()) {
+if(isPost()) {
     $data = [
         "order_no" => date('Ydmhis') . time(),
         "body" => '测试',
@@ -12,7 +12,7 @@ if(!isPost()) {
 
     $pay = new Payment($config);
     $result = $pay->pay($data);  // ->pay(); ->callback();
-    var_dump($result);die;
+
     exit(json_encode($result));
 }
 

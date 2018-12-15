@@ -25,7 +25,9 @@ class BuildSign extends ApiSend
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $payload
+     *
      * @return mixed|void
+     * @throws \app\common\library\exception\ParameterException
      */
     public function doBuild($payload)
     {
@@ -33,7 +35,7 @@ class BuildSign extends ApiSend
             ."\n" . utf8_encode(self::get(HttpHeader::X_CA_TIMESTAMP))
             ."\n" . utf8_encode(json_encode(static::get('ApiResposeData')));
         //生成签名并记录本次签名上下文
-        self::set(HttpHeader::X_CA_SIGNATURE, self::sign($_to_sign_data));
+        self::set(HttpHeader::X_CA_SIGNATURE, self::sign(base64_encode($_to_sign_data)));
     }
 
 }

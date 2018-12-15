@@ -33,11 +33,10 @@ class RsaUtils
 
     /**
      * 构造函数
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param string 公钥文件（验签和加密时传入）
-     * @param string 私钥文件（签名和解密时传入）
+     * RsaUtils constructor.
+     * @param string $public_key_file
+     * @param string $private_key_file
+     * @throws \Exception
      */
     public function __construct($public_key_file = '', $private_key_file = '')
     {
@@ -175,10 +174,14 @@ class RsaUtils
      */
     private function _setPublicKey($file)
     {
-        $key_content = $this->_readFile($file);
-        if ($key_content) {
-            $this->pubKey = openssl_pkey_get_public($key_content);
+        if (is_file($file)){
+            $publicKeyString = $this->_readFile($file);
+        }else{
+            $publicKeyString = "-----BEGIN PUBLIC KEY-----".PHP_EOL
+                . chunk_split($file,64,"\n")
+                . "-----END PUBLIC KEY-----".PHP_EOL;
         }
+        $this->pubKey = openssl_pkey_get_public($publicKeyString);
     }
 
     /**
@@ -192,10 +195,16 @@ class RsaUtils
      */
     private function _setPrivateKey($file)
     {
-        $key_content = $this->_readFile($file);
-        if ($key_content) {
-            $this->priKey = openssl_pkey_get_private($key_content);
+
+        if (is_file($file)){
+            $privateKeyString = $this->_readFile($file);
+        }else{
+            $privateKeyString = "-----BEGIN RSA PRIVATE KEY-----".PHP_EOL
+                . chunk_split($file,64,"\n")
+                . "-----END RSA PRIVATE KEY-----".PHP_EOL;
+
         }
+        $this->priKey = openssl_pkey_get_private($privateKeyString);
 
     }
 

@@ -17,6 +17,8 @@ namespace app\api\service;
 use app\common\controller\BaseApi;
 use app\common\library\exception\ParameterException;
 use app\common\library\RsaUtils;
+use app\common\model\Api;
+use think\Db;
 
 class Rest extends BaseApi
 {
@@ -83,13 +85,15 @@ class Rest extends BaseApi
      *
      * @param $name
      * @param null $default
+     *
      * @return null
+     * @throws ParameterException
      */
     public static function get($name, $default = null)
     {
         if(!isset(self::$context[self::$conId]))
         {
-            throw new \RuntimeException('get context data failed, current context is not found');
+            throw new ParameterException(['msg'=>'get context data failed, current context is not found']);
         }
         if(isset(self::$context[self::$conId][$name]))
         {
@@ -108,12 +112,14 @@ class Rest extends BaseApi
      *
      * @param $name
      * @param $value
+     *
+     * @throws ParameterException
      */
     public static function set($name, $value)
     {
         if(!isset(self::$context[self::$conId]))
         {
-            throw new \RuntimeException('set context data failed, current context is not found');
+            throw new ParameterException(['msg'=>'set context data failed, current context is not found']);
         }
         self::$context[self::$conId][$name] = $value;
     }
@@ -123,13 +129,15 @@ class Rest extends BaseApi
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
+     *
      * @return mixed
+     * @throws ParameterException
      */
     public static function getContext()
     {
         if(!isset(self::$context[self::$conId]))
         {
-            throw new \RuntimeException('get context failed, current context is not found');
+            throw new ParameterException(['msg'=>'get context failed, current context is not found']);
         }
         return self::$context[self::$conId];
     }
@@ -239,8 +247,14 @@ class Rest extends BaseApi
         if (is_array($data)){
             $data = json_encode($data);
         }
+
         try{
-            $Rsa = new RsaUtils(CRET_PATH . $key . DS .'rsa_public_key.pem');
+            //读取用户数据公钥
+            $certificate = Db::table('cm_api')
+                ->where(['key'  => $key])
+                ->cache($key,'300')
+                ->value('secretkey');
+            $Rsa = new RsaUtils($certificate);
             return $Rsa->verify($data, $sign, $code = 'base64');
         }catch (\Exception $e){
             throw new ParameterException([

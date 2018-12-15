@@ -40,9 +40,8 @@ class Payment
         HttpRequest::setSecretKey($config['mch_key']);  // 设置 MCH KEY
         HttpRequest::setNotifyUrl($config['notify_url']); // 设置 NOTIFY URL
         HttpRequest::setReturnUrl($config['return_url']); // 设置 RETURN URL
-        HttpRequest::setPrivateKeyPath(CRET_PATH .'772ae1d32322f49508307b2f31a0107f/rsa_private_key.pem'); // 设置私钥
-        HttpRequest::setPublicKeyPath(CRET_PATH . '772ae1d32322f49508307b2f31a0107f/rsa_public_key.pem'); // 设置公钥
-        HttpRequest::setPayPublicKeyPath(CRET_PATH . 'rsa_public_key.pem'); // 设置平台公钥
+        HttpRequest::setPrivateKey($config['private_key']); // 设置商户数据私钥
+        HttpRequest::setPayPublicKey($config['public_key']); // 设置支付平台公钥
     }
 
     /**

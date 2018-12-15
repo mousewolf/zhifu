@@ -32,8 +32,9 @@ class CheckSign extends ApiCheck
      *
      * @param Request $request
      *
-     * @return mixed|Request
+     * @return mixed|void
      * @throws SignatureException
+     * @throws \app\common\library\exception\ParameterException
      */
     public function doCheck(Request $request)
     {
@@ -56,7 +57,7 @@ class CheckSign extends ApiCheck
             ."\n".utf8_encode(json_encode($request->post()));
 
         //商户提交支付数据验签
-        $verify_result = self::verify($_to_verify_data, $header['x-ca-signature'],self::get(HttpHeader::X_CA_AUTH));
+        $verify_result = self::verify(base64_encode($_to_verify_data), $header['x-ca-signature'],self::get(HttpHeader::X_CA_AUTH));
 
         if(empty($verify_result) || intval($verify_result) != 1){
             throw new SignatureException([
