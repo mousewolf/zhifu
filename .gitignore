@@ -2,5 +2,5 @@
 data/runtime
 thinkphp
 vendor
-composer.lock
+*.lock
 *.log
