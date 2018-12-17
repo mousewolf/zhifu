@@ -24,7 +24,7 @@ return [
         'username'    => 'service@iredcap.cn',
         'password'    => 'xzx595...',
         'address'     => 'service@iredcap.cn',
-        'name'        => '小红帽'
+        'name'        => '小红帽提醒'
     ],
 
     //极光
