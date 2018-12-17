@@ -7,7 +7,7 @@ if(isPost()) {
         "order_no" => date('Ydmhis') . time(),
         "body" => '测试',
         "sum" => '0.66',
-        "channel" => strtolower('alipay') //渠道  官方的official
+        "channel" => strtolower('pswxpay') //渠道  官方的official
     ];
 
     $pay = new Payment($config);

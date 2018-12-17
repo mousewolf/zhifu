@@ -54,7 +54,7 @@ class CheckSign extends ApiCheck
             ."\n".utf8_encode($_query_string)
             ."\n".utf8_encode($header['x-ca-noncestr'])
             ."\n".utf8_encode($header['x-ca-timestamp'])
-            ."\n".utf8_encode(json_encode($request->post()));
+            ."\n".utf8_encode($request->getContent());
 
         //商户提交支付数据验签
         $verify_result = self::verify(base64_encode($_to_verify_data), $header['x-ca-signature'],self::get(HttpHeader::X_CA_AUTH));

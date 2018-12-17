@@ -41,7 +41,7 @@ class Payment
         HttpRequest::setNotifyUrl($config['notify_url']); // 设置 NOTIFY URL
         HttpRequest::setReturnUrl($config['return_url']); // 设置 RETURN URL
         HttpRequest::setPrivateKey($config['private_key']); // 设置商户数据私钥
-        HttpRequest::setPayPublicKey($config['public_key']); // 设置支付平台公钥
+        HttpRequest::setPayPublicKey($config['cm_public_key']); // 设置支付平台公钥
     }
 
     /**

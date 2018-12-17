@@ -23,8 +23,8 @@ return [
     'url_domain_deploy'      => true,
     // 视图输出字符串内容替换
     'view_replace_str'       => [
-        '__STATIC__'    => 'static',
-        '__LAYER__'    => 'static/layer'
+        '__STATIC__'    => '/static',
+        '__LAYER__'    => '/static/layer'
     ],
 
     // 自定义跳转页面对应的模板文件

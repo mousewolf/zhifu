@@ -39,20 +39,20 @@ class ApiRequest extends Rest
     public static function check(){
         // 初始化一个：访问频次校验的check
         $checkFrequent    =  new CheckFrequent();
-        // 初始化一个：访问频次校验的check
+        // 初始化一个：访问IP校验的check
         $CheckAllowed    =  new CheckAllowed();
+        // 初始化一个：签名校验的check
+        $checkSign        =  new CheckSign();
         // 初始化一个：必传参数校验的check
         $checkArguments   =  new CheckArguments();
         // 初始化一个：令牌校验的check
         $checkAppkey      =  new CheckAppkey();
-        // 初始化一个：签名校验的check
-        $checkSign        =  new CheckSign();
 
         // 构成对象链
         $checkFrequent->setNext($CheckAllowed)
             ->setNext($checkArguments)
-            ->setNext($checkAppkey)
-            ->setNext($checkSign);
+            ->setNext($checkSign)
+            ->setNext($checkAppkey);
 
         // 启动网关
         $checkFrequent->start(Request::instance());
