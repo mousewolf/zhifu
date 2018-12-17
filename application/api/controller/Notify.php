@@ -29,9 +29,17 @@ class Notify extends BaseApi
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      */
-    public function person(){
+    public function person($channel = 'wxpay'){
 
+        $apiurl = $this->request->request("apiurl");
+        $sign = $this->request->request("sign");
 
+        //验证签名
+        if ($sign != md5(md5($apiurl))) {
+            $this->result("签名密钥不正确");
+        }
+        $this->result("配置成功");
+        echo $channel;
     }
 
     /**

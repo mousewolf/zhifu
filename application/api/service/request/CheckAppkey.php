@@ -51,7 +51,7 @@ class CheckAppkey extends ApiCheck
         $appCodeMap = (array)$this->logicPay->getAppCodeMap();
         if (empty(self::get('payload')['channel']) ?: !in_array(self::get('payload')['channel'],$appCodeMap)) {
             throw new ParameterException([
-                'msg'=>'Invalid Request.[ Pay Code Does Not Allowed.]',
+                'msg'=>'Invalid Request.[ Payment Code Does Not Allowed.]',
                 'errorCode'=> 400003
             ]);
         }

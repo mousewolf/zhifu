@@ -69,7 +69,7 @@ class CheckArguments extends ApiCheck
         // 创建上下文
         self::createContext();
         self::set(HttpHeader::X_CA_AUTH,$request->header('x-ca-auth'));
-        self::set('payload',$request->param());
+        self::set('payload', $request->param());
 
         // 获取所有参数
         $header = $request->header();
