@@ -47,7 +47,7 @@ Route::domain('www',function () {
     Route::get('protocol', 'index/Index/protocol'); //服务条款
     Route::get('help/:id', 'index/Index/help');
     Route::post('vercode','index/Index/sendVerCode'); //【测试】
-    Route::get('user/getOrderStat','index/User/getOrderStat');
+    Route::get('user/get_order_stat','index/User/getOrderStat');
     /**
      * 商户
      */
@@ -60,6 +60,7 @@ Route::domain('www',function () {
     Route::get('agent','index/Agent/index');
     Route::get('agent/order','index/Agent/order');
     Route::get('agent/profit','index/Agent/profit');
+    Route::rule('agent/add_user','index/Agent/addUser','GET|POST');
     /**
      * 资金
      */

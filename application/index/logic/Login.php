@@ -87,34 +87,40 @@ class Login extends Base
 
             return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateRegister->getError()];
         }
+
         //TODO 添加数据
         Db::startTrans();
         try{
-            //创建基本  是否修改
-            if (empty($data['password'])){
-                unset($data['password']);
-            }else{
-                $data['password'] = data_md5_key($data['password']);
-            }
+            //密码
+            $data['password'] = data_md5_key($data['password']);
+            //基本信息
             $user = $this->modelUser->setInfo($data);
-            //创建账号
+            //账户记录
             $this->modelUserAccount->setInfo(['uid'  => $user ]);
-            //创建账户
+            //资金记录
             $this->modelBalance->setInfo(['uid'  => $user ]);
-            //创建API
-            $this->modelApi->setInfo(['uid'  => $user]);
+            //生成API记录
+            $this->modelApi->setInfo([
+                'uid'  => $user,
+                'domain' =>  $data['siteurl'],
+                'sitename' =>  $data['sitename']
+            ]);
 
             //加入邮件队列
             $jobData = $this->logicUser->getUserInfo(['uid'=>$user],'uid,account,username');
+
             //邮件场景
             $jobData['scene']   = 'register';
             $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
 
+
+            action_log('新增', '新增商户。UID:'. $user);
             Db::commit();
             return ['code' => CodeEnum::SUCCESS, 'msg' => '注册成功'];
         }catch (\Exception $ex){
             Db::rollback();
-            return [ 'code' => CodeEnum::ERROR, 'msg' =>$ex->getMessage()];
+            return ['code' => CodeEnum::ERROR, 'msg' => config('app_debug') ? $ex->getMessage()
+                : '哎呀！注册发生异常了~'];
         }
     }
     /**

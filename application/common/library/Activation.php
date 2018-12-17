@@ -32,7 +32,7 @@ class Activation
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param object $user
-     * @return bool|string
+     * @return bool
      */
     public function sendActiveCode($user){
         //收件人邮箱
@@ -40,87 +40,15 @@ class Activation
         //发件人昵称
         $name       =   !empty($user->nickname)? $user->nickname:'Cmpay';
         //邮件标题
-        $subject    =   "注册验证";
-        //生成code
-        $activecode = urlencode($this->createActiveCode($user));
-        //激活地址
-        $activeUrl = "http://www.caomao.com/active/{$activecode}";
+        $subject    =   "【聚合支付】用户注册 - 注册邮箱验证";
+
+        $content = self::getRegActiveContent($user);
         //邮件主体  也可以使用邮件模板文件
-        $content = "
-        <div style=\"margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;\">
-            <div style=\"width: 750px; margin: 0 auto; background-color: #fff;\">
-                <div style=\"padding: 20px 10%; text-align: center; font-size: 16px;line-height: 16px;\">
-                    <a href=\"https://www.caomao.com\" style=\"vertical-align: top;\" target=\"_blank\" rel=\"noopener\"> 
-                    <img style=\"margin:32px auto; max-width: 95%; color: #0e2026;\" src=\"https://pay.iredcap.cn/static/logo-color.png\">
-                     </a>
-                </div>
-                <table width=\"600\" style=\"background-color:#fff;margin:0 auto;\" cellpadding=\"0\" cellspacing=\"0\">
-                    <tbody><tr>
-                        <td>
-                            <table width=\"600\" style=\"background-color:#fff;margin:0 auto;\" cellpadding=\"0\" cellspacing=\"0\">
-                                <tbody>
-                                <tr>
-                                    <td colspan=\"3\" style=\"height:40px;\">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td width=\"40\">&nbsp;</td>
-                                    <td width=\"520\" style=\"line-height:20px;\">
-                                        <p style=\"text-align:center;margin:0;padding:0;\">
-                                            
-                                            <span style=\"font-size:24px;line-height:32px;color:#35B34A;\">注册申请成功！</span>
-                                        </p>
-                                        <p style=\"color:#7d7d7d;margin:10px 0px 24px 0px;font-size:14px;line-height:22px;padding:0 40px;text-align:center\">欢迎{$name}加入,在开始使用之前，请确认你的邮箱账号
-                                        </p>
-                                      
-                                        <p style=\"margin:0;padding:0;\">&nbsp;</p>
-                                        <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"height:44px; width:200px\">
-                                            <tbody>
-                                            <tr>
-                                                <td style=\"background-color:#00c1de; height:44px; line-height:44px;text-align:center; width:200px\">
-                                                    <a href=\"{$activeUrl}\" style=\"display:block;text-decoration: none;color: #ffffff;font-size:16px;\" target=\"_blank\" rel=\"noopener\">激活账户
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td width=\"40\">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td colspan=\"3\" style=\"height:40px;\">
-                                        <div style=\"width: 500px; max-width: 90%;margin: 10px auto; font-size: 14px;\">
-                                            <div style=\"color:#7d7d7d;margin: 8px 0;\">
-                                                如果按钮无效，请将以下链接复制到浏览器地址栏完成激活。
-                                            </div>
-                                            <div>
-                                                <a href=\"{$activeUrl}\" style=\"color: #35c8e6; word-break: break-all\" target=\"_blank\" rel=\"noopener\">{$activeUrl}</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
-                <div style=\"padding-bottom: 40px;font-size: 14px;\">
-                    <div style=\"padding-bottom: 40px;font-size: 14px;\">
-                        <div style=\"width: 430px; max-width: 90%;margin: 10px auto;\">
-                            彻底告别繁琐的支付接入流程 一次接入所有主流支付渠道，99% 系统可用性，满足你丰富的交易场景需求,为你的用户提供完美支付体验。
-                        </div>
-                        <div>
-                            <span style=\"color: #76858c;\">服务咨询请联系：</span>
-                            <a href=\"mailto:me@iredcap.cn\" style=\"color:#35c8e6; text-decoration: none;\" target=\"_blank\" rel=\"noopener\"> me@iredcap.cn </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>";
+
         //发送激活邮件
         try{
             Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
-            return $activecode;
+            return true;
         }catch (\Exception $exception){
             Log::error("Active Code Error:".$exception->getMessage());
             return false;
@@ -142,7 +70,7 @@ class Activation
         //发件人昵称
         $name       =   !empty($user->nickname)? $user->nickname:'Cmpay';
         //邮件标题
-        $subject    =   "注册成功";
+        $subject    =   "【聚合支付】用户注册 - 注册成功通知";
         //邮件主体  也可以使用邮件模板文件
         $content = self::getRegCallbackContent($user);
         //发送激活邮件
@@ -199,6 +127,93 @@ class Activation
         }
     }
 
+    /**
+     * 注册邮件发送
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $user
+     *
+     * @return string
+     */
+    private function getRegActiveContent($user){
+
+        //生成code
+        $activecode = urlencode($this->createActiveCode($user));
+        //激活地址
+        $activeUrl = "http://www.caomao.com/active/{$activecode}";
+
+        return "<div style=\"margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;\">
+            <div style=\"width: 750px; margin: 0 auto; background-color: #fff;\">
+                <div style=\"padding: 20px 10%; text-align: center; font-size: 16px;line-height: 16px;\">
+                    <a href=\"https://www.caomao.com\" style=\"vertical-align: top;\" target=\"_blank\" rel=\"noopener\"> 
+                    <img style=\"margin:32px auto; max-width: 95%; color: #0e2026;\" src=\"https://pay.iredcap.cn/static/logo-color.png\">
+                     </a>
+                </div>
+                <table width=\"600\" style=\"background-color:#fff;margin:0 auto;\" cellpadding=\"0\" cellspacing=\"0\">
+                    <tbody><tr>
+                        <td>
+                            <table width=\"600\" style=\"background-color:#fff;margin:0 auto;\" cellpadding=\"0\" cellspacing=\"0\">
+                                <tbody>
+                                <tr>
+                                    <td colspan=\"3\" style=\"height:40px;\">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td width=\"40\">&nbsp;</td>
+                                    <td width=\"520\" style=\"line-height:20px;\">
+                                        <p style=\"text-align:center;margin:0;padding:0;\">
+                                            
+                                            <span style=\"font-size:24px;line-height:32px;color:#35B34A;\">注册申请成功！</span>
+                                        </p>
+                                        <p style=\"color:#7d7d7d;margin:10px 0px 24px 0px;font-size:14px;line-height:22px;padding:0 40px;text-align:center\">欢迎{$user->name}加入,在开始使用之前，请确认你的邮箱账号
+                                        </p>
+                                      
+                                        <p style=\"margin:0;padding:0;\">&nbsp;</p>
+                                        <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"height:44px; width:200px\">
+                                            <tbody>
+                                            <tr>
+                                                <td style=\"background-color:#00c1de; height:44px; line-height:44px;text-align:center; width:200px\">
+                                                    <a href=\"{$activeUrl}\" style=\"display:block;text-decoration: none;color: #ffffff;font-size:16px;\" target=\"_blank\" rel=\"noopener\">激活账户
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td width=\"40\">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan=\"3\" style=\"height:40px;\">
+                                        <div style=\"width: 500px; max-width: 90%;margin: 10px auto; font-size: 14px;\">
+                                            <div style=\"color:#7d7d7d;margin: 8px 0;\">
+                                                如果按钮无效，请将以下链接复制到浏览器地址栏完成激活。
+                                            </div>
+                                            <div>
+                                                <a href=\"{$activeUrl}\" style=\"color: #35c8e6; word-break: break-all\" target=\"_blank\" rel=\"noopener\">{$activeUrl}</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+                <div style=\"padding-bottom: 40px;font-size: 14px;\">
+                    <div style=\"padding-bottom: 40px;font-size: 14px;\">
+                        <div style=\"width: 430px; max-width: 90%;margin: 10px auto;\">
+                            彻底告别繁琐的支付接入流程 一次接入所有主流支付渠道，99% 系统可用性，满足你丰富的交易场景需求,为你的用户提供完美支付体验。
+                        </div>
+                        <div>
+                            <span style=\"color: #76858c;\">服务咨询请联系：</span>
+                            <a href=\"mailto:me@iredcap.cn\" style=\"color:#35c8e6; text-decoration: none;\" target=\"_blank\" rel=\"noopener\"> me@iredcap.cn </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>";
+    }
     /**
      * 注册成功内容
      *

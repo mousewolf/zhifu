@@ -376,7 +376,7 @@ $(function() {
   //商户首页订单统计图
 
   var orders = [], fees = [];
-  $.get('user/getOrderStat').done(function(res) {
+  $.get('user/get_order_stat').done(function(res) {
       if (res.code == 1) {
           for (var i = 1; i <= 12; i++) {
               orders.push(res.data.orders[i]);
