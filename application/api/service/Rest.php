@@ -221,14 +221,16 @@ class Rest extends BaseApi
         if (is_array($to_sign_data)){
             $to_sign_data = json_encode($to_sign_data);
         }
-        try{
-            $Rsa = new RsaUtils('', CRET_PATH . 'rsa1_private_key.pem');
-            return $Rsa->sign($to_sign_data);
-        }catch (\Exception $e){
-            throw new ParameterException([
-                'msg'   => 'Sign Build Failure.[ Platform Sign Key File Not Exists.]'
-            ]);
+        //生成签名
+        $rsaUtils = new RsaUtils('', CRET_PATH . 'rsa_private_key.pem');
+        $sign =  $rsaUtils->sign($to_sign_data);
+        if($sign && !empty($sign)){
+            //返回
+            return $sign;
         }
+        throw new ParameterException([
+            'msg'   => 'Sign Build Failure.[ Platform Sign Key File Not Exists.]'
+        ]);
     }
 
     /**
@@ -248,18 +250,17 @@ class Rest extends BaseApi
             $data = json_encode($data);
         }
 
-        try{
-            //读取用户数据公钥
-            $certificate = Db::table('cm_api')
-                ->where(['key'  => $key])
-                ->cache($key,'300')
-                ->value('secretkey');
-            $Rsa = new RsaUtils($certificate);
-            return $Rsa->verify($data, $sign, $code = 'base64');
-        }catch (\Exception $e){
+        //读取用户数据公钥
+        $certificate = Db::table('cm_api')->where(['key'  => $key])
+            ->cache($key,'300')->value('secretkey');
+        //验签
+        $rsaUtils = new RsaUtils($certificate);
+        $result = $rsaUtils->verify($data, $sign, $code = 'base64');
+        if (!$result){
             throw new ParameterException([
                 'msg'   => 'Sign Verify Failure.[ Platform Sign Key File Not Exists.]'
             ]);
         }
+        return true;
     }
 }

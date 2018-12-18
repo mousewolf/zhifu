@@ -19,7 +19,7 @@ layui.define(["table", "form"],
             n = layui.form;
         i.render({
             elem: "#app-user-manage",
-            url: "/user/getList",
+            url: "getList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -123,7 +123,7 @@ layui.define(["table", "form"],
                                     layer.confirm("真的删除此商户吗？",
                                     function(d) {
                                         t.ajax({
-                                            url:'/user/del?uid='+ e.data.uid,
+                                            url: 'del?uid='+ e.data.uid,
                                             method:'POST',
                                             success:function (res) {
                                                 if (res.code == 1){
@@ -140,7 +140,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "商户分润配置",
-                            content: "/user/profit.html?id=" + e.data.uid,
+                            content: "profit.html?id=" + e.data.uid,
                             maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
@@ -151,7 +151,7 @@ layui.define(["table", "form"],
                                 l.layui.form.on("submit(" + r + ")",
                                     function(t) {
                                         var l = t.field;
-                                        layui.$.post("/user/profit",l,function (res) {
+                                        layui.$.post("profit",l,function (res) {
                                             if (res.code == 1){
                                                 i.render(),
                                                     layer.close(f)
@@ -168,7 +168,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑用户",
-                            content: "/user/edit.html?id=" + e.data.uid,
+                            content: "edit.html?id=" + e.data.uid,
                             maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
@@ -179,7 +179,7 @@ layui.define(["table", "form"],
                                 l.layui.form.on("submit(" + r + ")",
                                     function(t) {
                                         var l = t.field;
-                                        layui.$.post("/user/edit",l,function (res) {
+                                        layui.$.post("edit",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 e.update({
@@ -202,7 +202,7 @@ layui.define(["table", "form"],
                 }),
         i.render({
             elem: "#app-user-auth-manage",
-            url: "/user/getAuthList",
+            url: "getAuthList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -292,7 +292,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "审核用户认证信息",
-                            content: "/user/userAuthInfo.html?id=" + e.data.uid,
+                            content: "userAuthInfo.html?id=" + e.data.uid,
                             maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
@@ -304,7 +304,7 @@ layui.define(["table", "form"],
                                     function(t) {
                                         var l = t.field;
                                         console.log(l)
-                                        layui.$.post("/user/userAuthInfo",l,function (res) {
+                                        layui.$.post("userAuthInfo",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 e.update({

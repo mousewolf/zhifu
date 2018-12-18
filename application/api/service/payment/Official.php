@@ -3,28 +3,21 @@
 
 namespace app\api\service\payment;
 
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\Item;
-use PayPal\Api\ItemList;
-use PayPal\Api\Payer;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction;
-use PayPal\Api\ShippingAddress;
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
-use PayPal\Auth\OAuthTokenCredential;
 
 use app\api\service\ApiPayment;
 use app\common\library\exception\OrderException;
 use think\Log;
 
+/**
+ * 【最好也是分开处理】
+ * Class Official
+ * @package app\api\service\payment
+ */
 class Official extends ApiPayment
 {
 
     /**
-     * 微信支付
+     * 微信扫码支付
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -34,41 +27,87 @@ class Official extends ApiPayment
      * @return array
      * @throws OrderException
      */
-    public function wxpay($order, $notify = false){
-
+    public function wx_native($order, $notify = false){
+        //异步回调
         if ($notify){
             return $this->verifyWxOrderNotify();
         }
-        $unified = array(
-            'appid' => $this->config['app_id'],
-            'attach' => 'cmpay',             //商家数据包，原样返回，如果填写中文，请注意转换为utf-8
-            'body' => $order['subject'],
-            'mch_id' =>  $this->config['mch_id'],
-            'nonce_str' => self::createNonceStr(),
-            'notify_url' => $this->config['notify_url'],
-            'out_trade_no' => $order['trade_no'],
-            'spbill_create_ip' => request()->ip(),
-            'total_fee' => intval(bcmul(100, $order['amount'])),       //单位 转为分
-            'trade_type' => 'NATIVE',
-        );
-
-        $unified['sign'] = self::getWxpaySign($unified, $this->config['key']);
-
-        $responseXml = self::curlPost('https://api.mch.weixin.qq.com/pay/unifiedorder', self::arrayToXml($unified));
-
-        $result = self::xmlToArray($responseXml);
-
-        if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
-            Log::error('Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['err_code_des'] ?? ''));
-            throw new OrderException([
-                'msg'   => 'Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['err_code_des'] ?? ''),
-                'errCode'   => 200009
-            ]);
-        }
+        //获取预下单
+        $unifiedOrder = self::getWxpayUnifiedOrder($order);
+        //数据返回
         return [
-            'prepay_id' => $result['prepay_id'],
-            'order_qr' => $result['code_url']
+            'prepay_id' => $unifiedOrder['prepay_id'],
+            'order_qr' => $unifiedOrder['code_url']
         ];
+    }
+
+    /**
+     * 微信公众号支付
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     * @param bool $notify
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function wx_jsapi($order, $notify = false){
+        //异步回调
+        if ($notify){
+            return $this->verifyWxOrderNotify();
+        }
+        //获取预下单
+        $unifiedOrder = self::getWxpayUnifiedOrder($order, 'JSAPI');
+        //构建微信支付
+        $jsBizPackage = array(
+            "appId" => $this->config['app_id'],
+            "timeStamp" => (string)time(),        //这里是字符串的时间戳
+            "nonceStr" => self::createNonceStr(),
+            "package" => "prepay_id=" . $unifiedOrder->prepay_id,
+            "signType" => 'MD5',
+        );
+        $jsBizPackage['paySign'] = self::getWxpaySign($jsBizPackage, $this->config['key']);
+
+        //数据返回
+        return $jsBizPackage;
+    }
+
+    /**
+     * 微信APP支付
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     * @param bool $notify
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function wx_app($order, $notify = false){
+        //异步回调
+        if ($notify){
+            return $this->verifyWxOrderNotify();
+        }
+        //获取预下单
+        $unifiedOrder = self::getWxpayUnifiedOrder($order, 'JSAPI');
+        //构建微信支付
+        $jsBizPackage = array(
+            "appid" => $this->config['app_id'],  //应用号
+            "partnerid" => $this->config['mch_id'], //商户号
+            "prepayid" => $unifiedOrder->prepay_id,
+            "package" => "Sign=WXPay",
+            "timeStamp" => (string)time(),        //这里是字符串的时间戳
+            "nonceStr" => self::createNonceStr()
+        );
+        $jsBizPackage['sign'] = self::getWxpaySign($jsBizPackage, $this->config['key']);
+
+        //数据返回
+        return $jsBizPackage;
+    }
+
+    public function wx_mini(){
+
     }
 
     /**
@@ -174,78 +213,51 @@ class Official extends ApiPayment
             'order_qr' => $result['qr_code']
         ];
     }
+    
+    /******************微信***********************************/
 
 
     /**
-     *
+     * 微信预下单
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
+     * @param string $trade_type
      *
-     * @return array
+     * @return mixed
      * @throws OrderException
      */
-    public function paypal($order, $notify = false){
-        // 下面为申请app获得的clientId和clientSecret，必填项，否则无法生成token。
-        $clientId = 'AeQoPWrmDu_FqEn-v49hPkakimNj6Q5LlPIk6DqoNbwS10ZSoRaK42Dv9BC6UTVQ6mIpyz3zBs4XmIbu';
-        $clientSecret = 'EHLGtJUY_vpWbOBR2ZKM5ck3smCiD7LGYetb01k2kemFbLyxlz7n0hnh-2w_eONoq4DcnfyalzqUPU8d';
-        $apiContext = new ApiContext(
-            new OAuthTokenCredential(
-                $this->config['client_id'] ,
-                $this->config['client_secret']
-            )
+    private function getWxpayUnifiedOrder($order, $trade_type = 'NATIVE'){
+        $unified = array(
+            'appid' => $this->config['app_id'],
+            'attach' => 'cmpay',             //商家数据包，原样返回，如果填写中文，请注意转换为utf-8
+            'body' => $order['subject'],
+            'mch_id' =>  $this->config['mch_id'],
+            'nonce_str' => self::createNonceStr(),
+            'notify_url' => $this->config['notify_url'],
+            'out_trade_no' => $order['trade_no'],
+            'spbill_create_ip' => request()->ip(),
+            'total_fee' => intval(bcmul(100, $order['amount'])),       //单位 转为分
+            'trade_type' => $trade_type,
         );
-        // Create new payer and method
-        $payer = new Payer();
-        $payer->setPaymentMethod("paypal");
 
-        // Set redirect URLs
-        $redirectUrls = new RedirectUrls();
-        $redirectUrls->setReturnUrl($this->config['return_url'] . '?success=true')
-            ->setCancelUrl($this->config['cancel_url'] . '?success=false');
+        $unified['sign'] = self::getWxpaySign($unified, $this->config['key']);
 
-        // Set payment amount
-        $amount = new Amount();
-        $amount->setCurrency('USD')
-            ->setTotal($order['amount']);
+        $responseXml = self::curlPost('https://api.mch.weixin.qq.com/pay/unifiedorder', self::arrayToXml($unified));
 
-        // Set transaction object
-        $transaction = new Transaction();
-        $transaction->setAmount($amount)
-            ->setDescription($order['subject'])
-            ->setInvoiceNumber($order['trade_no']);
-
-        // Create the full payment object
-        $payment = new Payment();
-        $payment->setIntent('sale')
-            ->setPayer($payer)
-            ->setRedirectUrls($redirectUrls)
-            ->setTransactions(array($transaction));
-
-        // Create payment with valid API context
-        try {
-            $payment->create($apiContext);
-
-            // Get PayPal redirect URL and redirect the customer
-            $approvalUrl = $payment->getApprovalLink();
-
-            // Redirect the customer to $approvalUrl
-        } catch (PayPalConnectionException $ex) {
-            Log::error('Create Paypal API Error:'. $ex->getCode().' : '.$ex->getMessage());
+        $result = self::xmlToArray($responseXml);
+        //判断成功
+        if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
+            Log::error('Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['err_code_des'] ?? ''));
             throw new OrderException([
-                'msg'   => 'Create Paypal API Error:'. $ex->getCode().' : '.$ex->getMessage(),
+                'msg'   => 'Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['err_code_des'] ?? ''),
                 'errCode'   => 200009
             ]);
         }
-
-        return [
-            'order_qr' => $approvalUrl
-        ];
+        //数据返回
+        return $result;
     }
-    
-    /******************微信***********************************/
 
     /**
      * 回调验签

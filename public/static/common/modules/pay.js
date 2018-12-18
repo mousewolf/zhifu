@@ -19,7 +19,7 @@ layui.define(["table", "form"],
         //方式
         i.render({
             elem: "#app-pay-code-list",
-            url: "/pay/getCodeList",
+            url: "getCodeList",
             //自定义响应字段
             response: {
                 statusCode: 1 //数据状态一切正常的状态码
@@ -67,7 +67,7 @@ layui.define(["table", "form"],
                     if ("del" === e.event) layer.confirm("确定删除此支付方式？",
                         function(d) {
                             t.ajax({
-                                url:'/pay/delCode?id='+ e.data.id,
+                                url: 'delCode?id='+ e.data.id,
                                 method:'POST',
                                 success:function (res) {
                                     if (res.code == 1){
@@ -83,7 +83,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑支付方式",
-                            content: "/pay/editCode.html?id="+ d.id,
+                            content: "editCode.html?id="+ d.id,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(d, f) {
@@ -94,7 +94,7 @@ layui.define(["table", "form"],
                                     function(r) {
                                         var l = r.field;
                                         //提交修改
-                                        t.post("/pay/editCode",l,function (res) {
+                                        t.post("editCode",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 e.update({
@@ -119,7 +119,7 @@ layui.define(["table", "form"],
             //渠道
         i.render({
             elem: "#app-pay-channel-list",
-            url: '/pay/getChannelList',
+            url: 'getChannelList',
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -194,7 +194,7 @@ layui.define(["table", "form"],
                     if ("del" === e.event) layer.confirm("确定删除此支付渠道？",
                         function(d) {
                             t.ajax({
-                                url:'/pay/delChannel?id='+ e.data.id,
+                                url: 'delChannel?id='+ e.data.id,
                                 method:'POST',
                                 success:function (res) {
                                     if (res.code == 1){
@@ -210,7 +210,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑渠道",
-                            content: "/pay/editChannel?id=" + e.data.id,
+                            content: "editChannel?id=" + e.data.id,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {
@@ -221,7 +221,7 @@ layui.define(["table", "form"],
                                     function(r) {
                                         var l = r.field;
                                         //提交修改
-                                        t.post("/pay/editChannel",l,function (res) {
+                                        t.post("editChannel",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 s.update({
@@ -248,7 +248,7 @@ layui.define(["table", "form"],
             //银行
         i.render({
             elem: "#app-pay-bank-list",
-            url: '/pay/getBankList',
+            url: 'getBankList',
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -313,7 +313,7 @@ layui.define(["table", "form"],
                     if ("del" === e.event) layer.confirm("确定删除此银行？",
                         function(d) {
                             t.ajax({
-                                url:'/pay/delBank?id='+ e.data.id,
+                                url: 'delBank?id='+ e.data.id,
                                 method:'POST',
                                 success:function (res) {
                                     if (res.code == 1){
@@ -329,7 +329,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑银行",
-                            content: "/pay/editBank?id=" + e.data.id,
+                            content: "editBank?id=" + e.data.id,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {
@@ -340,7 +340,7 @@ layui.define(["table", "form"],
                                     function(r) {
                                         var l = r.field;
                                         //提交修改
-                                        t.post("/pay/editBank",l,function (res) {
+                                        t.post("editBank",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 s.update({

@@ -52,7 +52,7 @@ project                             应用部署目录
 
 后台 ：https://crm.pay.iredcap.cn  (nouser nouser) 
 
-前台 ：https://www.pay.iredcap.cn (nouser@iredcap.cn nouser) 
+前台 ：https://pay.iredcap.cn (nouser@iredcap.cn nouser) 
 
 
 ## **运营截图**
@@ -96,7 +96,7 @@ V1.0.0 |2018-10-23 |最初版本
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-QQ群: [939417065](//shang.qq.com/wpa/qunwpa?idkey=0227fdd4ca96fb4feb57aad9542824ab76189089eb4f4fa0f8e3bd96dbf504f6) ![加入QQ群](http://pub.idqqimg.com/wpa/images/group.png) (交流群 暗号：Caomao)
+QQ群: [939417065](//shang.qq.com/wpa/qunwpa?idkey=0227fdd4ca96fb4feb57aad9542824ab76189089eb4f4fa0f8e3bd96dbf504f6) ![加入QQ群](http://pub.idqqimg.com/wpa/images/group.png) (交流群 暗号：Cmpay)
 
 Email: me@iredcap.cn
 
@@ -128,3 +128,8 @@ All rights reserved。
 ## 若对您有帮助，支持下吧
 
 ![赞赏](https://sirhe.cn/wp-content/uploads/2018/06/打赏.jpg)
+
+称呼 | 方式 | 金额
+------- | ------- | -------
+*二云 | 支付宝收款码 |￥200.00
+*丽 | 支付宝收款码 |￥68.00

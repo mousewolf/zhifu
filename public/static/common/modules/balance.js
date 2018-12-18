@@ -18,7 +18,7 @@ layui.define(["table", "form"],
             n = layui.form;
         i.render({
             elem: "#app-balance-list",
-            url: "/balance/getList",
+            url: "getList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -89,13 +89,13 @@ layui.define(["table", "form"],
         }),
             i.on("tool(app-balance-list)",
                 function(e) {
-                console.log(e)
+                console.log(e);
                     if ("details" === e.event) {
                         t(e.tr);
                         layer.open({
                             type: 2,
                             title: "账户明细",
-                            content: "/balance/details.html?id=" + e.data.uid,
+                            content: "details.html?id=" + e.data.uid,
                             maxmin: !0,
                             area:  ['80%', '60%'],
                             yes: function(f, t) {},

@@ -18,7 +18,7 @@ layui.define(["table", "form", "element"],
         // 表格初始化
         i.render({
             elem: "#app-admin-log-list",
-            url: '/log/getList',
+            url: 'getList',
             //自定义响应字段
             response: {
                 statusCode: 1 //数据状态一切正常的状态码
@@ -91,7 +91,7 @@ layui.define(["table", "form", "element"],
                                 layer.confirm("真的删除么",
                                     function(t) {
                                         q.ajax({
-                                            url:'/log/logDel?id='+ e.data.id,
+                                            url: 'logDel?id='+ e.data.id,
                                             method:'POST',
                                             success:function (res) {
                                                 if (res.code == 1){

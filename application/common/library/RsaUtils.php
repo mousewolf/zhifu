@@ -34,17 +34,17 @@ class RsaUtils
     /**
      * 构造函数
      * RsaUtils constructor.
-     * @param string $public_key_file
-     * @param string $private_key_file
-     * @throws \Exception
+     * @param string $public_key
+     * @param string $private_key
+     * @throws
      */
-    public function __construct($public_key_file = '', $private_key_file = '')
+    public function __construct($public_key = '', $private_key = '')
     {
-        if (!empty($public_key_file)) {
-            $this->_setPublicKey($public_key_file);
+        if (!empty($public_key)) {
+            $this->_setPublicKey($public_key);
         }
-        if (!empty($private_key_file)) {
-            $this->_setPrivateKey($private_key_file);
+        if (!empty($private_key)) {
+            $this->_setPrivateKey($private_key);
         }
     }
 
@@ -139,12 +139,11 @@ class RsaUtils
      * @param $file
      *
      * @return bool|string
-     * @throws \Exception
      */
     private function _readFile($file)
     {
-        if (!file_exists($file)) {
-            throw new \Exception('File not exists');
+        if (!file_exists($file)){
+            die('file not exists');
         }
         return file_get_contents($file);
     }
@@ -170,7 +169,6 @@ class RsaUtils
      *
      * @param $file
      *
-     * @throws \Exception
      */
     private function _setPublicKey($file)
     {
@@ -191,7 +189,6 @@ class RsaUtils
      *
      * @param $file
      *
-     * @throws \Exception
      */
     private function _setPrivateKey($file)
     {

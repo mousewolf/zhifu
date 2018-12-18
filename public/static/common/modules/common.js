@@ -3,7 +3,7 @@ layui.define(function(e) {
     var i = (layui.$, layui.layer, layui.laytpl, layui.setter, layui.view, layui.admin);
     i.events.logout = function() {
         i.req({
-            url: "/login/logout",
+            url: "login/logout",
             type: "get",
             data: {},
             done: function(e) {

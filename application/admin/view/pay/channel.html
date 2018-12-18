@@ -102,7 +102,7 @@
                 layer.open({
                     type: 2
                     ,title: '添加渠道'
-                    ,content: '/pay/addChannel'
+                    ,content: 'addChannel'
                     ,maxmin: true
                     ,area: ['80%','60%']
                     ,btn: ['确定', '取消']
@@ -116,7 +116,7 @@
                             var l = data.field; //获取提交的字段
                             //提交 Ajax 成功后，静态更新表格中的数据
                             $.ajax({
-                                url:'/pay/addChannel',
+                                url:'addChannel',
                                 type:'post',
                                 data: l,
                                 success:function (res) {

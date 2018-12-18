@@ -17,7 +17,7 @@ layui.define(["table", "form"],
             n = layui.form;
         i.render({
             elem: "#app-article-list",
-            url: "/article/getList",
+            url: "getList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -88,7 +88,7 @@ layui.define(["table", "form"],
                 "del" === t.event ? layer.confirm("确定删除此文章？",
                     function(d) {
                         q.ajax({
-                            url:'/article/delArticle?id='+ e.id,
+                            url: 'delArticle?id='+ e.id,
                             method:'POST',
                             success:function (res) {
                                 if (res.code == 1){
@@ -101,7 +101,7 @@ layui.define(["table", "form"],
                     }) : "edit" === t.event && layer.open({
                     type: 2,
                     title: "编辑文章",
-                    content: "/article/edit.html?id=" + e.id,
+                    content: "edit.html?id=" + e.id,
                     maxmin: !0,
                     area: ['80%','60%'],
                     btn: ["确定", "取消"],
@@ -111,7 +111,7 @@ layui.define(["table", "form"],
                         l.layui.form.on("submit(app-article-form-edit)",
                             function(i) {
                                 var l = i.field;
-                                layui.$.post("/article/edit",l,function (res) {
+                                layui.$.post("edit",l,function (res) {
                                     if (res.code == 1){
                                         //更新数据表
                                         t.update({
@@ -132,7 +132,7 @@ layui.define(["table", "form"],
             });
         i.render({
             elem: "#app-notice-list",
-            url: "/article/getNoticeList",
+            url: "getNoticeList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -199,7 +199,7 @@ layui.define(["table", "form"],
                     "del" === t.event ? layer.confirm("确定删除此通知？",
                         function(d) {
                             q.ajax({
-                                url:'/article/delNotice?id='+ e.id,
+                                url: 'delNotice?id='+ e.id,
                                 method:'POST',
                                 success:function (res) {
                                     if (res.code == 1){
@@ -211,8 +211,8 @@ layui.define(["table", "form"],
                             });
                         }): "edit" === t.event && layer.open({
                         type: 2,
-                        title: "编辑文章",
-                        content: "/article/editNotice.html?id=" + e.id,
+                        title: "编辑通知",
+                        content: "editNotice.html?id=" + e.id,
                         maxmin: !0,
                         area: ['80%','60%'],
                         btn: ["确定", "取消"],
@@ -222,7 +222,7 @@ layui.define(["table", "form"],
                             l.layui.form.on("submit(app-notice-form-edit)",
                                 function(i) {
                                     var l = i.field;
-                                    layui.$.post("/article/editNotice",l,function (res) {
+                                    layui.$.post("editNotice",l,function (res) {
                                         if (res.code == 1){
                                             //更新数据表
                                             t.update({
