@@ -36,6 +36,8 @@ class BuildResponse extends ApiSend
         $return['result_msg'] = empty($chargeRespose) ? 'FAIL' : 'SUCCESS';
         $return['charge'] =  self::get('ApiResposeData');
 
+        Log::notice('Response Data :' . json_encode($return));
+
         //签名及数据返回
         $response = Response::create(json_encode($return))->header(self::get('header'));
         // 销毁请求上下文

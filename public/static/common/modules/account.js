@@ -20,7 +20,7 @@ layui.define(["table", "form"],
             n = layui.form;
         i.render({
             elem: "#app-user-account",
-            url: "/account/getList",
+            url: "getList",
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -114,7 +114,7 @@ layui.define(["table", "form"],
                             layer.close(i),
                                 layer.confirm("真的删除此账户？", function(d) {
                                         t.ajax({
-                                            url:'/account/del?id='+ e.data.id,
+                                            url: 'del?id='+ e.data.id,
                                             method:'POST',
                                             success:function (res) {
                                                 if (res.code == 1){
@@ -131,7 +131,7 @@ layui.define(["table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑账号",
-                            content: "/account/edit.html?id=" + e.data.id,
+                            content: "edit.html?id=" + e.data.id,
                             maxmin: !0,
                             area:  ['80%', '60%'],
                             btn: ["确定", "取消"],
@@ -142,7 +142,7 @@ layui.define(["table", "form"],
                                 l.layui.form.on("submit(" + r + ")",
                                     function(t) {
                                         var l = t.field;
-                                        layui.$.post("/account/edit",l,function (res) {
+                                        layui.$.post("edit",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 e.update({

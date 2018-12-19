@@ -17,7 +17,7 @@ layui.define(["table", "form", "element"],
             u = layui.util;
         i.render({
             elem: "#app-order-list",
-            url: '/orders/getList',
+            url: 'getList',
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称
@@ -38,17 +38,27 @@ layui.define(["table", "form", "element"],
                 {
                     field: "uid",
                     width: 100,
-                    title: "交易商户"
+                    title: "商户编号"
+                },
+                {
+                    field: "channel",
+                    width: 100,
+                    title: "交易方式"
+                },
+                {
+                    field: "puid",
+                    width: 100,
+                    title: "代理编号"
                 },
                 {
                     field: "trade_no",
                     width: 200,
-                    title: "支付单号"
+                    title: "平台订单号"
                 },
                 {
                     field: "out_trade_no",
                     width: 200,
-                    title: "订单号"
+                    title: "商户订单号"
                 },
                 {
                     field: "subject",
@@ -71,9 +81,24 @@ layui.define(["table", "form", "element"],
                     title: "交易金额"
                 },
                 {
-                    field: "channel",
+                    field: "amount",
                     width: 100,
-                    title: "交易方式"
+                    title: "实付金额"
+                },
+                {
+                    field: "amount",
+                    width: 100,
+                    title: "商户收入"
+                },
+                {
+                    field: "amount",
+                    width: 100,
+                    title: "代理收入"
+                },
+                {
+                    field: "amount",
+                    width: 100,
+                    title: "平台收入"
                 },
                 {
                     field: "create_time",
@@ -113,7 +138,7 @@ layui.define(["table", "form", "element"],
                         layer.open({
                             type: 2,
                             title: "交易详情",
-                            content: "/orders/details.html?id=" + e.data.id,
+                            content: "details.html?id=" + e.data.id,
                             area: ["650px", "850px"],
                             btn: ["确定", "取消"],
                             yes: function(e, t) {},

@@ -1,6 +1,6 @@
 .idea
 application/database.php
-data/runtime
-data/install.lock
+runtime
+install.lock
 composer.lock
 *.log

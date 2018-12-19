@@ -16,6 +16,7 @@
 namespace app\api\service\response;
 
 use app\common\library\HttpHeader;
+use think\Log;
 
 class BuildHeader extends ApiSend
 {
@@ -26,7 +27,9 @@ class BuildHeader extends ApiSend
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $chargeRespose
+     *
      * @return mixed|void
+     * @throws \app\common\library\exception\ParameterException
      */
     public function doBuild($chargeRespose)
     {
@@ -36,6 +39,7 @@ class BuildHeader extends ApiSend
             HttpHeader::X_CA_TIMESTAMP  =>  self::get(HttpHeader::X_CA_TIMESTAMP),
             HttpHeader::X_CA_SIGNATURE  =>  self::get(HttpHeader::X_CA_SIGNATURE)
         ];
+        Log::notice('Response Header :' . json_encode($header));
         //记录本次签名
         self::set('header',$header);
     }

@@ -19,7 +19,7 @@ layui.define(["treeGrid","table", "form"],
         i.render({
             id:'app-admin-menu-list'
             ,elem: '#app-admin-menu-list'
-            ,url:'/menu/getList'
+            ,url: 'getList'
             ,method:'get'//默认以post方式请求后台
             ,cellMinWidth: 100
             ,idField:'id'//必須字段
@@ -83,7 +83,7 @@ layui.define(["treeGrid","table", "form"],
                     if ("del" === e.event) layer.confirm("确定删除此菜单？",
                         function(d) {
                             t.ajax({
-                                url:'/menu/menuDel?id='+ e.data.id,
+                                url: 'menuDel?id='+ e.data.id,
                                 method:'POST',
                                 success:function (res) {
                                     if (res.code == 1){
@@ -99,7 +99,7 @@ layui.define(["treeGrid","table", "form"],
                         layer.open({
                             type: 2,
                             title: "新增菜单",
-                            content: "/menu/menuAdd.html?id="+ d.id,
+                            content: "menuAdd.html?id="+ d.id,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(f, t) {
@@ -110,7 +110,7 @@ layui.define(["treeGrid","table", "form"],
                                         function(t) {
                                             var l = t.field;
                                             console.log(l)
-                                            layui.$.post("/menu/menuAdd",l,function (res) {
+                                            layui.$.post("menuAdd",l,function (res) {
                                                 if (res.code == 1){
                                                     b.render('app-admin-menu-list'),
                                                         layer.close(f)
@@ -128,7 +128,7 @@ layui.define(["treeGrid","table", "form"],
                         layer.open({
                             type: 2,
                             title: "编辑菜单",
-                            content: "/menu/menuEdit.html?id="+ d.id+"&pid="+ d.pid,
+                            content: "menuEdit.html?id="+ d.id+"&pid="+ d.pid,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(f, t) {
@@ -138,7 +138,7 @@ layui.define(["treeGrid","table", "form"],
                                 l.layui.form.on("submit("+ r +")",
                                     function(t) {
                                         var l = t.field;
-                                        layui.$.post("/menu/menuEdit",l,function (res) {
+                                        layui.$.post("menuEdit",l,function (res) {
                                             if (res.code == 1){
                                                 //更新数据表
                                                 e.update({

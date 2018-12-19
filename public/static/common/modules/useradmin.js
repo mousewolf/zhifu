@@ -19,7 +19,7 @@ layui.define(["table", "form"],
 
         i.render({
             elem: "#app-admin-user-manage",
-            url: "/admin/userList",
+            url: "userList",
             //自定义响应字段
             response: {
                 statusCode: 1 //数据状态一切正常的状态码
@@ -76,7 +76,7 @@ layui.define(["table", "form"],
                                 function(d) {
                                     console.log(e),
                                         t.ajax({
-                                            url:'/admin/userDel?id='+ e.data.id,
+                                            url: 'userDel?id='+ e.data.id,
                                             method:'POST',
                                             success:function (res) {
                                                 if (res.code == 1){
@@ -93,7 +93,7 @@ layui.define(["table", "form"],
                     layer.open({
                         type: 2,
                         title: "管理授权",
-                        content: "/admin/userAuth.html?id="+ d.id,
+                        content: "userAuth.html?id="+ d.id,
                         area: ['80%','60%'],
                         btn: ["确定", "取消"],
                         yes: function(f, t) {
@@ -103,7 +103,7 @@ layui.define(["table", "form"],
                             l.layui.form.on("submit("+ r +")",
                                 function(t) {
                                     var l = t.field;
-                                    layui.$.post("/admin/userAuth",l,function (res) {
+                                    layui.$.post("userAuth",l,function (res) {
                                         if (res.code == 1){
                                             i.render(),
                                                 layer.close(f)
@@ -121,7 +121,7 @@ layui.define(["table", "form"],
                     layer.open({
                         type: 2,
                         title: "编辑管理员",
-                        content: "/admin/userEdit.html?id="+ d.id,
+                        content: "userEdit.html?id="+ d.id,
                         area: ['80%','60%'],
                         btn: ["确定", "取消"],
                         yes: function(f, t) {
@@ -131,7 +131,7 @@ layui.define(["table", "form"],
                             l.layui.form.on("submit(" + r + ")",
                                 function(d) {
                                     var l = d.field;
-                                    layui.$.post("/admin/userEdit",l,function (res) {
+                                    layui.$.post("userEdit",l,function (res) {
                                         if (res.code == 1){
                                             //更新数据表
                                             e.update({
@@ -153,7 +153,7 @@ layui.define(["table", "form"],
             }),
         i.render({
             elem: "#app-admin-user-role",
-            url: "/admin/groupList",
+            url: "groupList",
             //自定义响应字段
             response: {
                 statusCode: 1 //数据状态一切正常的状态码
@@ -193,7 +193,7 @@ layui.define(["table", "form"],
                 if ("del" === e.event) layer.confirm("确定删除此角色？",
                     function(d) {
                         t.ajax({
-                            url:'/admin/groupDel?id='+ e.data.id,
+                            url: 'groupDel?id='+ e.data.id,
                             method:'POST',
                             success:function (res) {
                                 if (res.code == 1){
@@ -209,7 +209,7 @@ layui.define(["table", "form"],
                     layer.open({
                         type: 2,
                         title: "角色授权",
-                        content: "/admin/menuAuth.html?id="+ d.id,
+                        content: "menuAuth.html?id="+ d.id,
                         area: ['80%','60%'],
                         btn: ["确定", "取消"],
                         yes: function(f, t) {
@@ -220,7 +220,7 @@ layui.define(["table", "form"],
                                 function(t) {
                                     var l = t.field;
                                     console.log(l)
-                                    layui.$.post("/admin/menuAuth",l,function (res) {
+                                    layui.$.post("menuAuth",l,function (res) {
                                         if (res.code == 1){
                                             i.render(),
                                                 layer.close(f)
@@ -238,7 +238,7 @@ layui.define(["table", "form"],
                     layer.open({
                         type: 2,
                         title: "编辑角色",
-                        content: "/admin/groupEdit.html?id="+ d.id,
+                        content: "groupEdit.html?id="+ d.id,
                         area: ['80%','60%'],
                         btn: ["确定", "取消"],
                         yes: function(f, t) {
@@ -248,7 +248,7 @@ layui.define(["table", "form"],
                             l.layui.form.on("submit("+ r +")",
                                 function(t) {
                                     var l = t.field;
-                                    layui.$.post("/admin/groupEdit",l,function (res) {
+                                    layui.$.post("groupEdit",l,function (res) {
                                         if (res.code == 1){
                                             //更新数据表
                                             e.update({

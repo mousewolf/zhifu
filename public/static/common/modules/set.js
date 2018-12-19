@@ -16,28 +16,28 @@ layui.define(["form", "upload"], function(t) {
         }
     }), n.on("submit(set_website)", function(t) {
         //这里是基本信息
-        i.post("/system/website",t.field,function (res) {
+        i.post("website",t.field,function (res) {
             return e.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500},function () {
                 window.location.reload()
             })
         });
     }), n.on("submit(set_system_email)", function(t) {
         //这里是基本信息
-        i.post("/system/email",t.field,function (res) {
+        i.post("email",t.field,function (res) {
             return e.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500},function () {
                 window.location.reload()
             })
         });
     }), n.on("submit(setmyinfo)", function(t) {
         //这里是基本信息
-        i.post("/system/profile",t.field,function (res) {
+        i.post("profile",t.field,function (res) {
             return e.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500},function () {
                 window.location.reload()
             })
         });
     }),n.on("submit(setmypass)", function(t) {
         //修改管理密码
-        i.post("/system/changePwd",t.field,function (res) {
+        i.post("changePwd",t.field,function (res) {
             return e.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500},function () {
                 window.location.reload()
             })

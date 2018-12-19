@@ -64,27 +64,30 @@ class DoPay extends BaseApi
         $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $configMap['id']);
 
         //获取支付渠道
-        list($payment,$action) = str2arr($order['channel'] . '.' .  $configMap['action'],'.');
+        list($action,$payment) = str2arr($order['channel'] . '.' .  $configMap['action'],'.');
 
         //配置载入
         $appConfig = !empty(config('pay.' . $payment))
             ? array_merge(config('pay.' . $payment), $configMap['param'])
             : $configMap['param'];
+        //支付分发
+        $result = ApiPayment::$payment($appConfig)->$action($order);
 
-        try {
-
-            //支付分发
-            $result = ApiPayment::$action($appConfig)->$payment($order);
-
-            return $result;
-
-        } catch (Exception $e) {
-            Log::error('Create Pay Order Fail:[' . $e->getMessage() . ']');
-            throw new OrderException([
-                'errorCode' => '200008',
-                'msg' => 'Create Pay Order Fail:[ Please wait for a moment to try.]'
-            ]);
-        }
+        return $result;
+//        try {
+//
+//            //支付分发
+//            $result = ApiPayment::$payment($appConfig)->$action($order);
+//
+//            return $result;
+//
+//        } catch (Exception $e) {
+//            Log::error('Create Pay Order Fail:[' . $e->getMessage() . ']');
+//            throw new OrderException([
+//                'errorCode' => '200008',
+//                'msg' => 'Create Pay Order Fail:[ Please wait for a moment to try.]'
+//            ]);
+//        }
     }
 
     /**

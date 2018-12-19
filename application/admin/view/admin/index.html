@@ -131,7 +131,7 @@
                 layer.open({
                     type: 2
                     ,title: '添加管理员'
-                    ,content: '/admin/userAdd.html'
+                    ,content: 'userAdd.html'
                     ,area: ['80%','60%']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
@@ -144,7 +144,7 @@
                                 var l = data.field; //获取提交的字段
                                 //提交 Ajax 成功后，静态更新表格中的数据
                                 $.ajax({
-                                    url:'/admin/userAdd',
+                                    url:'userAdd',
                                     method:'POST',
                                     data:l,
                                     success:function (res) {
