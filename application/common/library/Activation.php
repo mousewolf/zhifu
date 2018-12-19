@@ -13,8 +13,8 @@
  */
 
 namespace app\common\library;
+
 use think\Cache;
-use think\Env;
 use think\Log;
 
 /**
@@ -47,8 +47,7 @@ class Activation
 
         //发送激活邮件
         try{
-            Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
-            return true;
+            return Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
         }catch (\Exception $exception){
             Log::error("Active Code Error:".$exception->getMessage());
             return false;
@@ -75,7 +74,7 @@ class Activation
         $content = self::getRegCallbackContent($user);
         //发送激活邮件
         try{
-            Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
+           return Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
         }catch (\Exception $exception){
             Log::error("Active Code Error:".$exception->getMessage());
             return false;
@@ -100,7 +99,7 @@ class Activation
         //2.用code解密取到ActiveCode的数据
         //3.比对cache
         //4.完成激活
-        $encryptData = (new Aes($code))->encrypt(json_encode(obj2arr($userInfo))); //用户信息
+        $encryptData = (new CryptAes($code))->encrypt(json_encode(obj2arr($userInfo))); //用户信息
         //存入cache 2H内验证时间 2*60*60 7200秒
         Cache::set('avtive_code_'.$code,$encryptData,7200);
         return $code;
@@ -122,7 +121,7 @@ class Activation
         }else{
             //删除Cache
             //Cache::rm($build);
-            $user = (new Aes($code))->decrypt($activeCode);
+            $user = (new CryptAes($code))->decrypt($activeCode);
             return json_decode($user);
         }
     }

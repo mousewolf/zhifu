@@ -168,7 +168,7 @@
                 layer.open({
                     type: 2
                     ,title: '添加用户'
-                    ,content: '/admin/user/add'
+                    ,content: 'add'
                     ,maxmin: true
                     ,area: ['80%','60%']
                     ,btn: ['确定', '取消']
@@ -183,7 +183,7 @@
 
                             //提交 Ajax 成功后，静态更新表格中的数据
                             $.ajax({
-                                url:'/admin/user/add',
+                                url:'add',
                                 method:'POST',
                                 data:field,
                                 success:function (res) {

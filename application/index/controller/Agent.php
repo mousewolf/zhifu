@@ -97,7 +97,7 @@ class Agent extends Base
      */
     public function editUser(){
         if($this->request->isPost()){
-            if ($this->request->post('u/a')['puid'] == is_login()){
+            if ($this->request->post('i/a')['puid'] == is_login()){
                 $this->result($this->logicUser->editUser($this->request->post('i/a')));
             }else{
                 $this->result(0,'非法操作，请重试！');

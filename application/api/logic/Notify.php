@@ -69,19 +69,21 @@ class Notify extends BaseApi
     }
 
     /**
-     * 更新支付单状态
+     * 更新支付订单数据
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param $id
+     * @param $order_id
      * @param $success
      */
-    private function updateOrderStatus($id, $success)
+    private function updateOrderStatus($order_id, $success)
     {
+        //1.查找用户对应渠道费率
+
         $this->modelOrders->changeOrderStatusValue([
             'status'  => $success ? OrderStatusEnum::PAID : OrderStatusEnum::UNPAID
         ], [
-            'id'=>$id
+            'id'=>$order_id
         ]);
     }
 
@@ -91,15 +93,17 @@ class Notify extends BaseApi
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $uid
+     * @param $puid
      * @param $fee
      * @param $out_trade_no
+     *
      */
-    private function changeBalanceValue($uid, $fee,$out_trade_no)
+    private function changeBalanceValue($uid, $fee, $out_trade_no)
     {
+        //*******商户部分*********//
         //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
         $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，转移至待结算金额','disable',true);
         //支付成功  写入待结算金额
         $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，待支付金额转入','enable',false);
-
     }
 }
