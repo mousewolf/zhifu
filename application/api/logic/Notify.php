@@ -32,7 +32,7 @@ class Notify extends BaseApi
      * @return bool
      *
      */
-    public function notify($data){
+    public function handle($data){
         Db::startTrans();
         try{
             //获取支付订单号
@@ -81,18 +81,21 @@ class Notify extends BaseApi
         //1.查找用户对应渠道费率
         $profit = $this->logicUser->getUserProfitInfo(['uid' => $order->uid, 'cnl_id' => $order->cnl_id]);
         $channel = $this->logicPay->getChannelInfo(['id' => $order->cnl_id]);
+        if(empty($profit)) $profit = $channel;
         //2.数据计算
         //实付金额 - 扣除渠道费率后
         $income = bcmul($order->amount, bcsub(1 , $channel['rate'],3),  3);
-        $agent_in = 0;
+        $agent_in = "0.000";
+        //商户收入
+        $user_in = bcmul(bcmul($income, $profit['urate'], 3), $profit['urate'], 3);
         if ($order->puid != 0){
             //1.获取代理的费率
             $agent_profit = $this->logicUser->getUserProfitInfo(['uid' => $order->puid, 'cnl_id' => $order->cnl_id]);
             //2.代理收入
             $agent_in = bcsub($income, bcmul($income, $agent_profit['urate'], 3),3);
+            //3.商户收入
+            $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
         }
-        //商户收入
-        $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
         //平台收入
         $platform_in = bcsub(bcsub($income,$user_in,3), $agent_in,3);
         //3.数据存储

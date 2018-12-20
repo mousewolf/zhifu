@@ -87,6 +87,6 @@ class Login extends BaseAdmin
 
         \think\Cache::clear();
 
-        return [ 'code' => CodeEnum::SUCCESS, 'msg' =>  '清理成功'];
+        return [ 'code' => CodeEnum::ERROR, 'msg' =>  '清理成功'];
     }
 }
