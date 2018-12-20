@@ -27,7 +27,8 @@
         "jiguang/jsms": "^1.0",
         "qcloudsms/qcloudsms_php": "^0.1.4",
         "topthink/think-helper": "^1.0",
-        "paypal/rest-api-sdk-php": "^1.13"
+        "paypal/rest-api-sdk-php": "^1.13",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "autoload": {
         "psr-4": {
