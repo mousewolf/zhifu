@@ -45,7 +45,7 @@ class Login extends Base
         //密码判断
         if (!empty($user['password']) && data_md5_key($password) == $user['password']) {
             //激活判断
-            if ($user['is_verify'] == UserStatusEnum::DISABLE){
+            if ($user['status'] == UserStatusEnum::WAIT){
                 action_log('登录', '商户'. $username . '账号未激活');
                 return [ 'code' => CodeEnum::ERROR, 'msg' =>  '账号未激活,<span onclick="page(\'发送激活邮件\',\'/active/sendActive\',this,\'440px\',\'180px\')">点击发送激活邮件</span>'];
             }
@@ -119,6 +119,7 @@ class Login extends Base
             return ['code' => CodeEnum::SUCCESS, 'msg' => '注册成功'];
         }catch (\Exception $ex){
             Db::rollback();
+            Log::error($ex->getMessage());
             return ['code' => CodeEnum::ERROR, 'msg' => config('app_debug') ? $ex->getMessage()
                 : '哎呀！注册发生异常了~'];
         }
@@ -191,7 +192,7 @@ class Login extends Base
             return ['code' => CodeEnum::ERROR, 'msg' =>'商户不存在！'];
         } else {
             //是否已经激活
-            if(($user['status'] && $user['is_verify'] ) == UserStatusEnum::ENABLE){
+            if(($user['status'] == UserStatusEnum::ENABLE && $user['is_verify'] ) == UserStatusEnum::ENABLE){
                 return ['code' => CodeEnum::SUCCESS, 'msg'=>'商户已经激活过了 :-)'];
             }else{
                 ///生成随机安全码
@@ -208,8 +209,6 @@ class Login extends Base
                     ['uid'=>$Verification->uid],
                     [
                         'status' => UserStatusEnum::ENABLE,
-                        'is_verify' => UserStatusEnum::ENABLE,
-                        'is_verify_phone' => UserStatusEnum::ENABLE,
                         'auth_code' => data_md5($auth_code)
                     ]);
 

@@ -29,7 +29,7 @@ class Register extends Base
         'account'  => 'require|email',
         'password'  => 'require|length:6,12',
         'phone'     => 'require|number|length:11',
-        //'code'      => 'require|length:4,6|checkCode'
+        'code'      => 'require|length:4,6|checkCode'
     ];
 
     /**

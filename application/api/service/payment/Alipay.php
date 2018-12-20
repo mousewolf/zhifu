@@ -242,7 +242,7 @@ class Alipay extends ApiPayment
                 }
             }
         }
-        Log::notice('Alipay Sign Content :' . trim($stringToBeSigned, '&'));
+
         return trim($stringToBeSigned, '&');
     }
 

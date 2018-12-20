@@ -27,13 +27,7 @@ class Common extends Controller
     {
         parent::__construct($request);
 
-        $config_array = [];
-
-        foreach ($this->logicConfig->getConfigList() as $info) {
-
-            $config_array[$info['name']] = $info['value'];
-        }
-        $this->assign('site',$config_array);
+        $this->assign('site', config('site'));
     }
 
     /**
