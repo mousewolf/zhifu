@@ -155,7 +155,6 @@ class Alipay extends ApiPayment
      */
     protected function sign($data, $signType = "RSA") {
         $priKey = $this->config['private_key'];
-
         $res = "-----BEGIN RSA PRIVATE KEY-----\n" .
             wordwrap($priKey, 64, "\n", true) .
             "\n-----END RSA PRIVATE KEY-----";
