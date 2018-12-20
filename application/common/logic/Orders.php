@@ -91,7 +91,7 @@ class Orders extends BaseLogic
      */
     public function getOrdersAllStat($where = []){
         return [
-            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid")
+            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid,sum(user_in) as user,sum(agent_in) as agent,sum(platform_in) as platform")
         ];
     }
 

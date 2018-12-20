@@ -214,11 +214,51 @@ class User extends BaseAdmin
      */
     public function profit(){
         // post 是提交数据
-        $this->request->isPost() && $this->result($this->logicUser->saveUserProfit($this->request->post()));
-        //获取认证详细信息
-        $profit = $this->logicUser->getUserProfitList(['uid' =>$this->request->param('id')]);
+        if ($this->request->isPost()){
+            $data = $this->request->post('r/a');
+            foreach ($data as $key => $item) {
+                //查
+                $profit = $this->logicUser->getUserProfitInfo(['uid' => $item['uid'], 'cnl_id' => $item['cnl_id']]);
+                if ($profit) {
+                    $data_update[] = [
+                        'id' => $profit['id'],
+                        'uid' => $item['uid'],
+                        'cnl_id' => $item['cnl_id'],
+                        'urate' => $item['urate'],
+                        'grate' => $item['grate']
+                    ];
+                } else {
+                    $data_update[] = [
+                        'uid' => $item['uid'],
+                        'cnl_id' => $item['cnl_id'],
+                        'urate' => $item['urate'],
+                        'grate' => $item['grate']
+                    ];
+                }
 
-        $this->assign('list',$profit);
+            }
+            $this->result($this->logicUser->saveUserProfit($data_update));
+        };
+        //所有渠道列表
+        $channel = $this->logicPay->getChannelList([],true, 'create_time desc',false);
+
+        //获取商户分润详细信息
+        $userProfit = $this->logicUser->getUserProfitList(['uid' =>$this->request->param('id')]);
+        if ($userProfit) {
+            foreach ($userProfit as $item) {
+                $_tmpData[$item['cnl_id']] = $item;
+            }
+        }
+
+        //重组渠道列表
+        if ($channel) {
+            foreach ($channel as $key => $item) {
+                //dump($item);
+                $channel[$key]['urate']    = isset($_tmpData[$item['id']]['urate']) ? $_tmpData[$item['id']]['urate'] : $item['urate'];
+                $channel[$key]['grate'] = isset($_tmpData[$item['id']]['grate']) ? $_tmpData[$item['id']]['grate'] : $item['grate'];
+            }
+        }
+        $this->assign('list', $channel);;
 
         return $this->fetch();
     }

@@ -146,11 +146,12 @@ layui.define(["table", "form"],
                             btn: ["确定", "取消"],
                             yes: function(f, t) {
                                 var l = window["layui-layer-iframe" + f],
-                                    r = "app-user-manage-submit",
+                                    r = "app-user-profit-submit",
                                     n = t.find("iframe").contents().find("#" + r);
                                 l.layui.form.on("submit(" + r + ")",
                                     function(t) {
                                         var l = t.field;
+                                        console.log(l);
                                         layui.$.post("profit",l,function (res) {
                                             if (res.code == 1){
                                                 i.render(),

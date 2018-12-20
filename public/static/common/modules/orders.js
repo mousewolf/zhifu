@@ -78,27 +78,32 @@ layui.define(["table", "form", "element"],
                 {
                     field: "amount",
                     width: 100,
-                    title: "交易金额"
+                    title: "交易金额",
+                    style:"color:red"
                 },
                 {
-                    field: "amount",
+                    field: "income",
                     width: 100,
-                    title: "实付金额"
+                    title: "到账金额",
+                    style: "color:green"
                 },
                 {
-                    field: "amount",
+                    field: "user_in",
                     width: 100,
-                    title: "商户收入"
+                    title: "商户收入",
+                    style: "color:grey"
                 },
                 {
-                    field: "amount",
+                    field: "agent_in",
                     width: 100,
-                    title: "代理收入"
+                    title: "代理收入",
+                    style: "color:orange"
                 },
                 {
-                    field: "amount",
+                    field: "platform_in",
                     width: 100,
-                    title: "平台收入"
+                    title: "平台收入",
+                    style: "color:red"
                 },
                 {
                     field: "create_time",
@@ -139,7 +144,7 @@ layui.define(["table", "form", "element"],
                             type: 2,
                             title: "交易详情",
                             content: "details.html?id=" + e.data.id,
-                            area: ["650px", "850px"],
+                            area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, t) {},
                             success: function(e, t) {}

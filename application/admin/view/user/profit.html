@@ -11,41 +11,47 @@
 <body>
 
 
-<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
-    <input hidden disabled name="id" value="{$auth.id|default=''}">
-    <!--产品列表-->
-    <table class="layui-table" lay-even="" lay-skin="line">
-        <thead>
-            <tr>
-                <th>编号</th>
-                <th>渠道名称</th>
-                <th>渠道费率</th>
-                <th>默认分成</th>
-                <th>用户分成</th>
-            </tr>
-        </thead>
-        <tbody>
-            {volist name="list" id="vo"}
-            <tr>
-                <td>{$vo.id}</td>
-                <td>{$vo.name}</td>
-                <td>{$vo.rate}</td>
-                <td>
-                    <div class="layui-input-inline" style="width: 100px;">
-                        <input type="text" name="u[902][t0feilv]" placeholder="" autocomplete="off" class="layui-input" value="{$vo.uprice}">
-                    </div>
-                </td>
-                <td>
-                    <div class="layui-input-inline" style="width: 100px;">
-                        <input type="text" name="u[902][t0fengding]" placeholder="" autocomplete="off" class="layui-input" value="{$vo.gprice}">
-                    </div>
-                </td>
-            </tr>
-            {/volist}
-        </tbody>
-    </table>
-    <div class="layui-form-item layui-hide">
-        <input type="button" lay-submit lay-filter="app-user-auth-manage-submit" id="app-user-auth-manage-submit" value="确认">
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
+
+            <!--产品列表-->
+            <table class="layui-table" lay-even="" lay-skin="line">
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>渠道名称</th>
+                    <th>渠道费率</th>
+                    <th>默认分成</th>
+                    <th>用户分成</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="list" id="vo"}
+                <tr>
+                    <input type="text" name="r[{$vo.id}][uid]" hidden value="{$Request.get.id}">
+                    <input type="text" name="r[{$vo.id}][cnl_id]" hidden value="{$vo.id}">
+                    <td>{$vo.id}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.rate}</td>
+                    <td>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="r[{$vo.id}][grate]" disabled autocomplete="off" class="layui-input" value="{$vo.grate|default='0.998'}">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="r[{$vo.id}][urate]" placeholder="" autocomplete="off" class="layui-input" value="{$vo.urate|default='0.998'}">
+                        </div>
+                    </td>
+                </tr>
+                {/volist}
+                </tbody>
+            </table>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="app-user-profit-submit" id="app-user-profit-submit" value="确认">
+            </div>
+        </div>
     </div>
 </div>
 
