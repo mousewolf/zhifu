@@ -59,7 +59,7 @@ Route::get('agent$','index/Agent/index');
 Route::get('agent/order','index/Agent/orders');
 Route::rule('agent/add_user','index/Agent/addUser','GET|POST');
 Route::rule('agent/edit_user','index/Agent/editUser','GET|POST');
-Route::rule('agent/profit/:uid','index/Agent/profit','GET|POST');
+Route::rule('agent/profit','index/Agent/profit','GET|POST');
 /**
  * 资金
  */

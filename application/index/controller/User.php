@@ -196,4 +196,15 @@ class User extends Base
 
     }
 
+    /**
+     * 常见问题
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return mixed
+     */
+    public function faq(){
+        return $this->fetch();
+    }
 }

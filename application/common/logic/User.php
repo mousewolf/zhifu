@@ -121,20 +121,27 @@ class User extends BaseLogic
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param array $where
-     * @param string $field
-     * @param string $order
-     * @param int $paginate
+     * @param bool $field
      *
      * @return mixed
      */
-    public function getUserProfitList($where = [], $field = '*', $order = '', $paginate = 20){
-        $this->modelUserProfit->alias('a');
+    public function getUserProfitInfo($where = [], $field = true){
+        return $this->modelUserProfit->getInfo($where, $field);
+    }
 
-        $join = [
-            ['pay_channel b', 'a.cnl_id = b.id'],
-        ];
-
-        $this->modelUserProfit->join = $join;
+    /**
+     * 获取费率列表
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param string $field
+     * @param string $order
+     * @param bool $paginate
+     *
+     * @return mixed
+     */
+    public function getUserProfitList($where = [], $field = '*', $order = '', $paginate = false){
 
         return $this->modelUserProfit->getList($where, $field, $order, $paginate);
     }
@@ -273,6 +280,30 @@ class User extends BaseLogic
     }
 
 
+    /**
+     * 分润配置
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     *
+     * @return array
+     */
+    public function saveUserProfit($data){
+        //TODO 修改数据
+        Db::startTrans();
+        try{
+
+            $this->modelUserProfit->setList($data, true);  //强制覆盖
+
+            Db::commit();
+            return ['code' => CodeEnum::SUCCESS, 'msg' => '分润配置成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return ['code' => CodeEnum::ERROR, config('app_debug') ? $ex->getMessage() : '未知错误'];
+        }
+    }
     /**
      * 修改密码
      *

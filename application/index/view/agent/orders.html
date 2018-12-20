@@ -66,6 +66,7 @@
                                 <th>订单号</th>
                                 <th>产品</th>
                                 <th class="text-center">金额</th>
+                                <th class="text-center">收入</th>
                                 <th>支付渠道</th>
                                 <th class="text-center">创建时间</th>
                                 <th class="text-center">更新时间</th>
@@ -79,6 +80,7 @@
                                 <td>{$vo.trade_no}</td>
                                 <td title="{$vo.body}"> <p class="line-limit-length">{$vo.subject}</p></td>
                                 <td class="text-center text-danger">￥{$vo.amount}</td>
+                                <td class="text-center text-danger">￥{$vo.agent_in}</td>
                                 <td>{$vo.channel}</td>
                                 <td class="text-center">{$vo.create_time|date='Y/m/d H:i:s',###}</td>
                                 <td class="text-center">{$vo.update_time|date='Y/m/d H:i:s',###}</td>

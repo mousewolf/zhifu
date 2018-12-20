@@ -38,6 +38,8 @@ class Api extends Base
      * @return mixed
      */
     public function channel(){
+        $channel = $this->logicPay->getCodeList(['status' => '1'], true, 'create_time desc', 10);
+        $this->assign('list',$channel);
         return $this->fetch();
     }
 

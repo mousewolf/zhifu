@@ -39,9 +39,39 @@ class CheckAllowed extends ApiCheck
     {
         // 获取Ip Map
         $checkAllowedIpMap = (array)$this->logicApi->getallowedIpMap();
-
+        //客户端IP
+        $ip = $request->ip();
+        //ip参数拆分成数组
+        $check_ip_arr= explode('.',$ip);
+        $allowed = false;
+        if(!in_array($ip, $checkAllowedIpMap)) {
+            foreach ($checkAllowedIpMap as $val){
+                if(strpos($val,'*')!==false){
+                    //发现有*号替代符
+                    $arr = array();
+                    $arr = explode('.', $val);
+                    $allowed = true;
+                    //用于记录循环检测中是否有匹配成功的
+                    for ( $i=0; $i<4; $i++ ){
+                        if( $arr[$i] != '*' ){
+                            //不等于* 就要进来检测，如果为*符号替代符就不检查
+                            if( $arr[$i] != $check_ip_arr[$i] ){
+                                $allowed = false;
+                                break;
+                                //终止检查本个ip 继续检查下一个ip
+                            }
+                        }
+                    }
+                    //end for
+                    if( $allowed) {
+                        //如果是true则终止匹配
+                        break;
+                    }
+                }
+            }
+        }
         //存在性
-        if (!in_array($request->ip(), $checkAllowedIpMap)) {
+        if ( !$allowed ) {
             throw new ForbiddenException([
                 'msg'=>'Invalid Request.[ Request IP not authorized.]',
                 'errorCode'=> 400003

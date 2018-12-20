@@ -18,8 +18,11 @@ use app\api\service\ApiPayment;
 use app\common\library\exception\OrderException;
 use think\Log;
 
+header('Content-type:text/html; Charset=utf-8');
+
 class Alipay extends ApiPayment
 {
+    private $public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAix0lmphMY4htd8sw6kLMBGyju6p2y4pQtmiUpk7KxIV2NaUj0Zve2WJvPDptbKB0Lmn3EksPVG8VCrlh97shKjerm0gW314YN1DY/7RFPqxeeYNIFaMiGgf1ecMZUAOwO/v8NKn2nKH5hA0eMFxXNTtAXfSY/UBBnMFWOd765uQsXNn6r0PjhIpC2T9Hk+KfVm2eQ3QqY82/s0SaeebN/xjbkTsAc6yKGPCJxbe2vyE5coQ8iCj4pVvlFX6+SO+lEFvB56r8H+dQlDixPGgEGz+PZkUny7SZjFBZm5amH6XEl40ac9iWuuaW2C28FMoHX6XjJgu95aZMeVa5ZCrqmQIDAQAB";
     /**
      * 支付宝扫码支付
      *
@@ -72,7 +75,7 @@ class Alipay extends ApiPayment
             'app_id' => $this->config['app_id'],
             'method' => $trade_type,             //接口名称
             'format' => 'JSON',
-            'charset'=> 'utf8',
+            'charset'=> 'utf-8',
             'sign_type'=>'RSA2',
             'timestamp'=> date('Y-m-d H:i:s'),
             'version'=>'1.0',
@@ -108,8 +111,12 @@ class Alipay extends ApiPayment
      * @throws OrderException
      */
     public function verifyAliOrderNotify(){
+
         $response = convertUrlArray(file_get_contents('php://input')); //支付宝异步通知POST返回数据
-        $result = $this->verify($this->getSignContent($response), $response['sign'], $response['sign_type']);
+        //转码
+        $response = self::encoding($response,'utf-8', $response['charset'] ?? 'gb2312');
+        //验签
+        $result = $this->verify($this->getSignContent($response, true), $response['sign'], $response['sign_type']);
         if (!$result) {
             Log::error('Verify AliOrder Notify Error');
             throw new OrderException([
@@ -174,7 +181,7 @@ class Alipay extends ApiPayment
      * @return bool
      */
     protected function verify($data, $sign, $signType = 'RSA') {
-        $pubKey= $this->config['public_key'];
+        $pubKey= $this->public_key;
 
         $res = "-----BEGIN PUBLIC KEY-----\n" .
             wordwrap($pubKey, 64, "\n", true) .
@@ -209,48 +216,57 @@ class Alipay extends ApiPayment
     }
 
     /**
+     * 签名排序
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $params
+     * @param $verify
      *
      * @return string
      */
-    public function getSignContent($params) {
-        ksort($params);
-        $stringToBeSigned = "";
-        $i = 0;
-        foreach ($params as $k => $v) {
+    public function getSignContent($params, $verify =false) {
+
+        $data = self::encoding($params, $params['charset'] ?? 'gb2312', 'utf-8');
+
+        ksort($data);
+
+        $stringToBeSigned = '';
+
+        foreach ($data as $k => $v) {
             if (false === $this->checkEmpty($v) && "@" != substr($v, 0, 1)) {
-                // 转换成目标字符集
-                $v = $this->characet($v, 'utf8');
-                if ($i == 0) {
-                    $stringToBeSigned .= "$k" . "=" . "$v";
-                } else {
-                    $stringToBeSigned .= "&" . "$k" . "=" . "$v";
+                if ($verify && $k != 'sign' && $k != 'sign_type') {
+                    $stringToBeSigned .= $k . '=' . $v . '&';
                 }
-                $i++;
+                if (!$verify && $v !== '' && !is_null($v) && $k != 'sign' && '@' != substr($v, 0, 1)) {
+                    $stringToBeSigned .= $k . '=' . $v . '&';
+                }
             }
         }
-
-        return $stringToBeSigned;
+        Log::notice('Alipay Sign Content :' . trim($stringToBeSigned, '&'));
+        return trim($stringToBeSigned, '&');
     }
 
+
     /**
-     * 转换字符集编码
-     * @param $data
-     * @param $targetCharset
-     * @param $fileType = 'utf8'
-     * @return string
+     * 编码转换
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $array
+     * @param $to_encoding
+     * @param string $from_encoding
+     *
+     * @return array
      */
-    function characet($data, $targetCharset, $fileType = 'utf8') {
-        if (!empty($data)) {
-            if (strcasecmp($fileType, $targetCharset) != 0) {
-                $data = mb_convert_encoding($data, $targetCharset, $fileType);
-                //$data = iconv($fileType, $targetCharset.'//IGNORE', $data);
-            }
+    public static function encoding($array, $to_encoding, $from_encoding = 'gb2312')
+    {
+        $encoded = [];
+        foreach ($array as $key => $value) {
+            $encoded[$key] = is_array($value) ? self::encoding($value, $to_encoding, $from_encoding) :
+                mb_convert_encoding(urldecode($value), $to_encoding, $from_encoding);
         }
-        return $data;
+        return $encoded;
     }
 
 }

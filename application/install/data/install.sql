@@ -1,4 +1,3 @@
-
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -19,6 +18,9 @@ CREATE TABLE `cm_action_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='行为日志表';
 
+-- ----------------------------
+-- Records of cm_action_log
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for cm_admin
@@ -38,6 +40,10 @@ CREATE TABLE `cm_admin` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员信息';
+
+-- ----------------------------
+-- Records of cm_admin
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for cm_api
@@ -152,7 +158,6 @@ CREATE TABLE `cm_balance` (
 -- Records of cm_balance
 -- ----------------------------
 INSERT INTO `cm_balance` VALUES ('1', '100001', '0.000', '0.000', '0.000', '1', '1541787044', '1542617892');
-
 -- ----------------------------
 -- Table structure for cm_balance_cash
 -- ----------------------------
@@ -195,6 +200,10 @@ CREATE TABLE `cm_balance_change` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `change_index` (`id`,`uid`,`type`,`status`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户资产变动记录表';
+
+-- ----------------------------
+-- Records of cm_balance_change
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for cm_balance_settle
@@ -268,17 +277,17 @@ CREATE TABLE `cm_config` (
 -- ----------------------------
 -- Records of cm_config
 -- ----------------------------
-INSERT INTO `cm_config` VALUES ('1', 'seo_title', '网站标题', '1', '1', '1', '聚合支付', '', '', '1', '1378898976', '1544333698');
-INSERT INTO `cm_config` VALUES ('8', 'email_port', 'SMTP端口号', '1', '8', '2', '465', '', '如：一般为 25 或 465', '1', '0', '1540556601');
-INSERT INTO `cm_config` VALUES ('2', 'seo_description', '网站描述', '2', '3', '1', '聚合支付', '', '网站搜索引擎描述，优先级低于SEO模块', '1', '1378898976', '1544333698');
+INSERT INTO `cm_config` VALUES ('1', 'seo_title', '网站标题', '1', '1', '1', '聚合支付', '', '', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('8', 'email_port', 'SMTP端口号', '1', '8', '2', '465', '', '如：一般为 25 或 465', '1', '0', '1545131349');
+INSERT INTO `cm_config` VALUES ('2', 'seo_description', '网站描述', '2', '3', '1', '聚合支付', '', '网站搜索引擎描述，优先级低于SEO模块', '1', '1378898976', '1545131346');
 INSERT INTO `cm_config` VALUES ('3', 'seo_keywords', '网站关键字', '2', '4', '1', '聚合支付', '', '网站搜索引擎关键字，优先级低于SEO模块', '1', '1378898976', '1542443678');
-INSERT INTO `cm_config` VALUES ('4', 'app_index_title', '首页标题', '1', '2', '1', '小红帽科技|草帽聚合支付|Cmpay聚合支付', '', '', '1', '1378898976', '1544333698');
-INSERT INTO `cm_config` VALUES ('5', 'app_domain', '网站域名', '1', '5', '1', 'caomao.com', '', '网站域名', '1', '1378898976', '1544333698');
-INSERT INTO `cm_config` VALUES ('6', 'app_copyright', '版权信息', '2', '6', '1', '© 2018聚合支付. ', '', '版权信息', '1', '1378898976', '1544333698');
-INSERT INTO `cm_config` VALUES ('7', 'email_host', 'SMTP服务器', '3', '7', '2', '2', '1:smtp.163.com,2:smtp.aliyun.com,3:smtp.qq.com', '如：smtp.163.com', '1', '1378898976', '1540556601');
-INSERT INTO `cm_config` VALUES ('9', 'send_email', '发件人邮箱', '1', '9', '2', 'me@iredcap.cn', '', '', '1', '0', '1540556601');
-INSERT INTO `cm_config` VALUES ('10', 'send_nickname', '发件人昵称', '1', '10', '2', '小红帽', '', '', '1', '0', '1540556601');
-INSERT INTO `cm_config` VALUES ('11', 'email_password', '邮箱密码', '1', '11', '2', 'xzx595...', '', '', '1', '0', '1540556601');
+INSERT INTO `cm_config` VALUES ('4', 'app_index_title', '首页标题', '1', '2', '1', '小红帽科技|草帽聚合支付|Cmpay聚合支付', '', '', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('5', 'app_domain', '网站域名', '1', '5', '1', 'caomao.com', '', '网站域名', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('6', 'app_copyright', '版权信息', '2', '6', '1', '© 2018聚合支付. ', '', '版权信息', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('7', 'email_host', 'SMTP服务器', '3', '7', '2', '2', '1:smtp.163.com,2:smtp.aliyun.com,3:smtp.qq.com', '如：smtp.163.com', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('9', 'send_email', '发件人邮箱', '1', '9', '2', 'me@iredcap.cn', '', '', '1', '0', '1545131349');
+INSERT INTO `cm_config` VALUES ('10', 'send_nickname', '发件人昵称', '1', '10', '2', '小红帽', '', '', '1', '0', '1545131349');
+INSERT INTO `cm_config` VALUES ('11', 'email_password', '邮箱密码', '1', '11', '2', 'xzx595...', '', '', '1', '0', '1545131349');
 
 -- ----------------------------
 -- Table structure for cm_menu
@@ -384,6 +393,7 @@ INSERT INTO `cm_notice` VALUES ('1', '一个正经的标题', 'admin', '我特�
 DROP TABLE IF EXISTS `cm_orders`;
 CREATE TABLE `cm_orders` (
   `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '订单id',
+  `puid` mediumint(8) NOT NULL DEFAULT '0' COMMENT '代理ID',
   `uid` mediumint(8) NOT NULL COMMENT '商户id',
   `trade_no` varchar(30) NOT NULL COMMENT '交易订单号',
   `out_trade_no` varchar(30) NOT NULL COMMENT '商户订单号',
@@ -392,7 +402,11 @@ CREATE TABLE `cm_orders` (
   `channel` varchar(30) NOT NULL COMMENT '交易方式(wx_qrcode)',
   `cnl_id` int(3) NOT NULL COMMENT '支付通道ID',
   `extra` text COMMENT '特定渠道发起时额外参数',
-  `amount` decimal(12,3) unsigned NOT NULL COMMENT '实际付款金额,单位是元,12-9保留3位小数',
+  `amount` decimal(12,3) unsigned NOT NULL COMMENT '订单金额,单位是元,12-9保留3位小数',
+  `income` decimal(12,3) unsigned NOT NULL DEFAULT '0.000' COMMENT '实付金额',
+  `user_in` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '商户收入',
+  `agent_in` decimal(12,3) unsigned NOT NULL DEFAULT '0.000' COMMENT '代理收入',
+  `platform_in` decimal(12,3) unsigned NOT NULL DEFAULT '0.000' COMMENT '平台收入',
   `currency` varchar(3) NOT NULL DEFAULT 'CNY' COMMENT '三位货币代码,人民币:CNY',
   `client_ip` varchar(32) NOT NULL COMMENT '客户端IP',
   `return_url` varchar(128) NOT NULL COMMENT '同步通知地址',
@@ -404,6 +418,9 @@ CREATE TABLE `cm_orders` (
   UNIQUE KEY `order_no_index` (`out_trade_no`,`trade_no`,`uid`,`channel`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000000001 DEFAULT CHARSET=utf8mb4 COMMENT='交易订单表';
 
+-- ----------------------------
+-- Records of cm_orders
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for cm_orders_notify
@@ -434,6 +451,8 @@ CREATE TABLE `cm_pay_channel` (
   `name` varchar(30) NOT NULL COMMENT '支付渠道名称',
   `action` varchar(30) NOT NULL COMMENT '控制器名称,如:official,xxx;用于分发处理支付请求',
   `rate` decimal(4,3) NOT NULL COMMENT '渠道费率',
+  `urate` decimal(4,3) NOT NULL DEFAULT '0.998',
+  `grate` decimal(4,3) NOT NULL DEFAULT '0.998',
   `daily` decimal(12,3) NOT NULL COMMENT '日限额',
   `single` decimal(12,3) NOT NULL COMMENT '单笔',
   `timeslot` text NOT NULL COMMENT '时间段',
@@ -443,15 +462,16 @@ CREATE TABLE `cm_pay_channel` (
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
 
 -- ----------------------------
 -- Records of cm_pay_channel
 -- ----------------------------
-INSERT INTO `cm_pay_channel` VALUES ('1', '官方微信支付', 'official', '0.006', '20000.000', '2000.000', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '{\"mch_id\":\"1493758822\",\"app_id\":\"wx1c32cda245563ee1\",\"key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wechat\"}', '官方微信支付', '1', '1535983487', '1544377311');
-INSERT INTO `cm_pay_channel` VALUES ('2', '官方支付宝', 'official', '0.006', '200000.000', '3000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"app_id\":\"2018112262303149\",\"private_key\":\"/+vC9FF747/viq//ToBK6gEbzlR+HFYXsoYwWstxIMhvhxZ+7v8tS9nnKVo92MRp/5Bzw3sUjgkVCHQrPOX+OgSVjQmUmXTt3v/l2j3LD1gkPtad+zZC85Yxd3mvueAFGEVF8hcqy1eK0n6lYGq4oYlMzR2oETTmgGrfZF5RBTIKWDKvCinQIDAQABAoIBAAFgAmWt2FzfT90Vc9aS52mjbODhZJUGdSL+lLV5l0K+PnP5aRtLlvSR5b2ktv7SowRwDyVPgUhxN53YX/Jg9ORSN3Qi3EKGBe6Uwo+c15nKYJWoIicFhul7ccH4lhVnt+NoIOr5Oy1zOL+4C1bc0NfRokg9/9ep3HigALbUngKv8Tm8Z+Id9MD5GacdE0DK8mEq9mnOlQvTbBAVf7x1fAvAZovA5tJ11iCJ2uLOxtSQuLV5XuzojmfvoCeBUjZug81Ycjd7a5wxvAdGv4hyU+cOdwwtoslbH/evpoDSX65ZxDI0i7lh+8y6ySxBvbQqL2F+Bxu0cKH8atMKeeDyQQECgYEA/0ZDeOKa05qv0aiPRSWWEWgDYis8PJCWEsgVTVKNaTjt/0X/nIuonhdvWwCyIx7Ky+fa5dGFk4gXZrwagGo9v9//XqKzxlD32dEy9OrmvJYsIQuxeOGjb1isSdc+QVGG/XAofstHV5s88/FQmsHCl9kET8uVjhTefm7ZMfZwgP0CgYEA2kojiquYnR1oxtu+GC1Nc5gsl/vPGBdapzDvnotZyzfFKxTFehuCevAg5VhfBObdwa5baZ4F15nxRTg8A6kH/J7yoD408FW2fz2SU0YrdBf82N8DsqvLnXUtJmjMd8wn2q3HfKTNpLqbHc9xG/J5gdd0qDWEX747OTQV85JoqiECgYEAzlAUYhQK+/BuHu2zdTgudDzzVxkIYw6cK+vHw6lvntYjDAif0P7StYrNNeh3EIlnb6sgsFNJOPZpq19lr9mttHCuLOckkqiH2GQKYgWjnFFmswKHWeJLO8eX30n2B8aDajuGjwttynEtrx6efaURx7XelTs90Qou1FJ0ebvqK2UCgYBuPSzP1jL/fZ+xdb39pbtMmlhC9Pc0Om8cqjkI/2T8nRCk3huQvB3cCjMCv+tUpWbubihaIWTf6i2PgIPGcXHIIVl0lZXUneTJQ4YHKhO90HNv7siGTf5JaajAkgJYqbCi3ko1Z2E3RMobduyvaXf1m6KdZFGSrJZqICTJ2nGjIQKBgQDMC09oaOfKVXm3ZhqERWSz975ygqeFRX5CUCe4XYGtD3af8Uh+lL8GlsmVaf4fDVUqzljhOobKo2PVVQoCa4fWmx0Q3+bnhKzVQh8slXHHanwJuPH5w50HmgzWHDfCJc7dSws47RBzonzNQ98bBUHHI3MqmThiliAKd9Sy5sl7iA==\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/alipay\"}', '官方支付宝', '1', '1543082772', '1544377306');
-INSERT INTO `cm_pay_channel` VALUES ('3', '官方QQ支付', 'official', '0.006', '200000.000', '5000.000', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '{\"mch_id\":\"1499660101\",\"app_id\":\"1499660101\",\"key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/qqpay\"}', 'QQ扫码', '1', '1544264384', '1544377298');
-INSERT INTO `cm_pay_channel` VALUES ('4', '官方Paypal支付', 'official', '0.006', '200000.000', '6000.000', '{\"start\":\"8:0\",\"end\":\"23:59\"}', '{\"mch_id\":\"1493758822\",\"app_id\":\"wx1c32cda245563ee1\",\"key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wechat\"}', '微信支付2', '1', '1544368985', '1544377075');
+INSERT INTO `cm_pay_channel` VALUES ('1', '官方微信支付', 'Wxpay', '0.006', '0.998', '0.996', '20000.000', '2000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wx58b38f5e760e7338\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方微信支付', '1', '1535983487', '1545146107');
+INSERT INTO `cm_pay_channel` VALUES ('2', '官方支付宝', 'Alipay', '0.006', '0.998', '0.996', '200000.000', '3000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"app_id\":\"2018112262303149\",\"private_key\":\"MIIEpAIBAAKCAQEA2avDNVQfXI1wySlht34i9p/+vC9FF747/viq/lKnnnfwM5R7dEClZzuou1LzcuojjsNQ5nV9E0n6DdyxFv4s8vjlFw7vsdmsN0CvJ6vEYVihlBHajAoX0KD/ToBK6gEbzlR+HFYXsoYwWstxIMhvhxZ+7v8tS9nnKVo92MRp/5Bzw3sUjgkVCHQrPOX+OgSVjQmUmXTt3v/l2j3LD1gkPtad+zZC85Yxd3mvueAFGEVF8hcqy1eK0n6lYGq4oYlMzR2oETTmgGrfZF5RBTIKWDKvCinQIDAQABAoIBAAFgAmWt2FzfT90Vc9aS52mjbODhZJUGdSL+lLV5l0K+PnP5aRtLlvSR5b2ktv7SowRwDyVPgUhxN53YX/Jg9ORSN3Qi3EKGBe6Uwo+c15nKYJWoIicFhul7ccH4lhVnt+NoIOr5Oy1zOL+4C1bc0NfRokg9/9ep3HigALbUngKv8Tm8Z+Id9MD5GacdE0DK8mEq9mnOlQvTbBAVf7x1fAvAZovA5tJ11iCJ2uLOxtSQuLV5XuzojmfvoCeBUjZug81Ycjd7a5wxvAdGv4hyU+cOdwwtoslbH/evpoDSX65ZxDI0i7lh+8y6ySxBvbQqL2F+Bxu0cKH8atMKeeDyQQECgYEA/0ZDeOKa05qv0aiPRSWWEWgDYis8PJCWEsgVTVKNaTjt/0X/nIuonhdvWwCyIx7Ky+fa5dGFk4gXZrwagGo9v9//XqKzxlD32dEy9OrmvJYsIQuxeOGjb1isSdc+QVGG/XAofstHV5s88/FQmsHCl9kET8uVjhTefm7ZMfZwgP0CgYEA2kojiquYnR1oxtu+GC1Nc5gsl/vPGBdapzDvnotZyzfFKxTFehuCevAg5VhfBObdwa5baZ4F15nxRTg8A6kH/J7yoD408FW2fz2SU0YrdBf82N8DsqvLnXUtJmjMd8wn2q3HfKTNpLqbHc9xG/J5gdd0qDWEX747OTQV85JoqiECgYEAzlAUYhQK+/BuHu2zdTgudDzzVxkIYw6cK+vHw6lvntYjDAif0P7StYrNNeh3EIlnb6sgsFNJOPZpq19lr9mttHCuLOckkqiH2GQKYgWjnFFmswKHWeJLO8eX30n2B8aDajuGjwttynEtrx6efaURx7XelTs90Qou1FJ0ebvqK2UCgYBuPSzP1jL/fZ+xdb39pbtMmlhC9Pc0Om8cqjkI/2T8nRCk3huQvB3cCjMCv+tUpWbubihaIWTf6i2PgIPGcXHIIVl0lZXUneTJQ4YHKhO90HNv7siGTf5JaajAkgJYqbCi3ko1Z2E3RMobduyvaXf1m6KdZFGSrJZqICTJ2nGjIQKBgQDMC09oaOfKVXm3ZhqERWSz975ygqeFRX5CUCe4XYGtD3af8Uh+lL8GlsmVaf4fDVUqzljhOobKo2PVVQoCa4fWmx0Q3+bnhKzVQh8slXHHanwJuPH5w50HmgzWHDfCJc7dSws47RBzonzNQ98bBUHHI3MqmThiliAKd9Sy5sl7iA==\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/alipay\"}', '官方支付宝', '1', '1543082772', '1545142376');
+INSERT INTO `cm_pay_channel` VALUES ('3', '官方QQ支付', 'Qpay', '0.006', '0.998', '0.996', '200000.000', '5000.000', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '{\"mch_id\":\"1499660101\",\"app_id\":\"1499660101\",\"key\":\"a50e731409bada470b8f2d50b254e62a\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/qqpay\"}', 'QQ扫码', '1', '1544264384', '1545142415');
+INSERT INTO `cm_pay_channel` VALUES ('4', '官方Paypal支付', 'Paypal', '0.006', '0.998', '0.996', '200000.000', '6000.000', '{\"start\":\"8:0\",\"end\":\"23:59\"}', '{\"client_id\":\"AeQoPWrmDu_FqEn-\",\"client_secret\":\"-2w_eONoq4DcnfyalzqUPU8d\",\"return_url\":\"https://api.pay.iredcap.cn/callback/paypal\",\"cancel_url\":\"https://api.pay.iredcap.cn/notify/wechat\"}', '微信支付2', '1', '1544368985', '1545141245');
+INSERT INTO `cm_pay_channel` VALUES ('5', '官方小程序支付', 'Wxpay', '0.006', '0.998', '0.996', '500000.000', '2000.000', '{\"start\":\"9:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wxcc956ffaa369b7f9\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方小程序支付', '1', '1545143235', '1545145266');
 
 -- ----------------------------
 -- Table structure for cm_pay_code
@@ -467,15 +487,17 @@ CREATE TABLE `cm_pay_code` (
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='交易方式表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='交易方式表';
 
 -- ----------------------------
 -- Records of cm_pay_code
 -- ----------------------------
-INSERT INTO `cm_pay_code` VALUES ('1', '1', '微信扫码支付', 'wxpay', '微信扫码支付', '1', '1535983487', '1544369237');
-INSERT INTO `cm_pay_code` VALUES ('2', '2', '支付宝扫码', 'alipay', '支付宝扫码', '1', '1544173543', '1544349532');
-INSERT INTO `cm_pay_code` VALUES ('3', '3', 'QQ扫码', 'qqpay', '微信扫码', '1', '1544264177', '1544349972');
-INSERT INTO `cm_pay_code` VALUES ('4', '4', 'Paypal支付', 'paypal', '返回支付地址', '1', '1544363537', '1544364423');
+INSERT INTO `cm_pay_code` VALUES ('1', '1', '微信原生扫码支付', 'wx_native', '微信扫码支付', '1', '1535983487', '1545140379');
+INSERT INTO `cm_pay_code` VALUES ('2', '2', '支付宝扫码', 'ali_qr', '支付宝扫码', '1', '1544173543', '1545142055');
+INSERT INTO `cm_pay_code` VALUES ('3', '3', 'QQ扫码', 'qq_native', 'QQ扫码', '1', '1544264177', '1545141844');
+INSERT INTO `cm_pay_code` VALUES ('4', '4', 'Paypal支付', 'pp_web', '返回支付地址', '1', '1544363537', '1545141309');
+INSERT INTO `cm_pay_code` VALUES ('5', '1', '微信公众号支付', 'wx_jsapi', '微信公众号支付，返回数据包', '1', '1545142906', '1545143662');
+INSERT INTO `cm_pay_code` VALUES ('6', '5', '微信小程序支付', 'wx_mini', '微信小程序支付，返回支付包', '1', '1545143540', '1545143653');
 
 -- ----------------------------
 -- Table structure for cm_transaction
@@ -525,7 +547,7 @@ CREATE TABLE `cm_user` (
 -- ----------------------------
 -- Records of cm_user
 -- ----------------------------
-INSERT INTO `cm_user` VALUES ('100001', '0', 'nouser@iredcap.cn', 'Nouser', '3e7fb8e42b6be5e3c6b69f3597cb6ff7', '7a563bd96286403ca906e99727283cd5', '18078687485', '702154416', '1', '1', '1', '1', '1541787044', '1544365513');
+INSERT INTO `cm_user` VALUES ('100001', '0', 'nouser@iredcap.cn', 'Nouser', '8f421396f3ad805ed015b68323a6b2fd', '7a563bd96286403ca906e99727283cd5', '18078687485', '702154416', '1', '1', '1', '1', '1541787044', '1545300565');
 
 -- ----------------------------
 -- Table structure for cm_user_account
@@ -579,15 +601,10 @@ CREATE TABLE `cm_user_profit` (
   `id` bigint(10) NOT NULL AUTO_INCREMENT,
   `uid` mediumint(8) NOT NULL COMMENT '商户ID',
   `cnl_id` int(10) unsigned NOT NULL,
-  `uprice` decimal(4,3) unsigned NOT NULL DEFAULT '0.000',
-  `gprice` decimal(4,3) unsigned NOT NULL DEFAULT '0.000',
+  `urate` decimal(4,3) unsigned NOT NULL DEFAULT '0.000',
+  `grate` decimal(4,3) unsigned NOT NULL DEFAULT '0.000',
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='商户分润表';
-
--- ----------------------------
--- Records of cm_user_profit
--- ----------------------------
-INSERT INTO `cm_user_profit` VALUES ('1', '100001', '1', '0.998', '0.996', '1', '1541787044', '1541787044');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户分润表';

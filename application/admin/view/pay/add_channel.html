@@ -33,30 +33,33 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">单笔限额：</label>
-        <div class="layui-input-block">
-            <input type="text" name="single" required lay-verify="required" placeholder="请输入渠道单笔限额" autocomplete="off" class="layui-input" value="">
+        <label class="layui-form-label">代理分成：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="urate" required lay-verify="required" placeholder="请输入代理分成" autocomplete="off" class="layui-input" value="">
+        </div>
+        <label class="layui-form-label">用户分成：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="urate" required lay-verify="required" placeholder="请输入用户分成" autocomplete="off" class="layui-input" value="">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">日限额：</label>
-        <div class="layui-input-block">
+        <label class="layui-form-label">单笔限额：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="single" required lay-verify="required" placeholder="请输入渠道单笔限额" autocomplete="off" class="layui-input" value="">
+        </div>
+        <label class="layui-form-label">当日限额：</label>
+        <div class="layui-input-inline">
             <input type="text" name="daily" required lay-verify="required" placeholder="请输入渠道日限额" autocomplete="off" class="layui-input" value="">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">时间段：</label>
-        <div class="layui-input-block">
-            <div class="layui-inline">
-                <div class="layui-input-inline">
-                    <input type="text" name="timeslot[start]" id="channel-timeslot-start" lay-verify="time" value="" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="start">
-                </div>
-            </div>-
-            <div class="layui-inline">
-                <div class="layui-input-inline">
-                    <input type="text" name="timeslot[end]" id="channel-timeslot-end" lay-verify="time" value="" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="end">
-                </div>
-            </div>
+        <label class="layui-form-label">开始时间：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="timeslot[start]" id="channel-timeslot-start" lay-verify="time" value="" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="start">
+        </div>
+        <label class="layui-form-label">结束时间：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="timeslot[end]" id="channel-timeslot-end" lay-verify="time" value="" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="end">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -78,7 +81,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">备注：</label>
         <div class="layui-input-block">
-            <input type="text" name="remarks" value="" required placeholder="请输入备注" autocomplete="off" class="layui-input" lay-filter="remark">
+            <textarea name="remarks" placeholder="请输入备注" class="layui-textarea"></textarea>
         </div>
     </div>
     <div class="layui-form-item layui-hide">

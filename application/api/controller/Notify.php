@@ -106,12 +106,13 @@ class Notify extends BaseApi
         if (empty($channel)){
             return false;
         }
+        //匹配出现
         switch ($channel){
-            case 'wxpay':
-            case 'qqpay':
+            case strstr($channel,"qq"):
+            case strstr($channel,"wx"):
                 $config = self::getWxPayConfig();
                 break;
-            case 'alipay':
+            case strstr($channel,"ali"):
                 $config = self::getAliPayConfig();
                 break;
         }

@@ -43,12 +43,12 @@ class Notify extends BaseApi
             if ($order->status == 1 && bcsub(time(), $order->create_time) <= 600) {
                 Log::notice('更新订单状态');
                 //更新订单状态
-                $this->updateOrderStatus($order->id, true);
+                $this->updateOrderInfo($order, true);
                 Log::notice('自增商户资金');
                 //自增商户资金
                 $this->changeBalanceValue($order->uid, $order->amount,$order->out_trade_no);
-                //异步消息商户
                 Log::notice('异步消息商户');
+                //异步消息商户
                 $this->logicOrdersNotify->saveOrderNotify($order);
                 Log::notice('提交队列');
                 $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
@@ -73,27 +73,45 @@ class Notify extends BaseApi
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param $order_id
+     * @param $order
      * @param $success
      */
-    private function updateOrderStatus($order_id, $success)
+    private function updateOrderInfo($order, $success)
     {
         //1.查找用户对应渠道费率
-
+        $profit = $this->logicUser->getUserProfitInfo(['uid' => $order->uid, 'cnl_id' => $order->cnl_id]);
+        $channel = $this->logicPay->getChannelInfo(['id' => $order->cnl_id]);
+        //2.数据计算
+        //实付金额 - 扣除渠道费率后
+        $income = bcmul($order->amount, bcsub(1 , $channel['rate'],3),  3);
+        $agent_in = 0;
+        if ($order->puid != 0){
+            //1.获取代理的费率
+            $agent_profit = $this->logicUser->getUserProfitInfo(['uid' => $order->puid, 'cnl_id' => $order->cnl_id]);
+            //2.代理收入
+            $agent_in = bcsub($income, bcmul($income, $agent_profit['urate'], 3),3);
+        }
+        //商户收入
+        $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
+        //平台收入
+        $platform_in = bcsub(bcsub($income,$user_in,3), $agent_in,3);
+        //3.数据存储
         $this->modelOrders->changeOrderStatusValue([
-            'status'  => $success ? OrderStatusEnum::PAID : OrderStatusEnum::UNPAID
+            'income'    => $income,
+            'user_in'    => $user_in,
+            'agent_in'    => $agent_in,
+            'platform_in'    => $platform_in
         ], [
-            'id'=>$order_id
+            'id'=>$order->id
         ]);
     }
 
     /**
-     * 更新商户账户余额
+     * 更新商户/代理账户余额
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $uid
-     * @param $puid
      * @param $fee
      * @param $out_trade_no
      *

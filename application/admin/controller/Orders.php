@@ -88,10 +88,8 @@ class Orders extends BaseAdmin
      */
     public function details(){
         $where['id'] = $this->request->param('id','0');
-        //时间搜索  时间戳搜素
-        $where['create_time'] = $this->parseRequestDate();
 
-        $this->assign('order', $this->logicOrders->getOrderList($where));
+        $this->assign('order', $this->logicOrders->getOrderInfo($where));
 
         return $this->fetch();
     }
