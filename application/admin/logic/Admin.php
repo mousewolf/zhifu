@@ -134,7 +134,6 @@ class Admin extends BaseAdmin
             }
 
             $result = $this->setAdminValue(['id' => is_admin_login()], 'password', $newPwd);
-
             action_log('修改', '管理员ID'. is_admin_login() .'密码修改');
 
             return $result && !empty($result) ? ['code' => CodeEnum::SUCCESS, 'msg' => '修改密码成功']
