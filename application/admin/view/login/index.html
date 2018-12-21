@@ -94,7 +94,7 @@
                             ,value: res.data.access_token
                         });
                         layer.msg('登入成功', {icon: 1,time: 1500}, function(){
-                            location.href = "{:url('admin/Index/index')}"; //后台主页
+                            location.href = "/admin.html"; //后台主页
                         });
                     }else {
                         $("#app-user-get-vercode").click();

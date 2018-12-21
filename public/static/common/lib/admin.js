@@ -220,7 +220,7 @@ layui.define("view",
                     })
                 },
                 clearcache: function(e) {
-                    layui.$.get('login/clearCache',function(res){
+                    layui.$.get('/admin/login/clearCache',function(res){
                             layer.msg('清除缓存成功！', {
                                 offset: '15px'
                                 ,icon: 1

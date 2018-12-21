@@ -1,18 +1,6 @@
 
 
 <!DOCTYPE html>
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -95,25 +83,25 @@
                                 <div carousel-item>
                                     <ul class="layui-row layui-col-space10">
                                         <li class="layui-col-xs6">
-                                            <a lay-href="/balance/settle.html?status=0" class="layadmin-backlog-body">
+                                            <a lay-href="{:url('admin/balance/settle')}?status=0" class="layadmin-backlog-body">
                                                 <h3>待审提现</h3>
                                                 <p><cite>{$cash.failed}</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs6">
-                                            <a lay-href="/user/index.html" class="layadmin-backlog-body">
+                                            <a lay-href="{:url('admin/user/index')}" class="layadmin-backlog-body">
                                                 <h3>待审商户</h3>
                                                 <p><cite>{$user.failed}</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs6">
-                                            <a lay-href="/orders/index.html?status=1" class="layadmin-backlog-body">
+                                            <a lay-href="{:url('admin/orders/index')}?status=1" class="layadmin-backlog-body">
                                                 <h3>待付订单</h3>
                                                 <p><cite>{$order.wait}</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs6">
-                                            <a lay-href="/orders/index.html?status=2" class="layadmin-backlog-body">
+                                            <a lay-href="{:url('admin/orders/index')}?status=2" class="layadmin-backlog-body">
                                                 <h3>已付订单</h3>
                                                 <p><cite>{$order.success}</cite></p>
                                             </a>
@@ -121,7 +109,7 @@
                                     </ul>
                                     <ul class="layui-row layui-col-space10">
                                         <li class="layui-col-xs6">
-                                            <a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+                                            <a href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
                                                 <h3>待付订单</h3>
                                                 <p><cite>99</cite></p>
                                             </a>

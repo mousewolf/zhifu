@@ -27,7 +27,32 @@ class Common extends Controller
     {
         parent::__construct($request);
 
+        $this->initSystemConf();
+
         $this->assign('site', config('site'));
+    }
+
+    /**
+     * 初始化配置信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     */
+    private function initSystemConf()
+    {
+
+        $model = model('app\common\model\Config');
+
+        $config_list = auto_cache('config_list', create_closure($model, 'all'));
+        $config_array =[];
+        foreach ($config_list as $info) {
+
+            $config_array[$info['name']] = $info['value'];
+        }
+        //写入配置
+        config('site' ,$config_array);
+
     }
 
     /**

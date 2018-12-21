@@ -43,8 +43,8 @@ class CheckAllowed extends ApiCheck
         $ip = $request->ip();
         //ip参数拆分成数组
         $check_ip_arr= explode('.',$ip);
-        $allowed = false;
         if(!in_array($ip, $checkAllowedIpMap)) {
+            $allowed = false;
             foreach ($checkAllowedIpMap as $val){
                 if(strpos($val,'*')!==false){
                     //发现有*号替代符
@@ -69,13 +69,13 @@ class CheckAllowed extends ApiCheck
                     }
                 }
             }
-        }
-        //存在性
-        if ( !$allowed ) {
-            throw new ForbiddenException([
-                'msg'=>'Invalid Request.[ Request IP not authorized.]',
-                'errorCode'=> 400003
-            ]);
+            //存在性
+            if ( !$allowed ) {
+                throw new ForbiddenException([
+                    'msg'=>'Invalid Request.[ Request IP not authorized.]',
+                    'errorCode'=> 400003
+                ]);
+            }
         }
 
     }

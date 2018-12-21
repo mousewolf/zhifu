@@ -36,7 +36,7 @@ class BaseLogic extends BaseModel
     public function checkFrequent($key= '',$num = 5){
         //API 访问限制
         $name = !empty($key) ? $key : 'client-ip:' . request()->ip();
-        $cache = new Cache();
+        $cache = Cache::store('redis');
         $value = $cache->get($name);
         //没有数据
         if (!$value) {

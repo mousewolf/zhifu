@@ -34,8 +34,6 @@ class InitApp
     {
         // 初始化分层名称常量
         $this->initLayerConst();
-
-        $this->initSystemConf();
     }
 
     /**
@@ -54,29 +52,6 @@ class InitApp
         define('LIBRARY_LAYER_NAME'     , 'library');
         define('VALIDATE_LAYER_NAME'    , 'validate');
         define('VIEW_LAYER_NAME'        , 'view');
-
-    }
-
-    /**
-     * 初始化配置信息
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     *
-     */
-    private function initSystemConf()
-    {
-
-        $model = model('app\common\model\Config');
-
-        $config_list = auto_cache('config_list', create_closure($model, 'all'));
-
-        foreach ($config_list as $info) {
-
-            $config_array[$info['name']] = $info['value'];
-        }
-        //写入配置
-        config('site' ,$config_array);
 
     }
 
