@@ -58,7 +58,7 @@ class Paypal extends ApiPayment
 
         // Set payment amount
         $amount = new Amount();
-        $amount->setCurrency('USD')
+        $amount->setCurrency($order['currency'])
             ->setTotal($order['amount']);
 
         // Set transaction object
@@ -93,5 +93,31 @@ class Paypal extends ApiPayment
         return [
             'order_qr' => $approvalUrl
         ];
+    }
+
+    /**
+     * Paypal异步通知  【测试】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return array|string
+     * @throws OrderException
+     */
+    public function notify(){
+        //获取回调结果
+        $response = convertUrlArray(file_get_contents('php://input'));
+        //判断支付结果,如果支付完成 修改订单状态
+        if($response['resource']['state'] == 'completed'){
+            //记录错误日志
+            Log::error('Verify Paypal Notify Error');
+            throw new OrderException([
+                'msg'   => 'Verify Paypal Notify Error',
+                'errCode'   => 200010
+            ]);
+        }
+        //认为成功
+        echo "success";
+        return $response;
     }
 }

@@ -25,7 +25,6 @@ use think\Log;
  */
 class Activation
 {
-
     /**
      * 发送激活码链接   用户激活后在发送商户信息
      *
@@ -35,16 +34,17 @@ class Activation
      * @return bool
      */
     public function sendActiveCode($user){
+
         //收件人邮箱
         $toemail    =   $user->account;
         //发件人昵称
         $name       =   !empty($user->nickname)? $user->nickname:'Cmpay';
         //邮件标题
         $subject    =   "【聚合支付】用户注册 - 注册邮箱验证";
-
-        $content = self::getRegActiveContent($user);
         //邮件主体  也可以使用邮件模板文件
-
+        $content = self::getRegActiveContent($user);
+        //读数据库配置
+        $config = config();
         //发送激活邮件
         try{
             return Mail::getInstance(config('code.Email'))->send($toemail,$name,$subject,$content);
@@ -140,7 +140,7 @@ class Activation
         //生成code
         $activecode = urlencode($this->createActiveCode($user));
         //激活地址
-        $activeUrl = "http://www.caomao.com/active/{$activecode}";
+        $activeUrl = "http://" . config('site')['app_domain'] . "/active/{$activecode}";
 
         return "<div style=\"margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;\">
             <div style=\"width: 750px; margin: 0 auto; background-color: #fff;\">
@@ -164,7 +164,7 @@ class Activation
                                             
                                             <span style=\"font-size:24px;line-height:32px;color:#35B34A;\">注册申请成功！</span>
                                         </p>
-                                        <p style=\"color:#7d7d7d;margin:10px 0px 24px 0px;font-size:14px;line-height:22px;padding:0 40px;text-align:center\">欢迎{$user->name}加入,在开始使用之前，请确认你的邮箱账号
+                                        <p style=\"color:#7d7d7d;margin:10px 0px 24px 0px;font-size:14px;line-height:22px;padding:0 40px;text-align:center\">欢迎{$user->username}加入,在开始使用之前，请确认你的邮箱账号
                                         </p>
                                       
                                         <p style=\"margin:0;padding:0;\">&nbsp;</p>

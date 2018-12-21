@@ -52,7 +52,7 @@ class Login extends BaseAdmin
 
             action_log('登录', '管理员'. $username .'登录成功');
 
-            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '登录成功','data' => ['access_token'=>data_auth_sign($auth)]];
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '登录成功','data' => ['access_token'=> data_auth_sign($auth)]];
 
         } else {
 

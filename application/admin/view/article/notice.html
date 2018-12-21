@@ -125,7 +125,7 @@
                 layer.open({
                     type: 2
                     ,title: '添加通知'
-                    ,content: '/article/addNotice'
+                    ,content: 'addNotice'
                     ,maxmin: true
                     ,area: ['80%','60%']
                     ,btn: ['确定', '取消']
@@ -140,7 +140,7 @@
                             console.log(field)
                             //提交 Ajax 成功后，静态更新表格中的数据
                             $.ajax({
-                                url:'/article/addNotice',
+                                url:'addNotice',
                                 method:'POST',
                                 data:field,
                                 success:function (res) {

@@ -103,7 +103,8 @@ class Notify extends BaseApi
             'income'    => $income,
             'user_in'    => $user_in,
             'agent_in'    => $agent_in,
-            'platform_in'    => $platform_in
+            'platform_in'    => $platform_in,
+            'status'  => $success ? OrderStatusEnum::PAID : OrderStatusEnum::UNPAID
         ], [
             'id'=>$order->id
         ]);
