@@ -144,7 +144,7 @@ layui.define(["table", "form", "element"],
                             type: 2,
                             title: "交易详情",
                             content: "details.html?id=" + e.data.id,
-                            area: ['80%','60%'],
+                            maxmin: !0,                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, t) {},
                             success: function(e, t) {}

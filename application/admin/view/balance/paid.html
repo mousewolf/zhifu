@@ -1,17 +1,4 @@
-
-
 <!DOCTYPE html>
-<!--
-  ~  +----------------------------------------------------------------------
-  ~  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
-  ~  +----------------------------------------------------------------------
-  ~  | Copyright (c) 2018 http://www.iredcap.cn All rights reserved.
-  ~  +----------------------------------------------------------------------
-  ~  | Licensed ( https://www.apache.org/licenses/LICENSE-2.0 )
-  ~  +----------------------------------------------------------------------
-  ~  | Author: Brian Waring <BrianWaring98@gmail.com>
-  ~  +----------------------------------------------------------------------
-  -->
 
 <html>
 <head>
@@ -107,7 +94,7 @@
         //初始化表格
         table.render({
             elem: "#app-order-paid-list",
-            url: '/balance/paidList',
+            url: 'paidList',
             //自定义响应字段
             response: {
             statusName: 'code' //数据状态的字段名称
@@ -134,11 +121,6 @@
                 field: "cash_no",
                 width: 200,
                 title: "打款单号"
-            },
-            {
-                field: "settle_no",
-                width: 200,
-                title: "申请单号"
             },
             {
                 field: "amount",

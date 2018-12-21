@@ -43,7 +43,7 @@ class Notify extends BaseApi
     }
 
     /**
-     * 同步回调
+     * 同步回调 【不做数据处理 获取商户回调地址返回就行了】
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -51,7 +51,10 @@ class Notify extends BaseApi
      *
      */
     public function callback($channel = 'wxpay'){
-
+        //1.拿out_trade_no
+        //2.查订单获取  商户return_url
+        //3.redirect 带参数跳转
+        $this->redirect('');
     }
 
     /**
@@ -66,20 +69,10 @@ class Notify extends BaseApi
      */
     public function notify($channel = 'wxpay'){
 
-
         try{
-            //配置
-            $configMap = self::getOrderPayConfig($channel);
-
-            list(,$action,$config) = array_values($configMap);
-
-            //配置载入
-            $appConfig = !empty(config('pay.' . $channel))
-                ? array_merge(config('pay.' . $channel), $config)
-                : $config;
 
              //支付分发
-            $result = ApiPayment::$action($appConfig)->$channel('',true);
+            $result = ApiPayment::$channel()->notify();
 
             $this->logicNotify->handle($result);
 
@@ -91,86 +84,5 @@ class Notify extends BaseApi
                 'msg'   => '支付验签失败，请检查数据'
             ]);
         }
-    }
-
-    /**
-     * 配置获取
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $channel
-     *
-     * @return array|bool|mixed
-     */
-    private function getOrderPayConfig($channel){
-        if (empty($channel)){
-            return false;
-        }
-        //匹配出现
-        switch ($channel){
-            case strstr($channel,"qq"):
-            case strstr($channel,"wx"):
-                $config = self::getWxPayConfig();
-                break;
-            case strstr($channel,"ali"):
-                $config = self::getAliPayConfig();
-                break;
-        }
-        return $config;
-    }
-    /*********其他请尝试自己对接  -- 推荐写在app\api\service\payment下面  继承父类ApiPayment*********/
-
-    /**
-     * 获取微信订单对应支付通道配置
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return array
-     */
-    private function getWxPayConfig()
-    {
-
-        libxml_disable_entity_loader(true);
-        //Object  对象
-        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE),true);
-        Log::notice("WxNotify:" . json_encode($response));
-        //获取配置
-        return  self::getConfig($response);
-
-    }
-
-    /**
-     * 获取支付宝订单对应支付通道配置
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    private function getAliPayConfig()
-    {
-        $response = convertUrlArray(file_get_contents('php://input')); //支付宝异步通知POST返回数据
-        Log::notice("AliNotify:" . json_encode($response));
-
-        return  self::getConfig($response);
-    }
-
-    /**
-     * 依据订单获取配置
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $response
-     *
-     * @return mixed
-     */
-    private function getConfig($response = []){
-        //获取配置
-        $wx_config =$this->logicOrders->getOrderPayConfig($response['out_trade_no']);
-
-        $config =  reset($wx_config);
-        //配置载入
-        $config['param'] = json_decode($config['param'], true);
-
-        return $config;
     }
 }

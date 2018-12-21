@@ -66,22 +66,6 @@ class Orders extends BaseLogic
     }
 
     /**
-     *
-     * 获取结算订单列表
-     *
-     * @author 勇敢的小笨羊
-     * @param array $where
-     * @param bool $field
-     * @param string $order
-     * @param int $paginate
-     * @return mixed
-     */
-    public function getOrderSettleList($where = [], $field = true, $order = 'create_time desc', $paginate = 15)
-    {
-        return $this->modelBalanceSettle->getList($where, $field, $order, $paginate);
-    }
-
-    /**
      * 订单统计
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -174,8 +158,10 @@ class Orders extends BaseLogic
      * @return mixed
      */
     public function getOrderPayConfig($order_no){
-        return $this->logicPay->getChannelParam(
-            $this->modelOrders->getValue(['trade_no'=>$order_no], 'cnl_id')
+
+        return $this->logicPay->getAccountInfo([
+            'id'    => $this->modelOrders->getValue(['trade_no'=>$order_no], 'cnl_id')
+        ]
         );
     }
 

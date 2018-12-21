@@ -66,7 +66,6 @@ Route::rule('agent/profit','index/Agent/profit','GET|POST');
 Route::get('balance$','index/Balance/index');
 Route::get('balance/account','index/Balance/account');
 Route::rule('account/add','index/Balance/addAccount','GET|POST');
-Route::get('balance/settle','index/Balance/settle');
 Route::get('balance/paid','index/Balance/paid');
 Route::rule('balance/apply','index/Balance/apply','GET|POST');
 /**

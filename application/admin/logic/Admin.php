@@ -122,11 +122,12 @@ class Admin extends BaseAdmin
             'repassword' => 'require|confirm:password',
         ];
 
-        $newPwd = data_md5_key($data['oldPassword']);
+        $oldPwd = data_md5_key($data['oldPassword']);
+        $newPwd = data_md5_key($data['password']);
         $user = $this->logicAdmin->getAdminInfo(['id' => is_admin_login()]);
 
         //验证原密码
-        if ( $newPwd == $user['password']) {
+        if ( $oldPwd == $user['password']) {
             $validate = new Validate($rules);;
             if (!$validate->check($data)) {
                 return ['code' => CodeEnum::ERROR, 'msg' => $validate->getError()];

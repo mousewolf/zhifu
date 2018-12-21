@@ -44,15 +44,11 @@ class Notify extends BaseApi
                 Log::notice('更新订单状态');
                 //更新订单状态
                 $this->updateOrderInfo($order, true);
-                Log::notice('自增商户资金');
-                //自增商户资金
-                $this->changeBalanceValue($order->uid, $order->amount,$order->out_trade_no);
                 Log::notice('异步消息商户');
                 //异步消息商户
                 $this->logicOrdersNotify->saveOrderNotify($order);
                 Log::notice('提交队列');
                 $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
-
                 //提交更改
                 Db::commit();
 
@@ -78,6 +74,8 @@ class Notify extends BaseApi
      */
     private function updateOrderInfo($order, $success)
     {
+
+        /*************订单操作************/
         //1.查找用户对应渠道费率
         $profit = $this->logicUser->getUserProfitInfo(['uid' => $order->uid, 'cnl_id' => $order->cnl_id]);
         $channel = $this->logicPay->getChannelInfo(['id' => $order->cnl_id]);
@@ -88,6 +86,7 @@ class Notify extends BaseApi
         $agent_in = "0.000";
         //商户收入
         $user_in = bcmul(bcmul($income, $profit['urate'], 3), $profit['urate'], 3);
+        //是否有代理
         if ($order->puid != 0){
             //1.获取代理的费率
             $agent_profit = $this->logicUser->getUserProfitInfo(['uid' => $order->puid, 'cnl_id' => $order->cnl_id]);
@@ -95,7 +94,19 @@ class Notify extends BaseApi
             $agent_in = bcsub($income, bcmul($income, $agent_profit['urate'], 3),3);
             //3.商户收入
             $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
+            /*************写入商户代理资金******************/
+            //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
+            $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，转移至待结算金额','disable',true);
+            //支付成功  写入待结算金额
+            $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，待支付金额转入','enable',false);
+            /**************写入商户代理资金结束*****************/
         }
+        /*************写入商户资金******************/
+        //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
+        $this->logicBalanceChange->creatBalanceChange($order->uid,$user_in,'单号'. $order->out_trade_no . '支付成功，转移至待结算金额','disable',true);
+        //支付成功  写入待结算金额
+        $this->logicBalanceChange->creatBalanceChange($order->uid,$user_in,'单号'. $order->out_trade_no . '支付成功，待支付金额转入','enable',false);
+        /**************写入商户资金结束*****************/
         //平台收入
         $platform_in = bcsub(bcsub($income,$user_in,3), $agent_in,3);
         //3.数据存储
@@ -108,24 +119,5 @@ class Notify extends BaseApi
         ], [
             'id'=>$order->id
         ]);
-    }
-
-    /**
-     * 更新商户/代理账户余额
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $uid
-     * @param $fee
-     * @param $out_trade_no
-     *
-     */
-    private function changeBalanceValue($uid, $fee, $out_trade_no)
-    {
-        //*******商户部分*********//
-        //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
-        $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，转移至待结算金额','disable',true);
-        //支付成功  写入待结算金额
-        $this->logicBalanceChange->creatBalanceChange($uid,$fee,'单号'.$out_trade_no . '支付成功，待支付金额转入','enable',false);
     }
 }

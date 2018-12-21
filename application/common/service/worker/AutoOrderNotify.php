@@ -15,6 +15,7 @@ namespace app\common\service\worker;
 
 use app\common\library\HttpHeader;
 use app\api\service\Rest;
+use app\common\model\OrdersNotify;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use think\Db;
@@ -41,8 +42,7 @@ class AutoOrderNotify
      * @param $data
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \think\Exception
-     * @throws \think\exception\DbException
+     * @throws \app\common\library\exception\ParameterException
      */
     public function fire(Job $job,$data){
         // 如有必要,可以根据业务需求和数据库中的最新数据,判断该任务是否仍有必要执行.
@@ -52,7 +52,7 @@ class AutoOrderNotify
             return;
         }
         //查单
-        $order = Db::table('cm_orders_notify')->where(['order_id' => $data['id']]);
+        $order = (new OrdersNotify())->where(['order_id' => $data['id']]);
         //处理队列
         $result = $this->doJob($data);
 
@@ -101,6 +101,7 @@ class AutoOrderNotify
      *
      * @return array|bool
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \app\common\library\exception\ParameterException
      */
     private function doJob($data) {
 
@@ -183,6 +184,7 @@ class AutoOrderNotify
         //返回
         return $payload;
     }
+
     /**
      * 生成签名串
      *
@@ -190,7 +192,9 @@ class AutoOrderNotify
      *
      * @param $to_sign_data
      * @param $header
+     *
      * @return string
+     * @throws \app\common\library\exception\ParameterException
      */
     private function buildSignStr($to_sign_data,$header){
         $_to_sign_data = utf8_encode($header[HttpHeader::X_CA_NONCE_STR])

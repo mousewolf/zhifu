@@ -839,6 +839,7 @@ class Query
             }
             $field = array_map('trim', explode(',', $field));
         }
+
         if (true === $field) {
             // 获取全部字段
             $fields = $this->getTableInfo($tableName ?: (isset($this->options['table']) ? $this->options['table'] : ''), 'fields');

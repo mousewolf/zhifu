@@ -165,7 +165,6 @@ DROP TABLE IF EXISTS `cm_balance_cash`;
 CREATE TABLE `cm_balance_cash` (
   `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(8) NOT NULL COMMENT '商户ID',
-  `settle_no` varchar(80) NOT NULL COMMENT '对应结算申请',
   `cash_no` varchar(80) NOT NULL COMMENT '取现记录单号',
   `amount` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '取现金额',
   `account` int(2) NOT NULL COMMENT '取现账户（关联商户结算账户表）',
@@ -203,30 +202,6 @@ CREATE TABLE `cm_balance_change` (
 
 -- ----------------------------
 -- Records of cm_balance_change
--- ----------------------------
-
--- ----------------------------
--- Table structure for cm_balance_settle
--- ----------------------------
-DROP TABLE IF EXISTS `cm_balance_settle`;
-CREATE TABLE `cm_balance_settle` (
-  `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` mediumint(8) NOT NULL COMMENT '商户ID',
-  `settle_no` varchar(80) NOT NULL COMMENT '结算记录单号',
-  `amount` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '结算金额',
-  `rate` decimal(4,3) NOT NULL,
-  `fee` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '费率金额',
-  `actual` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '实际金额',
-  `remarks` varchar(255) NOT NULL COMMENT '申请结算说明',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '结算状态：0-等待中 1-进行中 2- 已结款',
-  `create_time` int(10) unsigned NOT NULL COMMENT '申请时间',
-  `update_time` int(10) unsigned NOT NULL COMMENT '处理时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `settle_index` (`id`,`uid`,`settle_no`,`status`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户账户结算记录';
-
--- ----------------------------
--- Records of cm_balance_settle
 -- ----------------------------
 
 -- ----------------------------
@@ -330,7 +305,7 @@ INSERT INTO `cm_menu` VALUES ('16', '15', '100', '文章管理', 'admin', 'Artic
 INSERT INTO `cm_menu` VALUES ('17', '15', '100', '公告管理', 'admin', 'Article/notice', '0', '', '1', '1539584897', '1539583897');
 INSERT INTO `cm_menu` VALUES ('18', '0', '100', '商户管理', 'admin', 'User', '0', 'user', '1', '1539584897', '1539583897');
 INSERT INTO `cm_menu` VALUES ('19', '18', '100', '商户列表', 'admin', 'User/index', '0', '', '1', '1539584897', '1539583897');
-INSERT INTO `cm_menu` VALUES ('20', '18', '100', '商户结算', 'admin', 'Balance/settle', '0', '', '1', '1539584897', '1539583897');
+INSERT INTO `cm_menu` VALUES ('20', '18', '100', '商户结算', 'admin', 'Balance/settle', '0', '', '-1', '1539584897', '1539583897');
 INSERT INTO `cm_menu` VALUES ('21', '18', '100', '付款记录', 'admin', 'Balance/paid', '0', '', '1', '1539584897', '1539583897');
 INSERT INTO `cm_menu` VALUES ('22', '18', '100', '商户账户', 'admin', 'Account/index', '0', '', '1', '1539584897', '1539583897');
 INSERT INTO `cm_menu` VALUES ('23', '18', '100', '商户资金', 'admin', 'Balance/index', '0', '', '1', '1539584897', '1539583897');
@@ -399,7 +374,7 @@ CREATE TABLE `cm_orders` (
   `out_trade_no` varchar(30) NOT NULL COMMENT '商户订单号',
   `subject` varchar(64) NOT NULL COMMENT '商品标题',
   `body` varchar(256) NOT NULL COMMENT '商品描述信息',
-  `channel` varchar(30) NOT NULL COMMENT '交易方式(wx_qrcode)',
+  `channel` varchar(30) NOT NULL COMMENT '交易方式(wx_native)',
   `cnl_id` int(3) NOT NULL COMMENT '支付通道ID',
   `extra` text COMMENT '特定渠道发起时额外参数',
   `amount` decimal(12,3) unsigned NOT NULL COMMENT '订单金额,单位是元,12-9保留3位小数',
@@ -449,29 +424,58 @@ DROP TABLE IF EXISTS `cm_pay_channel`;
 CREATE TABLE `cm_pay_channel` (
   `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '渠道ID',
   `name` varchar(30) NOT NULL COMMENT '支付渠道名称',
-  `action` varchar(30) NOT NULL COMMENT '控制器名称,如:official,xxx;用于分发处理支付请求',
-  `rate` decimal(4,3) NOT NULL COMMENT '渠道费率',
-  `urate` decimal(4,3) NOT NULL DEFAULT '0.998',
-  `grate` decimal(4,3) NOT NULL DEFAULT '0.998',
-  `daily` decimal(12,3) NOT NULL COMMENT '日限额',
-  `single` decimal(12,3) NOT NULL COMMENT '单笔',
-  `timeslot` text NOT NULL COMMENT '时间段',
-  `param` text NOT NULL COMMENT '账户配置参数,json字符串',
+  `action` varchar(30) NOT NULL COMMENT '控制器名称,如:Wxpay用于分发处理支付请求',
+  `urate` decimal(4,3) NOT NULL DEFAULT '0.998' COMMENT '默认商户分成',
+  `grate` decimal(4,3) NOT NULL DEFAULT '0.998' COMMENT '默认代理分成',
+  `timeslot` text NOT NULL COMMENT '交易时间段',
   `remarks` varchar(128) DEFAULT NULL COMMENT '备注',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '渠道状态,0-停止使用,1-开放使用',
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
 
 -- ----------------------------
 -- Records of cm_pay_channel
 -- ----------------------------
-INSERT INTO `cm_pay_channel` VALUES ('1', '官方微信支付', 'Wxpay', '0.006', '0.998', '0.996', '20000.000', '2000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wx58b38f5e760e7338\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方微信支付', '1', '1535983487', '1545146107');
-INSERT INTO `cm_pay_channel` VALUES ('2', '官方支付宝', 'Alipay', '0.006', '0.998', '0.996', '200000.000', '3000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"app_id\":\"2018112262303149\",\"private_key\":\"nmfvoCeBQECgYEA/0ZDeOKa05qv0aiPRSWWEWgDYis8PJCWvLnXUtJmjMd8wn2q3HfKTNpLqbHc9xG/J5gdd0qDWEX747OTQV85JoqiECgYEAzlAUYhQK+/BuHu2zdTgudDzzVxkIYw6cK+vHw6lvntYjDAif0P7StYrNNeh3EIlnb6sgsFNJOPZpq19lr9mttHCuLOckkqiH2GQKYgWjnFFmswKHWeJLO8eX30n2B8aDajuGjwttynEtrx6efaURx7XelTs90Qou1FJ0ebvqK2UCgYBuPSzP1jL/fZ+xdb39pbtMmlhC9Pc0Om8cqjkI/2T8nRCk3huQvB3cCjMCv+tUpWbubihaIWTf6i2PgIPGcXHIIVl0lZXUneTJQ4YHKhO90HNv7siGTf5JaajAkgJYqbCi3ko1Z2E3RMobduyvaXf1m6KdZFGSrJZqICTJ2nGjIQKBgQDMC09oaOfKVXm3ZhqERWSz975ygqeFRX5CUCe4XYGtD3af8Uh+lL8GlsmVaf4fDVUqzljhOobKo2PVVQoCa4fWmx0Q3+bnhKzVQh8slXHHanwJuPH5w50HmgzWHDfCJc7dSws47RBzonzNQ98bBUHHI3MqmThiliAKd9Sy5sl7iA==\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/alipay\"}', '官方支付宝', '1', '1543082772', '1545142376');
-INSERT INTO `cm_pay_channel` VALUES ('3', '官方QQ支付', 'Qpay', '0.006', '0.998', '0.996', '200000.000', '5000.000', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '{\"mch_id\":\"1499660101\",\"app_id\":\"1499660101\",\"key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/qqpay\"}', 'QQ扫码', '1', '1544264384', '1545142415');
-INSERT INTO `cm_pay_channel` VALUES ('4', '官方Paypal支付', 'Paypal', '0.006', '0.998', '0.996', '200000.000', '6000.000', '{\"start\":\"8:0\",\"end\":\"23:59\"}', '{\"client_id\":\"AeQoPWrmDu_FqEn-\",\"client_secret\":\"-2w_eONoq4DcnfyalzqUPU8d\",\"return_url\":\"https://api.pay.iredcap.cn/callback/paypal\",\"cancel_url\":\"https://api.pay.iredcap.cn/notify/wechat\"}', '微信支付2', '1', '1544368985', '1545141245');
-INSERT INTO `cm_pay_channel` VALUES ('5', '官方小程序支付', 'Wxpay', '0.006', '0.998', '0.996', '500000.000', '2000.000', '{\"start\":\"9:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wxcc956ffaa369b7f9\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方小程序支付', '1', '1545143235', '1545145266');
+INSERT INTO `cm_pay_channel` VALUES ('1', '微信支付', 'Wxpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '官方微信支付', '1', '1535983487', '1545146107');
+INSERT INTO `cm_pay_channel` VALUES ('2', '支付宝', 'Alipay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '官方支付宝', '1', '1543082772', '1545142376');
+INSERT INTO `cm_pay_channel` VALUES ('3', 'QQ支付', 'Qpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '官方QQ支付', '1', '1544264384', '1545142415');
+INSERT INTO `cm_pay_channel` VALUES ('4', 'Paypal支付', 'Paypal', '0.998', '0.996', '{\"start\":\"8:0\",\"end\":\"23:59\"}', 'Paypal支付', '1', '1544368985', '1545141245');
+
+
+-- ----------------------------
+-- Table structure for cm_pay_account
+-- ----------------------------
+DROP TABLE IF EXISTS `cm_pay_account`;
+CREATE TABLE `cm_pay_account` (
+  `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '账号ID',
+  `cnl_id` bigint(10) NOT NULL COMMENT '所属渠道ID',
+  `name` varchar(30) NOT NULL COMMENT '渠道账户名称',
+  `rate` decimal(4,3) NOT NULL COMMENT '渠道账户费率',
+  `urate` decimal(4,3) NOT NULL DEFAULT '0.998',
+  `grate` decimal(4,3) NOT NULL DEFAULT '0.998',
+  `daily` decimal(12,3) NOT NULL COMMENT '当日限额',
+  `single` decimal(12,3) NOT NULL COMMENT '单笔限额',
+  `timeslot` text NOT NULL COMMENT '交易时间段',
+  `param` text NOT NULL COMMENT '账户配置参数,json字符串',
+  `remarks` varchar(128) DEFAULT NULL COMMENT '备注',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '账户状态,0-停止使用,1-开放使用',
+  `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
+  `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道账户表';
+
+
+-- ----------------------------
+-- Records of cm_pay_account
+-- ----------------------------
+INSERT INTO `cm_pay_account` VALUES ('1', '1', '官方微信支付', '0.006', '0.998', '0.996', '20000.000', '2000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wx58b38f5e760e7338\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方微信支付', '1', '1535983487', '1545146107');
+INSERT INTO `cm_pay_account` VALUES ('2', '2', '官方支付宝', '0.006', '0.998', '0.996', '200000.000', '3000.000', '{\"start\":\"6:0\",\"end\":\"23:30\"}', '{\"app_id\":\"2018112262303149\",\"private_key\":\"nmfvoCeBQECgYEA/0ZDeOKa05qv0aiPRSWWEWgDYis8PJCWvLnXUtJmjMd8wn2q3HfKTNpLqbHc9xG/J5gdd0qDWEX747OTQV85JoqiECgYEAzlAUYhQK+/BuHu2zdTgudDzzVxkIYw6cK+vHw6lvntYjDAif0P7StYrNNeh3EIlnb6sgsFNJOPZpq19lr9mttHCuLOckkqiH2GQKYgWjnFFmswKHWeJLO8eX30n2B8aDajuGjwttynEtrx6efaURx7XelTs90Qou1FJ0ebvqK2UCgYBuPSzP1jL/fZ+xdb39pbtMmlhC9Pc0Om8cqjkI/2T8nRCk3huQvB3cCjMCv+tUpWbubihaIWTf6i2PgIPGcXHIIVl0lZXUneTJQ4YHKhO90HNv7siGTf5JaajAkgJYqbCi3ko1Z2E3RMobduyvaXf1m6KdZFGSrJZqICTJ2nGjIQKBgQDMC09oaOfKVXm3ZhqERWSz975ygqeFRX5CUCe4XYGtD3af8Uh+lL8GlsmVaf4fDVUqzljhOobKo2PVVQoCa4fWmx0Q3+bnhKzVQh8slXHHanwJuPH5w50HmgzWHDfCJc7dSws47RBzonzNQ98bBUHHI3MqmThiliAKd9Sy5sl7iA==\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/alipay\"}', '官方支付宝', '1', '1543082772', '1545142376');
+INSERT INTO `cm_pay_account` VALUES ('3', '3', '官方QQ支付','0.006', '0.998', '0.996', '200000.000', '5000.000', '{\"start\":\"6:0\",\"end\":\"23:0\"}', '{\"mch_id\":\"1499660101\",\"app_id\":\"1499660101\",\"key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/qqpay\"}', 'QQ扫码', '1', '1544264384', '1545142415');
+INSERT INTO `cm_pay_account` VALUES ('4', '4', '官方Paypal支付','0.006', '0.998', '0.996', '200000.000', '6000.000', '{\"start\":\"8:0\",\"end\":\"23:59\"}', '{\"client_id\":\"AeQoPWrmDu_FqEn-\",\"client_secret\":\"-2w_eONoq4DcnfyalzqUPU8d\",\"return_url\":\"https://api.pay.iredcap.cn/callback/paypal\",\"cancel_url\":\"https://api.pay.iredcap.cn/notify/wechat\"}', '微信支付2', '1', '1544368985', '1545141245');
+INSERT INTO `cm_pay_account` VALUES ('5', '1', '官方小程序支付','0.006', '0.998', '0.996', '500000.000', '2000.000', '{\"start\":\"9:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"1493758822\",\"mch_key\":\"\",\"app_id\":\"wxcc956ffaa369b7f9\",\"app_key\":\"\",\"notify_url\":\"https://api.pay.iredcap.cn/notify/wxpay\"}', '官方小程序支付', '1', '1545143235', '1545145266');
+
 
 -- ----------------------------
 -- Table structure for cm_pay_code

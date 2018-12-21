@@ -115,53 +115,6 @@ class Balance extends BaseAdmin
     }
 
     /**
-     * 结算记录
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function settle(){
-        return $this->fetch();
-    }
-
-    /**
-     * 获取结算申请记录API
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     */
-    public function settleList(){
-        $where = [];
-
-        //组合搜索
-        !empty($this->request->param('id')) && $where['a.id|a.uid']
-            = ['like', '%'.$this->request->param('id').'%'];
-
-        !empty($this->request->param('cash_no')) && $where['a.cash_no']
-            = ['like', '%'.$this->request->param('a.cash_no').'%'];
-
-        $data = $this->logicBalanceSettle->getOrderSettleList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
-
-        $count = $this->logicBalanceSettle->getOrderSettleCount($where);
-
-        $this->result($data || !empty($data) ?
-            [
-                'code' => CodeEnum::SUCCESS,
-                'msg'=> '',
-                'count'=>$count,
-                'data'=>$data
-            ] : [
-                'code' => CodeEnum::ERROR,
-                'msg'=> '暂无数据',
-                'count'=>$count,
-                'data'=>$data
-            ]
-        );
-
-    }
-
-    /**
      * 打款记录(仅作记录)
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>

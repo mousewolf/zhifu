@@ -1,5 +1,4 @@
 <?php
-
 /**
  *  +----------------------------------------------------------------------
  *  | 草帽支付系统 [ WE CAN DO IT JUST THINK ]
@@ -12,10 +11,10 @@
  *  +----------------------------------------------------------------------
  */
 
+
 namespace app\common\model;
 
 
-class BalanceSettle extends BaseModel
+class PayAccount extends BaseModel
 {
-
 }
