@@ -78,11 +78,11 @@ class Notify extends BaseApi
         /*************订单操作************/
         //1.查找用户对应渠道费率
         $profit = $this->logicUser->getUserProfitInfo(['uid' => $order->uid, 'cnl_id' => $order->cnl_id]);
-        $channel = $this->logicPay->getChannelInfo(['id' => $order->cnl_id]);
-        if(empty($profit)) $profit = $channel;
+        $account = $this->logicPay->getAccountInfo(['id' => $order->cnl_id]);
+        if(empty($profit)) $profit = $account;
         //2.数据计算
         //实付金额 - 扣除渠道费率后
-        $income = bcmul($order->amount, bcsub(1 , $channel['rate'],3),  3);
+        $income = bcmul($order->amount, bcsub(1 , $account['rate'],3),  3);
         $agent_in = "0.000";
         //商户收入
         $user_in = bcmul(bcmul($income, $profit['urate'], 3), $profit['urate'], 3);
@@ -95,16 +95,14 @@ class Notify extends BaseApi
             //3.商户收入
             $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
             /*************写入商户代理资金******************/
-            //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
-            $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，转移至待结算金额','disable',true);
-            //支付成功  写入待结算金额
-            $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，待支付金额转入','enable',false);
+            //支付成功  写入结算金额
+            $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，代理分润金额转入','enable',false);
             /**************写入商户代理资金结束*****************/
         }
         /*************写入商户资金******************/
         //支付成功  扣除待支付金额 (这个操作就只有两个地方   自动关闭订单和这里)
-        $this->logicBalanceChange->creatBalanceChange($order->uid,$user_in,'单号'. $order->out_trade_no . '支付成功，转移至待结算金额','disable',true);
-        //支付成功  写入待结算金额
+        $this->logicBalanceChange->creatBalanceChange($order->uid,$order->amount,'单号'. $order->out_trade_no . '支付成功，收入至待结算金额','disable',true);
+        //支付成功  写入结算金额
         $this->logicBalanceChange->creatBalanceChange($order->uid,$user_in,'单号'. $order->out_trade_no . '支付成功，待支付金额转入','enable',false);
         /**************写入商户资金结束*****************/
         //平台收入

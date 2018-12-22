@@ -97,11 +97,10 @@ class Alisms extends Driver
         try{
         // 发起访问请求
             $response = $this->handler->getAcsResponse($request);
-            Log::notice("Qsms Send:" . $response);
         }catch (\Exception $e){
-            Log::error("Qsms Send Fail:" . $e->getMessage());
+            Log::error("Alisms Send Fail:" . $e->getMessage());
         }
-        return $response && $response['result'] == 0 && $response['errmsg'] == 'OK' ? $response : false;
+        return $response && $response['result'] == 0 && $response['errmsg'] == 'OK' ? true : false;
     }
 
     /**

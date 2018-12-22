@@ -77,6 +77,7 @@ class BaseLogic extends BaseModel
         }
         //2.发送验证码
         $res = Code::send($whom, $param);
+        halt($res);
         return $res ? [  'code' =>  CodeEnum::SUCCESS,  'msg' => "发送成功"]
             : [ 'code' =>  CodeEnum::ERROR,  'msg' => "发送失败"];
     }

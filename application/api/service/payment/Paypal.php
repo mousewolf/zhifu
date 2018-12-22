@@ -16,6 +16,7 @@ namespace app\api\service\payment;
 use PayPal\Api\Amount;
 use PayPal\Api\Payer;
 use PayPal\Api\Payment;
+use PayPal\Api\PaymentExecution;
 use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Exception\PayPalConnectionException;
@@ -35,18 +36,18 @@ class Paypal extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function pp_web($order, $notify = false){
+    public function pp_web($order){
         $apiContext = new ApiContext(
             new OAuthTokenCredential(
                 $this->config['client_id'] ,
                 $this->config['client_secret']
             )
         );
+
         // Create new payer and method
         $payer = new Payer();
         $payer->setPaymentMethod("paypal");
@@ -54,7 +55,7 @@ class Paypal extends ApiPayment
         // Set redirect URLs
         $redirectUrls = new RedirectUrls();
         $redirectUrls->setReturnUrl($this->config['return_url'] . '?success=true')
-            ->setCancelUrl($this->config['cancel_url'] . '?success=false');
+        ->setCancelUrl($this->config['return_url'] . '?success=false');
 
         // Set payment amount
         $amount = new Amount();
@@ -95,6 +96,7 @@ class Paypal extends ApiPayment
         ];
     }
 
+
     /**
      * Paypal异步通知  【测试】
      *
@@ -102,22 +104,19 @@ class Paypal extends ApiPayment
      *
      *
      * @return array|string
-     * @throws OrderException
      */
     public function notify(){
-        //获取回调结果
-        $response = convertUrlArray(file_get_contents('php://input'));
-        //判断支付结果,如果支付完成 修改订单状态
-        if($response['resource']['state'] == 'completed'){
-            //记录错误日志
-            Log::error('Verify Paypal Notify Error');
-            throw new OrderException([
-                'msg'   => 'Verify Paypal Notify Error',
-                'errCode'   => 200010
-            ]);
-        }
-        //认为成功
-        echo "success";
-        return $response;
+
+        return ;
+    }
+
+    /**
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+
+     */
+    public function callback(){
+       return ;
     }
 }

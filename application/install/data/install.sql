@@ -398,7 +398,7 @@ CREATE TABLE `cm_notice` (
 -- ----------------------------
 -- Records of cm_notice
 -- ----------------------------
-INSERT INTO `cm_notice` VALUES ('1', '一个正经的标题', 'admin', '我特么是个通知，没啥好通知的，就是测试一下O不Ok!\n', '0', '1542704381', '1544366752');
+INSERT INTO `cm_notice` VALUES ('1', '一个正经的标题', 'admin', '我特么是个通知，没啥好通知的，就是测试一下O不Ok!\n', '1', '1542704381', '1544366752');
 
 -- ----------------------------
 -- Table structure for cm_orders
@@ -509,11 +509,11 @@ CREATE TABLE `cm_pay_channel` (
 -- ----------------------------
 -- Records of cm_pay_channel
 -- ----------------------------
-INSERT INTO `cm_pay_channel` VALUES ('1', '微信支付', 'Wxpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://api.pay.iredcap.cn/callback/wxpay', 'https://api.pay.iredcap.cn/notify/wxpay', '官方微信支付', '1', '1535983487', '1545146107');
-INSERT INTO `cm_pay_channel` VALUES ('2', '支付宝', 'Alipay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://api.pay.iredcap.cn/callback/qpay', 'https://api.pay.iredcap.cn/notify/qpay', '官方支付宝', '1', '1543082772', '1545142376');
-INSERT INTO `cm_pay_channel` VALUES ('3', 'QQ支付', 'Qpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://api.pay.iredcap.cn/callback/alipay', 'https://api.pay.iredcap.cn/notify/alipay', '官方QQ支付', '1', '1544264384', '1545142415');
-INSERT INTO `cm_pay_channel` VALUES ('4', 'Paypal支付', 'Paypal', '0.998', '0.996', '{\"start\":\"8:0\",\"end\":\"23:59\"}', 'https://api.pay.iredcap.cn/callback/paypal', 'https://api.pay.iredcap.cn/notify/paypal', 'Paypal支付', '1', '1544368985', '1545415845');
-INSERT INTO `cm_pay_channel` VALUES ('5', 'XX微信支付', 'Xpay', '0.998', '0.998', '{\"start\":\"0:0\",\"end\":\"23:0\"}', 'https://api.pay.iredcap.cn/callback/xxpay', 'https://api.pay.iredcap.cn/notify/xxpay', 'XX微信支付', '1', '1545417463', '1545417463');
+INSERT INTO `cm_pay_channel` VALUES ('1', '微信支付', 'Wxpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/wxpay', 'https://pay.iredcap.cn/notify/wxpay', '官方微信支付', '1', '1535983487', '1545146107');
+INSERT INTO `cm_pay_channel` VALUES ('2', '支付宝', 'Alipay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/alipay', 'https://pay.iredcap.cn/notify/qpay', '官方支付宝', '1', '1543082772', '1545142376');
+INSERT INTO `cm_pay_channel` VALUES ('3', 'QQ支付', 'Qpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/qpay', 'https://pay.iredcap.cn/notify/alipay', '官方QQ支付', '1', '1544264384', '1545142415');
+INSERT INTO `cm_pay_channel` VALUES ('4', 'Paypal支付', 'Paypal', '0.998', '0.996', '{\"start\":\"8:0\",\"end\":\"23:59\"}', 'https://pay.iredcap.cn/callback/paypal', 'https://pay.iredcap.cn/notify/paypal', 'Paypal支付', '1', '1544368985', '1545415845');
+INSERT INTO `cm_pay_channel` VALUES ('5', 'XX微信支付', 'Xpay', '0.998', '0.998', '{\"start\":\"0:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/xxpay', 'https://pay.iredcap.cn/notify/xxpay', 'XX微信支付', '1', '1545417463', '1545417463');
 
 -- ----------------------------
 -- Table structure for cm_pay_code
