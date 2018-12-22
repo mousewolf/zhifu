@@ -31,7 +31,6 @@ class AutoOrderClose
      *
      * @param Job $job
      * @param $data
-     * @throws OrderException
      * @throws \think\exception\DbException
      */
     public function fire(Job $job,$data){

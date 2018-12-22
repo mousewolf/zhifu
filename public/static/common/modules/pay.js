@@ -84,6 +84,7 @@ layui.define(["table", "form"],
                             type: 2,
                             title: "编辑支付方式",
                             content: "editCode.html?id="+ d.id,
+                            maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(d, f) {
@@ -143,38 +144,25 @@ layui.define(["table", "form"],
                     title: "渠道名称"
                 },
                 {
-                    field: "rate",
-                    title: "费率",
-                    width: 100,
-                    align: "center"
-                },
-                {
-                    field: "daily",
-                    title: "日限额",
-                    width: 110,
-                    align: "center"
-                },
-                {
-                    field: "param",
-                    width: 400,
-                    title: "渠道参数"
+                    field: "action",
+                    width: 150,
+                    title: "控制类名称"
                 },
                 {
                     field: "remarks",
-                    width: 200,
                     title: "备注",
                 },
                 {
                     field: "create_time",
-                    width: 200,
                     title: "创建时间",
+                    width: 200,
                     templet: function(d) {return u.toDateString(d.create_time*1000); }
                 },
                 {
                     field: "status",
                     title: "状态",
+                    width: 100,
                     templet: "#buttonTpl",
-                    minWidth: 100,
                     align: "center"
                 },
                 {
@@ -205,12 +193,26 @@ layui.define(["table", "form"],
                                 }
                             });
                         });
+                    else if ("account" === e.event) {
+                        t(e.tr);
+                        layer.open({
+                            type: 2,
+                            title: "渠道账户列表",
+                            content: "account?cnl_id=" + e.data.id,
+                            maxmin: !0,
+                            area: ['80%','60%'],
+                            btn: ["确定", "取消"],
+                            yes: function(e, f) {},
+                            success: function(e, t) {}
+                        })
+                    }
                     else if ("edit" === e.event) {
                         t(e.tr);
                         layer.open({
                             type: 2,
                             title: "编辑渠道",
                             content: "editChannel?id=" + e.data.id,
+                            maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {
@@ -235,6 +237,141 @@ layui.define(["table", "form"],
                                                 //渲染
                                                 n.render(),
                                                 layer.close(e);
+                                            }
+                                            layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                        });
+                                    }),
+                                    o.trigger("click")
+                            },
+                            success: function(e, t) {}
+                        })
+                    }
+                }),
+
+        //渠道
+        i.render({
+            elem: "#app-pay-account-list",
+            url: 'getAccountList',
+            //添加请求字段
+            where: {
+                cnl_id:  t("input[ name='cnl_id' ] ").val()
+            },
+            //自定义响应字段
+            response: {
+                statusName: 'code' //数据状态的字段名称
+                ,statusCode: 1 //数据状态一切正常的状态码
+                ,msgName: 'msg' //状态信息的字段名称
+                ,dataName: 'data' //数据详情的字段名称
+            },
+            cols: [[{
+                type: "checkbox",
+                fixed: "left"
+            },
+                {
+                    field: "id",
+                    width: 100,
+                    title: "ID",
+                    sort: !0
+                },
+                {
+                    field: "name",
+                    width: 150,
+                    title: "渠道名称"
+                },
+                {
+                    field: "rate",
+                    title: "费率",
+                    width: 100,
+                    align: "center"
+                },
+                {
+                    field: "single",
+                    title: "单笔限额",
+                    width: 100,
+                    align: "center"
+                },
+                {
+                    field: "daily",
+                    title: "当日限额",
+                    width: 110,
+                    align: "center"
+                },
+                {
+                    field: "remarks",
+                    title: "备注",
+                },
+                {
+                    field: "create_time",
+                    title: "创建时间",
+                    width: 200,
+                    templet: function(d) {return u.toDateString(d.create_time*1000); }
+                },
+                {
+                    field: "status",
+                    title: "状态",
+                    width: 100,
+                    templet: "#buttonTpl",
+                    align: "center"
+                },
+                {
+                    title: "操作",
+                    align: "center",
+                    fixed: "right",
+                    toolbar: "#table-pay-account"
+                }]],
+            page: !0,
+            limit: 10,
+            limits: [10, 15, 20, 25, 30],
+            text: "对不起，加载出现异常！"
+        }),
+            i.on("tool(app-pay-account-list)",
+                function(e) {
+                    var s = e;
+                    if ("del" === e.event) layer.confirm("确定删除此账户？",
+                        function(d) {
+                            t.ajax({
+                                url: 'delAccount?id='+ e.data.id,
+                                method:'POST',
+                                success:function (res) {
+                                    if (res.code == 1){
+                                        e.del()
+                                    }
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                                    layer.close(d); //关闭弹层
+                                }
+                            });
+                        });
+                    else if ("edit" === e.event) {
+                        t(e.tr);
+                        layer.open({
+                            type: 2,
+                            title: "编辑账户",
+                            content: "editAccount?id=" + e.data.id,
+                            maxmin: !0,
+                            area: ['80%','60%'],
+                            btn: ["确定", "取消"],
+                            yes: function(e, f) {
+                                var r = window["layui-layer-iframe" + e],
+                                    l = "app-pay-account-submit",
+                                    o = f.find("iframe").contents().find("#" + l);
+                                r.layui.form.on("submit(" + l + ")",
+                                    function(r) {
+                                        var l = r.field;
+                                        //提交修改
+                                        t.post("editAccount",l,function (res) {
+                                            if (res.code == 1){
+                                                //更新数据表
+                                                s.update({
+                                                    name: l.name,
+                                                    daily: l.daily,
+                                                    param: l.param,
+                                                    rate: l.rate,
+                                                    remarks: l.remarks,
+                                                    status: l.status
+                                                }),
+                                                    //渲染
+                                                    n.render(),
+                                                    layer.close(e);
                                             }
                                             layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
                                         });
@@ -330,6 +467,7 @@ layui.define(["table", "form"],
                             type: 2,
                             title: "编辑银行",
                             content: "editBank?id=" + e.data.id,
+                            maxmin: !0,
                             area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {

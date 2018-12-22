@@ -14,6 +14,7 @@
 namespace app\api\service;
 
 use app\common\library\exception\ParameterException;
+use app\common\logic\Orders;
 
 class ApiPayment
 {
@@ -185,5 +186,36 @@ class ApiPayment
 
         return json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE), true);
 
+    }
+
+    /**
+     * 依据订单号获取配置
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $out_trade_no
+     *
+     * @return mixed
+     */
+    protected function getOrderPayConfig($out_trade_no = ''){
+
+        //获取配置
+        $orderConfig = (new Orders())->getOrderPayConfig($out_trade_no);
+
+        return json_decode($orderConfig['param'], true);
+    }
+
+    /**
+     * 依据订单号获取订单同步地址
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param string $out_trade_no
+     *
+     * @return mixed
+     */
+    protected function getOrder($out_trade_no = ''){
+
+        return (new Orders())->getOrderInfo(['trade_no' => $out_trade_no], 'return_url');
     }
 }

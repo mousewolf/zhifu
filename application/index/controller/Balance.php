@@ -102,23 +102,6 @@ class Balance extends Base
 
         return $this->fetch();
     }
-    /**
-     * 结算记录
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function settle(){
-        $where = ['a.uid' => is_login()];
-
-        //时间搜索  时间戳搜素
-        $where['a.create_time'] = $this->parseRequestDate();
-
-        $this->assign('list', $this->logicBalanceSettle->getOrderSettleList($where));
-
-        return $this->fetch();
-    }
 
     /**
      * 打款记录

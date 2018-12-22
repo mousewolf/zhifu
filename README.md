@@ -1,4 +1,4 @@
-Cmpay_v20181215(测试版本)
+Cmpay_v20181220(测试版本)
 ===============
 
 ### 项目介绍
@@ -50,7 +50,7 @@ project                             应用部署目录
 
 ## **在线演示**
 
-后台 ：https://crm.pay.iredcap.cn  (nouser nouser) 
+后台 ：https://pay.iredcap.cn/admin  (nouser nouser) 
 
 前台 ：https://pay.iredcap.cn (nouser@iredcap.cn nouser) 
 

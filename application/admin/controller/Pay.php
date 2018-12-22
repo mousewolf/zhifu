@@ -42,6 +42,18 @@ class Pay extends BaseAdmin
     }
 
     /**
+     * 支付渠道账户
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function account(){
+        $this->assign('cnl_id',$this->request->param('cnl_id'));
+        return $this->fetch();
+    }
+
+    /**
      * 银行
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -122,6 +134,43 @@ class Pay extends BaseAdmin
     }
 
     /**
+     * 支付渠道账户列表
+     * @url getChannelList?page=1&limit=10
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function getAccountList(){
+
+        $where = [
+            'cnl_id' =>  $this->request->param('cnl_id')
+        ];
+        //组合搜索
+        !empty($this->request->param('id')) && $where['id']
+            = ['eq', $this->request->param('id')];
+        //name
+        !empty($this->request->param('name')) && $where['name']
+            = ['like', '%'.$this->request->param('name').'%'];
+
+
+        $data = $this->logicPay->getAccountList($where,true, 'create_time desc',false);
+
+        $count = $this->logicPay->getAccountCount($where);
+
+        $this->result($data || !empty($data) ?
+            [
+                'code' => CodeEnum::SUCCESS,
+                'msg'=> '',
+                'count'=>$count,
+                'data'=>$data
+            ] : [
+                'code' => CodeEnum::ERROR,
+                'msg'=> '暂无数据',
+                'count'=>$count,
+                'data'=>$data
+            ]);
+    }
+
+    /**
      * 支付渠道列表
      * @url getChannelList?page=1&limit=10
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -163,6 +212,28 @@ class Pay extends BaseAdmin
     {
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->saveChannelInfo($this->request->post()));
+        return $this->fetch();
+    }
+
+    /**
+     * 新增渠道账户
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function addAccount()
+    {
+        // post 是提交数据
+        $this->request->isPost() && $this->result($this->logicPay->saveAccountInfo($this->request->post()));
+
+        //获取渠道列表
+        $channel = $this->logicPay->getChannelList([], true, 'create_time desc',false);
+
+        $this->assign('cnl_id',$this->request->param('cnl_id'));
+
+        $this->assign('channel',$channel);
+
         return $this->fetch();
     }
 
@@ -212,6 +283,29 @@ class Pay extends BaseAdmin
         $channel['timeslot'] = json_decode($channel['timeslot'],true);
 
         $this->assign('channel',$channel);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 编辑支付渠道
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function editAccount(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result($this->logicPay->saveAccountInfo($this->request->post()));
+        //获取账户详细信息
+        $account = $this->logicPay->getAccountInfo(['id' =>$this->request->param('id')]);
+        //时间转换
+        $account['timeslot'] = json_decode($account['timeslot'],true);
+        //获取渠道列表
+        $channel = $this->logicPay->getChannelList([], true, 'create_time desc',false);
+
+        $this->assign('channel',$channel);
+        $this->assign('account',$account);
 
         return $this->fetch();
     }

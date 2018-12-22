@@ -13,8 +13,7 @@
 
 namespace app\common\service\command;
 
-use app\common\logic\BalanceSettle;
-use app\common\logic\Orders;
+
 use app\common\logic\Queue;
 use think\console\Command;
 use think\console\Input;

@@ -45,9 +45,6 @@ class Balance extends BaseAdmin
         !empty($this->request->param('username')) && $where['username']
             = ['like', '%'.$this->request->param('username').'%'];
 
-        //时间搜索  时间戳搜素
-        $where['create_time'] = $this->parseRequestDate();
-
         $data = $this->logicBalance->getBalanceList($where, '*', 'create_time desc', false);
 
         $count = $this->logicBalance->getBalanceCount($where);
@@ -97,53 +94,6 @@ class Balance extends BaseAdmin
         $data = $this->logicBalanceChange->getBalanceChangeList($where, true, 'id desc', false);
 
         $count = $this->logicBalanceChange->getBalanceChangeCount($where);
-
-        $this->result($data || !empty($data) ?
-            [
-                'code' => CodeEnum::SUCCESS,
-                'msg'=> '',
-                'count'=>$count,
-                'data'=>$data
-            ] : [
-                'code' => CodeEnum::ERROR,
-                'msg'=> '暂无数据',
-                'count'=>$count,
-                'data'=>$data
-            ]
-        );
-
-    }
-
-    /**
-     * 结算记录
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @return mixed
-     */
-    public function settle(){
-        return $this->fetch();
-    }
-
-    /**
-     * 获取结算申请记录API
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     */
-    public function settleList(){
-        $where = [];
-
-        //组合搜索
-        !empty($this->request->param('id')) && $where['a.id|a.uid']
-            = ['like', '%'.$this->request->param('id').'%'];
-
-        !empty($this->request->param('cash_no')) && $where['a.cash_no']
-            = ['like', '%'.$this->request->param('a.cash_no').'%'];
-
-        $data = $this->logicBalanceSettle->getOrderSettleList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
-
-        $count = $this->logicBalanceSettle->getOrderSettleCount($where);
 
         $this->result($data || !empty($data) ?
             [

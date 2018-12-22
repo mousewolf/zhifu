@@ -29,7 +29,7 @@ class Register extends Base
         'account'  => 'require|email',
         'password'  => 'require|length:6,12',
         'phone'     => 'require|number|length:11',
-        'code'      => 'require|length:4,6|checkCode'
+        'vercode'      => 'require|length:4,6|checkCode'
     ];
 
     /**
@@ -47,9 +47,9 @@ class Register extends Base
         'password.length'     => '登陆密码长度不足',
         'phone.require'       => '手机号不能为空',
         'phone.length'        => '手机号长度不足',
-        'code.checkCode'      => '验证码不正确',
-        'code.require'        => '验证码不能为空',
-        'code.length'         => '验证码位数不正确'
+        'vercode.checkCode'   => '验证码不正确',
+        'vercode.require'     => '验证码不能为空',
+        'vercode.length'      => '验证码位数不正确'
     ];
 
 }

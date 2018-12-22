@@ -251,7 +251,7 @@ class Rest extends BaseApi
         }
 
         //读取用户数据公钥
-        $certificate = Db::table('cm_api')->where(['key'  => $key])
+        $certificate = (new Api())->where(['key'  => $key])
             ->cache($key,'300')->value('secretkey');
         //验签
         $rsaUtils = new RsaUtils($certificate);

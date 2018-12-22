@@ -44,8 +44,8 @@ class DoPay extends BaseApi
         return $this->prePayOrder($order);
     }
 
+
     /**
-     * 支付分发
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -54,61 +54,20 @@ class DoPay extends BaseApi
      * @return mixed
      * @throws OrderException
      */
-    public function prePayOrder($order)
-    {
-        //随机支付渠道 -- 返回支付方式ID
-        $appChannelMap = $this->modelPayChannel->getChannelMap($this->modelPayCode->getCodeId($order['channel']));
-        //规则参数返回
-        $configMap = $this->fetchConfig($order, $appChannelMap);
-        //添加订单支付通道ID
-        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $configMap['id']);
+    private function prePayOrder($order){
+        //渠道和参数获取
+        $appChannel = $this->logicPay->getAllowedAccount($order);
+        if (isset($appChannel['errorCode'])){
+            Log::error($appChannel['msg']);
+            throw new OrderException($appChannel);
+        }
 
-        //获取支付渠道
-        list($action,$payment) = str2arr($order['channel'] . '.' .  $configMap['action'],'.');
+        //取出数据
+        list($payment,$action,$config) = array_values($appChannel);
 
-        //配置载入
-        $appConfig = !empty(config('pay.' . $payment))
-            ? array_merge(config('pay.' . $payment), $configMap['param'])
-            : $configMap['param'];
         //支付分发
-        $result = ApiPayment::$payment($appConfig)->$action($order);
+        $result = ApiPayment::$payment($config)->$action($order);
 
         return $result;
-    }
-
-    /**
-     *
-     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
-     *
-     * @param $order
-     * @param $appChannelMap
-     *
-     * @return mixed
-     * @throws OrderException
-     */
-    private function fetchConfig($order, $appChannelMap){
-
-
-        $configMap = [];
-        foreach ($appChannelMap as $key => $val){
-            $timeslot = json_decode($val['timeslot'],true);
-
-            if ($order['amount'] < $val['single']
-                && strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
-                $configMap[] = $val;
-            }
-        }
-        if (!empty($configMap)){
-            $key = array_rand($configMap);
-            return  [
-                'id'=>  $configMap[$key]['id'],
-                'action'=> $configMap[$key]['action'],
-                'param'=>json_decode($configMap[$key]['param'],true)
-            ];
-        }
-        Log::error('暂无可用渠道，请稍后尝试');
-        throw new OrderException([
-            'msg' => '暂无可用渠道，请稍后尝试'
-        ]);
     }
 }

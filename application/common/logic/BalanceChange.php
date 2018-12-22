@@ -65,7 +65,7 @@ class BalanceChange extends BaseLogic
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function creatBalanceChange($uid,$amount,$remarks = '未知变动记录',$field = 'balance',$setDec = false){
+    public function creatBalanceChange($uid,$amount,$remarks = '未知变动记录',$field = 'enable',$setDec = false){
 
         //事务
         Db::startTrans();

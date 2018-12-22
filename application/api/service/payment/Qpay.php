@@ -27,16 +27,11 @@ class Qpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function qq_native($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyQpayOrderNotify();
-        }
+    public function qq_native($order){
         //获取预下单
         $unifiedOrder = self::getQpayUnifiedOrder($order);
         //数据返回
@@ -52,16 +47,11 @@ class Qpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function qq_jsapi($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyQpayOrderNotify();
-        }
+    public function qq_jsapi($order){
         //获取预下单
         $unifiedOrder = self::getQpayUnifiedOrder($order, 'JSAPI');
         //构建QQ支付
@@ -79,21 +69,16 @@ class Qpay extends ApiPayment
     }
 
     /**
-     * QQAPP支付
+     * QQ APP支付
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
     public function qq_app($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyQpayOrderNotify();
-        }
         //获取预下单
         $unifiedOrder = self::getQpayUnifiedOrder($order, 'JSAPI');
         //构建QQ支付
@@ -111,8 +96,17 @@ class Qpay extends ApiPayment
         return $jsBizPackage;
     }
 
-    public function qq_mini(){
-
+    /**
+     * 异步回调地址 /默认按类名称  【 https://pay.iredcap.cn/notify/wxpay 】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function notify(){
+        return $this->verifyQpayOrderNotify();
     }
 
     /******************QQ***********************************/
@@ -160,9 +154,9 @@ class Qpay extends ApiPayment
         $result = self::xmlToArray($responseXml);
 
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
-            Log::error('Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''));
+            Log::error('Create QQ API Error:'. $result['retmsg']);
             throw new OrderException([
-                'msg'   => 'Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''),
+                'msg'   => 'Create QQ API Error:'. $result['retmsg'],
                 'errCode'   => 200009
             ]);
         }
@@ -182,12 +176,13 @@ class Qpay extends ApiPayment
     public function verifyQpayOrderNotify(){
         libxml_disable_entity_loader(true);
         //Object  对象
-        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE));
-
-        if (self::getQpaySign(obj2arr($response), $this->config['mch_key']) !== $response->sign) {
-            Log::error('Verify WxOrder Notify Error');
+        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE),true);
+        //读订单对应的支付渠道配置
+        $this->config = self::getOrderPayConfig($response['out_trade_no']);
+        if (self::getQpaySign($response, $this->config['mch_key']) !== $response['sign']) {
+            Log::error('Verify QpayOrder Notify Error');
             throw new OrderException([
-                'msg'   => 'Verify WxOrder Notify Error',
+                'msg'   => 'Verify QpayOrder Notify Error',
                 'errCode'   => 200010
             ]);
         }

@@ -27,9 +27,15 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">渠道费率：</label>
+        <label class="layui-form-label">回调地址：</label>
         <div class="layui-input-block">
-            <input type="text" name="rate" required lay-verify="required" placeholder="请输入渠道费率" autocomplete="off" class="layui-input" value="{$channel.rate}">
+            <input type="text" name="return_url" required lay-verify="required" placeholder="请输入回调地址" autocomplete="off" class="layui-input" value="{$channel.return_url}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">异步地址：</label>
+        <div class="layui-input-block">
+            <input type="text" name="notify_url" required lay-verify="required" placeholder="请输入异步地址" autocomplete="off" class="layui-input" value="{$channel.notify_url}">
         </div>
     </div>
     <div class="layui-form-item">
@@ -43,16 +49,6 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">单笔限额：</label>
-        <div class="layui-input-inline">
-            <input type="text" name="single" required lay-verify="required" placeholder="请输入渠道单笔限额" autocomplete="off" class="layui-input" value="{$channel.single}">
-        </div>
-        <label class="layui-form-label">当日限额：</label>
-        <div class="layui-input-inline">
-            <input type="text" name="daily" required lay-verify="required" placeholder="请输入渠道日限额" autocomplete="off" class="layui-input" value="{$channel.daily}">
-        </div>
-    </div>
-    <div class="layui-form-item">
         <label class="layui-form-label">开始时间：</label>
         <div class="layui-input-inline">
             <input type="text" name="timeslot[start]" id="channel-timeslot-start" lay-verify="time" value="{$channel.timeslot.start}" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="start">
@@ -60,14 +56,6 @@
         <label class="layui-form-label">结束时间：</label>
         <div class="layui-input-inline">
             <input type="text" name="timeslot[end]" id="channel-timeslot-end" lay-verify="time" value="{$channel.timeslot.end}" placeholder="H:m" autocomplete="off" class="layui-input" lay-key="end">
-        </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">配置参数：</label>
-        <div class="layui-input-block">
-            <textarea name="param" placeholder="请输入支付请求参数" class="layui-textarea">{$channel.param}</textarea>
-            <div class="layui-form-mid layui-word-aux">微信/QQ:{"mch_id":"商户支付号","mch_key":"商户支付KEY","app_id":"商户应用号","app_key":"应用KEY","return_url":"同步","notify_url":"异步"}</div>
-            <div class="layui-form-mid layui-word-aux">支付宝：{"appid":"应用号","private_key":"私钥","return_url":"同步","notify_url":"异步"}</div>
         </div>
     </div>
     <div class="layui-form-item">

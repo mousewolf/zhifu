@@ -21,6 +21,77 @@ class Pay extends BaseLogic
 {
 
     /**
+     * 下单时通过pay_code 获取渠道下的可用商户配置
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     * @return mixed
+     */
+    public function getAllowedAccount($order){
+        //1.传入支付方式获取对应渠道cnl_id
+        $cnl_id = $this->modelPayCode->getValue(['code' => $order['channel']], 'cnl_id');
+
+        //2.cnl_id获取支持该方式的渠道列表
+        $channels = $this->modelPayChannel->getColumn(['id' => ['in',$cnl_id], 'status' => ['eq','1']],
+            'id,name,action,timeslot,return_url,notify_url');
+
+        //3.规则排序选择合适渠道
+        /*******************************/
+        //TODO 写选择规则  时间、状态、费率 等等
+        //规则处理  我先简便写一下
+        $channelsMap = [];
+        foreach ($channels as $key => $val){
+            $timeslot = json_decode($val['timeslot'],true);
+            if ( strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+                $channelsMap[$key] = $val;
+            }
+        }
+        //判断可用
+        if (empty($channels)){
+            return ['errorCode' => '400006','msg' => '没有可用渠道'];
+        }
+        $channel =  $channelsMap[array_rand($channelsMap)];
+
+        /*******************************/
+        //3.获取该渠道下可用账户
+        $accounts = $this->modelPayAccount->getColumn(['cnl_id' => ['eq',$channel['id']], 'status' => ['eq','1']],
+            'id,single,daily,timeslot,param');
+
+        //4.规则取出可用账户
+        /*******************************/
+        //TODO 写选择规则  时间、状态、费率 等等
+
+        //规则处理  我先简便写一下
+        $accountsMap = [];
+        foreach ($accounts as $key => $val){
+            $timeslot = json_decode($val['timeslot'],true);
+            if ( strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+                $accountsMap[$key] = $val;
+            }
+        }
+        //判断可用
+        if (empty($accountsMap)){
+            return ['errorCode' => '400008','msg' => '没有可用商户'];
+        }
+
+        $account =  $accountsMap[array_rand($accountsMap)];
+
+        //配置合并
+        $configMap = array_merge($channel, json_decode($account['param'],true));
+
+        //添加订单支付通道ID
+        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $account['id']);
+        /*******************************/
+        return [
+            'channel' => $configMap['action'],
+            'action' => $order['channel'],
+            'config' =>  $configMap
+        ];
+
+    }
+
+    /**
      * 获取所有支持的支付方式
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -84,15 +155,29 @@ class Pay extends BaseLogic
     }
 
     /**
-     * 获取渠道配置
+     * 获取渠道账户列表
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
-     * @param $id
+     * @param array $where
+     * @param $field
+     * @param string $order
      * @return mixed
      */
-    public function getChannelParam($id){
-        return $this->modelPayChannel->getColumn(['id' => $id], 'id,action,param');
+    public function getAccountList($where = [], $field = true, $order = 'create_time desc',$paginate = 15){
+        return $this->modelPayAccount->getList($where,$field, $order, $paginate);
+    }
+
+    /**
+     * 获取渠道账户总数
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return mixed
+     */
+    public function getAccountCount($where = []){
+        return $this->modelPayAccount->getCount($where);
     }
 
     /**
@@ -107,6 +192,20 @@ class Pay extends BaseLogic
     public function getChannelInfo($where = [], $field = true)
     {
         return $this->modelPayChannel->getInfo($where, $field);
+    }
+
+    /**
+     * 获取渠道账户信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     * @return mixed
+     */
+    public function getAccountInfo($where = [], $field = true)
+    {
+        return $this->modelPayAccount->getInfo($where, $field);
     }
 
     /**
@@ -150,10 +249,50 @@ class Pay extends BaseLogic
 
             $action = isset($data['id']) ? '编辑' : '新增';
 
-            action_log($action,  '支付渠道,data:' . http_build_query($data) );
+            action_log($action,  '支付渠道' . $data['name'] );
 
             Db::commit();
             return ['code' =>  CodeEnum::SUCCESS,  'msg' => $action . '渠道成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
+        }
+
+    }
+
+
+    /**
+     * 添加一个渠道账户
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $data
+     * @return array|string
+     */
+    public function saveAccountInfo($data){
+        //TODO 数据验证
+        $validate = $this->validatePayAccount->check($data);
+
+        if (!$validate) {
+            return [  'code' => CodeEnum::ERROR,  'msg' => $this->validatePayAccount->getError()];
+        }
+
+        //TODO 添加数据
+        Db::startTrans();
+        try{
+
+            //时间存储
+            $data['timeslot'] = json_encode($data['timeslot']);
+
+            $this->modelPayAccount->setInfo($data);
+
+            $action = isset($data['id']) ? '编辑' : '新增';
+
+            action_log($action,  '支付渠道账户,' . $data['name'] );
+
+            Db::commit();
+            return ['code' =>  CodeEnum::SUCCESS,  'msg' => $action . '渠道账户成功'];
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());

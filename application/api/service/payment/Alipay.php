@@ -22,24 +22,23 @@ header('Content-type:text/html; Charset=utf-8');
 
 class Alipay extends ApiPayment
 {
+    /**
+     * 支付宝公钥
+     * @var string
+     */
     private $public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAix0lmphMY4htd8sw6kLMBGyju6p2y4pQtmiUpk7KxIV2NaUj0Zve2WJvPDptbKB0Lmn3EksPVG8VCrlh97shKjerm0gW314YN1DY/7RFPqxeeYNIFaMiGgf1ecMZUAOwO/v8NKn2nKH5hA0eMFxXNTtAXfSY/UBBnMFWOd765uQsXNn6r0PjhIpC2T9Hk+KfVm2eQ3QqY82/s0SaeebN/xjbkTsAc6yKGPCJxbe2vyE5coQ8iCj4pVvlFX6+SO+lEFvB56r8H+dQlDixPGgEGz+PZkUny7SZjFBZm5amH6XEl40ac9iWuuaW2C28FMoHX6XjJgu95aZMeVa5ZCrqmQIDAQAB";
+
     /**
      * 支付宝扫码支付
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array|bool
      * @throws OrderException
      */
-    public function ali_qr($order, $notify = false){
-
-        if ($notify){
-            return $this->verifyAliOrderNotify();
-        }
-
+    public function ali_qr($order){
         //请求参数
         $requestConfigs = array(
             'out_trade_no'=> $order['trade_no'],
@@ -53,6 +52,37 @@ class Alipay extends ApiPayment
         return [
             'order_qr' => $result['qr_code']
         ];
+    }
+
+
+    /**
+     * 异步回调地址 /默认按类名称  【 https://pay.iredcap.cn/notify/alipay 】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function notify(){
+        return $this->verifyAliOrderNotify();
+    }
+
+    /**
+     * 同步地址 【待测】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return mixed
+     */
+    public function callback(){
+        //1.拿out_trade_no
+        $out_trade_no = request()->param('out_trade_no');
+        //2.查订单获取  商户return_url
+        $order = self::getOrder($out_trade_no);
+        //3.返回参数跳转
+        return $order;
     }
 
     /******************************支付宝******************************************/
@@ -101,6 +131,7 @@ class Alipay extends ApiPayment
         //数据返回
         return $result;
     }
+
     /**
      * 回调验签
      *
@@ -115,6 +146,9 @@ class Alipay extends ApiPayment
         $response = convertUrlArray(file_get_contents('php://input')); //支付宝异步通知POST返回数据
         //转码
         $response = self::encoding($response,'utf-8', $response['charset'] ?? 'gb2312');
+        //读订单对应的支付渠道配置
+        $this->config = self::getOrderPayConfig($response['out_trade_no']);
+
         //验签
         $result = $this->verify($this->getSignContent($response, true), $response['sign'], $response['sign_type']);
         if (!$result) {

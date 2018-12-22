@@ -27,16 +27,11 @@ class Wxpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function wx_native($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyWxOrderNotify();
-        }
+    public function wx_native($order){
         //获取预下单
         $unifiedOrder = self::getWxpayUnifiedOrder($order);
         //数据返回
@@ -52,16 +47,11 @@ class Wxpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function wx_jsapi($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyWxOrderNotify();
-        }
+    public function wx_jsapi($order){
         //获取预下单
         $unifiedOrder = self::getWxpayUnifiedOrder($order, 'JSAPI');
         //构建微信支付
@@ -84,16 +74,11 @@ class Wxpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function wx_app($order, $notify = false){
-        //异步回调
-        if ($notify){
-            return $this->verifyWxOrderNotify();
-        }
+    public function wx_app($order){
         //获取预下单
         $unifiedOrder = self::getWxpayUnifiedOrder($order, 'JSAPI');
         //构建微信支付
@@ -117,16 +102,11 @@ class Wxpay extends ApiPayment
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param $order
-     * @param bool $notify
      *
      * @return array
      * @throws OrderException
      */
-    public function wx_mini($order, $notify = false){
-    //异步回调
-        if ($notify){
-            return $this->verifyWxOrderNotify();
-        }
+    public function wx_mini($order){
         //获取预下单
         $unifiedOrder = self::getWxpayUnifiedOrder($order, 'JSAPI');
         //构建微信支付
@@ -141,6 +121,36 @@ class Wxpay extends ApiPayment
 
         //数据返回
         return $jsBizPackage;
+    }
+
+    /**
+     * 异步回调地址 /默认按类名称  【 https://pay.iredcap.cn/notify/wxpay 】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function notify(){
+        return $this->verifyWxOrderNotify();
+    }
+
+    /**
+     * 同步地址 【待测】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return mixed
+     */
+    public function callback(){
+        //1.拿out_trade_no
+        $out_trade_no = request()->param('out_trade_no');
+        //2.查订单获取  商户return_url
+        $order = self::getOrder($out_trade_no);
+        //3.返回参数跳转
+        return $order;
     }
 
     /******************微信***********************************/
@@ -158,6 +168,7 @@ class Wxpay extends ApiPayment
      * @throws OrderException
      */
     private function getWxpayUnifiedOrder($order, $trade_type = 'NATIVE'){
+
         //请求参数
         $unified = array(
             'appid' => $this->config['app_id'],
@@ -187,12 +198,11 @@ class Wxpay extends ApiPayment
         $responseXml = self::curlPost('https://api.mch.weixin.qq.com/pay/unifiedorder', self::arrayToXml($unified));
 
         $result = self::xmlToArray($responseXml);
-
         //判断成功
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
-            Log::error('Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''));
+            Log::error('Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']));
             throw new OrderException([
-                'msg'   => 'Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''),
+                'msg'   => 'Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']),
                 'errCode'   => 200009
             ]);
         }
@@ -209,12 +219,13 @@ class Wxpay extends ApiPayment
      * @return array
      * @throws OrderException
      */
-    public function verifyWxOrderNotify(){
+    private function verifyWxOrderNotify(){
         libxml_disable_entity_loader(true);
         //Object  对象
-        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE));
-
-        if (self::getWxpaySign(obj2arr($response), $this->config['mch_key']) !== $response->sign) {
+        $response = json_decode(json_encode(simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE),true);
+        //读订单对应的支付渠道配置
+        $this->config = self::getOrderPayConfig($response['out_trade_no']);
+        if (self::getWxpaySign($response, $this->config['mch_key']) !== $response['sign']) {
             Log::error('Verify WxOrder Notify Error');
             throw new OrderException([
                 'msg'   => 'Verify WxOrder Notify Error',
