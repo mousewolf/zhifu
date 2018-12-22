@@ -18,6 +18,7 @@ use app\api\service\ApiPayment;
 use app\common\controller\BaseApi;
 use app\common\library\exception\ForbiddenException;
 use app\common\library\exception\OrderException;
+use app\common\model\Orders;
 use think\Log;
 
 class Notify extends BaseApi
@@ -51,10 +52,11 @@ class Notify extends BaseApi
      *
      */
     public function callback($channel = 'wxpay'){
-        //1.拿out_trade_no
-        //2.查订单获取  商户return_url
-        //3.redirect 带参数跳转
-        $this->redirect('');
+
+        //支付分发
+        $result = ApiPayment::$channel()->callback();
+
+        $this->redirect($result['return_url']);
     }
 
     /**

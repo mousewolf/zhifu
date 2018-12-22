@@ -144,6 +144,11 @@ layui.define(["table", "form"],
                     title: "渠道名称"
                 },
                 {
+                    field: "action",
+                    width: 150,
+                    title: "控制类名称"
+                },
+                {
                     field: "remarks",
                     title: "备注",
                 },
@@ -194,7 +199,8 @@ layui.define(["table", "form"],
                             type: 2,
                             title: "渠道账户列表",
                             content: "account?cnl_id=" + e.data.id,
-                            maxmin: !0,                             area: ['80%','60%'],
+                            maxmin: !0,
+                            area: ['80%','60%'],
                             btn: ["确定", "取消"],
                             yes: function(e, f) {},
                             success: function(e, t) {}
@@ -246,6 +252,10 @@ layui.define(["table", "form"],
         i.render({
             elem: "#app-pay-account-list",
             url: 'getAccountList',
+            //添加请求字段
+            where: {
+                cnl_id:  t("input[ name='cnl_id' ] ").val()
+            },
             //自定义响应字段
             response: {
                 statusName: 'code' //数据状态的字段名称

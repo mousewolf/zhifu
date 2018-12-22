@@ -19,6 +19,7 @@ class PayAccount extends BaseAdmin
     protected $rule = [
         'name'  => 'require|length:3,10',
         'rate'  => 'require|number',
+        'single'     => 'require|number',
         'daily'     => 'require|number',
         'remarks'    => 'require',
         'param'    => 'require'
@@ -26,13 +27,15 @@ class PayAccount extends BaseAdmin
 
     // 验证提示
     protected $message = [
-        'name.require'    => '渠道名不能为空',
-        'name.length'     => '渠道名长度为6-30个字符之间',
-        'rate.require'    => '渠道费率不能为空',
-        'rate.number'     => '渠道费率必须为数字',
-        'daily.require'       => '渠道日限不能为空',
-        'daily.number'       => '渠道日限必须为数字',
-        'remarks.require'     => '渠道备注不能为空',
+        'name.require'    => '账户名不能为空',
+        'name.length'     => '账户名长度为6-30个字符之间',
+        'rate.require'    => '账户费率不能为空',
+        'rate.number'     => '账户费率必须为数字',
+        'single.require'    => '账户单笔限额不能为空',
+        'single.number'    => '账户单笔限额必须为数字',
+        'daily.require'     => '账户当日限额不能为空',
+        'daily.number'       => '账户当日限额必须为数字',
+        'remarks.require'     => '账户备注不能为空',
         'param.require'      => '支付配置不能为空'
     ];
 }

@@ -26,16 +26,16 @@
     <div class="layui-form-item">
         <label class="layui-form-label">账户名称：</label>
         <div class="layui-input-block">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入渠道名称" autocomplete="off" class="layui-input" value="">
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入账户名称" autocomplete="off" class="layui-input" value="">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">支付渠道：</label>
         <div class="layui-input-block">
-            <select name="role">
+            <select name="cnl_id" disabled="disabled">
                 <option value="">请选择支付渠道</option>
                 {volist name="channel" id="vo"}
-                <option value="{$vo.id}">{$vo.name}</option>
+                <option {$cnl_id == $vo.id ? 'selected' : ''} value="{$vo.id}">{$vo.name}</option>
                 {/volist}
             </select>
         </div>
@@ -43,7 +43,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">账户费率：</label>
         <div class="layui-input-block">
-            <input type="text" name="rate" required lay-verify="required" placeholder="请输入渠道费率" autocomplete="off" class="layui-input" value="">
+            <input type="text" name="rate" required lay-verify="required" placeholder="请输入账户费率" autocomplete="off" class="layui-input" value="">
         </div>
     </div>
     <div class="layui-form-item">
@@ -59,11 +59,11 @@
     <div class="layui-form-item">
         <label class="layui-form-label">单笔限额：</label>
         <div class="layui-input-inline">
-            <input type="text" name="single" required lay-verify="required" placeholder="请输入渠道单笔限额" autocomplete="off" class="layui-input" value="">
+            <input type="text" name="single" required lay-verify="required" placeholder="请输入单笔限额" autocomplete="off" class="layui-input" value="">
         </div>
         <label class="layui-form-label">当日限额：</label>
         <div class="layui-input-inline">
-            <input type="text" name="daily" required lay-verify="required" placeholder="请输入渠道日限额" autocomplete="off" class="layui-input" value="">
+            <input type="text" name="daily" required lay-verify="required" placeholder="请输入当日限额" autocomplete="off" class="layui-input" value="">
         </div>
     </div>
     <div class="layui-form-item">

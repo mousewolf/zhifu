@@ -68,6 +68,23 @@ class Alipay extends ApiPayment
         return $this->verifyAliOrderNotify();
     }
 
+    /**
+     * 同步地址 【待测】
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @return mixed
+     */
+    public function callback(){
+        //1.拿out_trade_no
+        $out_trade_no = request()->param('out_trade_no');
+        //2.查订单获取  商户return_url
+        $order = self::getOrder($out_trade_no);
+        //3.返回参数跳转
+        return $order;
+    }
+
     /******************************支付宝******************************************/
 
     /**

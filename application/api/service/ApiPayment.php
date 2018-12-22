@@ -189,7 +189,7 @@ class ApiPayment
     }
 
     /**
-     * 依据订单获取配置
+     * 依据订单号获取配置
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -203,5 +203,19 @@ class ApiPayment
         $orderConfig = (new Orders())->getOrderPayConfig($out_trade_no);
 
         return json_decode($orderConfig['param'], true);
+    }
+
+    /**
+     * 依据订单号获取订单同步地址
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param string $out_trade_no
+     *
+     * @return mixed
+     */
+    protected function getOrder($out_trade_no = ''){
+
+        return (new Orders())->getOrderInfo(['trade_no' => $out_trade_no], 'return_url');
     }
 }

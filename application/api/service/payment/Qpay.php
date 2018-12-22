@@ -154,9 +154,9 @@ class Qpay extends ApiPayment
         $result = self::xmlToArray($responseXml);
 
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
-            Log::error('Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''));
+            Log::error('Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']));
             throw new OrderException([
-                'msg'   => 'Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']).'-'.($result['return_code'] ?? ''),
+                'msg'   => 'Create QQ API Error:'.($result['return_msg'] ?? $result['retmsg']),
                 'errCode'   => 200009
             ]);
         }

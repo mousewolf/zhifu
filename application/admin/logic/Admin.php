@@ -93,7 +93,7 @@ class Admin extends BaseAdmin
 
             $action = isset($data['id']) ? '编辑' : '新增';
 
-            action_log($action, $action . '管理员信息，name => ' . $data['nickname']);
+            action_log($action, $action . '管理员信息，' . $data['nickname']);
 
             Db::commit();
             return [ 'code' => CodeEnum::SUCCESS,'msg' => $action . '管理员信息成功'];

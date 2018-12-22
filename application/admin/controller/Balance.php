@@ -45,9 +45,6 @@ class Balance extends BaseAdmin
         !empty($this->request->param('username')) && $where['username']
             = ['like', '%'.$this->request->param('username').'%'];
 
-        //时间搜索  时间戳搜素
-        $where['create_time'] = $this->parseRequestDate();
-
         $data = $this->logicBalance->getBalanceList($where, '*', 'create_time desc', false);
 
         $count = $this->logicBalance->getBalanceCount($where);

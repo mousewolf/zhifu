@@ -142,7 +142,7 @@ class Orders extends BaseLogic
         $this->modelOrders->alias('a');
 
         $join = [
-            ['pay_channel b', ' b.id = a.cnl_id'],
+            ['pay_account b', ' b.id = a.cnl_id'],
         ];
 
         $this->modelOrders->join = $join;

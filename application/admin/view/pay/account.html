@@ -16,6 +16,7 @@
         <!--头部-->
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
+                <!--//传递隐藏渠道参数-->
                 <input type="text" name="cnl_id" value="{$cnl_id}" hidden >
                 <label class="layui-form-label">账户ID：</label>
                 <div class="layui-input-inline">
@@ -99,7 +100,7 @@
                 layer.open({
                     type: 2
                     ,title: '添加渠道账号'
-                    ,content: 'addAccount'
+                    ,content: 'addAccount?cnl_id=' + $("input[ name='cnl_id' ] ").val()
                     ,maxmin: true
                     ,area: ['80%','60%']
                     ,btn: ['确定', '取消']

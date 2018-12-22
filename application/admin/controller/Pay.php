@@ -226,8 +226,11 @@ class Pay extends BaseAdmin
     {
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->saveAccountInfo($this->request->post()));
+
         //获取渠道列表
         $channel = $this->logicPay->getChannelList([], true, 'create_time desc',false);
+
+        $this->assign('cnl_id',$this->request->param('cnl_id'));
 
         $this->assign('channel',$channel);
 

@@ -21,10 +21,10 @@
     <div class="layui-form-item">
         <label class="layui-form-label">支付渠道：</label>
         <div class="layui-input-block">
-            <select name="role">
+            <select name="cnl_id" disabled="disabled">
                 <option value="">请选择支付渠道</option>
                 {volist name="channel" id="vo"}
-                <option {$account.cnl_id == $vo.id ? 'selected' : ''} value="{$vo.id}">{$vo.name}</option>
+                <option {$account.cnl_id == $vo.id ? 'selected' : ''} value="{$vo.id}" >{$vo.name}</option>
                 {/volist}
             </select>
         </div>

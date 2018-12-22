@@ -33,35 +33,60 @@ class Pay extends BaseLogic
         $cnl_id = $this->modelPayCode->getValue(['code' => $order['channel']], 'cnl_id');
 
         //2.cnl_id获取支持该方式的渠道列表
-        $channels = $this->modelPayChannel->getColumn(['id' => ['in',$cnl_id]], 'id,name,action,timeslot,status');
+        $channels = $this->modelPayChannel->getColumn(['id' => ['in',$cnl_id], 'status' => ['eq','1']],
+            'id,name,action,timeslot,return_url,notify_url');
 
         //3.规则排序选择合适渠道
         /*******************************/
         //TODO 写选择规则  时间、状态、费率 等等
+        //规则处理  我先简便写一下
+        $channelsMap = [];
+        foreach ($channels as $key => $val){
+            $timeslot = json_decode($val['timeslot'],true);
+            if ( strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+                $channelsMap[$key] = $val;
+            }
+        }
+        //判断可用
         if (empty($channels)){
             return ['errorCode' => '400006','msg' => '没有可用渠道'];
         }
-        //先随机吧
-        $channel = $channels[array_rand($channels)];
+        $channel =  $channelsMap[array_rand($channelsMap)];
 
         /*******************************/
         //3.获取该渠道下可用账户
-        $accounts = $this->modelPayAccount->getColumn(['cnl_id' => ['eq',$channel['id']]], 'id,single,daily,timeslot,param,status');
+        $accounts = $this->modelPayAccount->getColumn(['cnl_id' => ['eq',$channel['id']], 'status' => ['eq','1']],
+            'id,single,daily,timeslot,param');
 
         //4.规则取出可用账户
         /*******************************/
         //TODO 写选择规则  时间、状态、费率 等等
-        if (empty($accounts)){
+
+        //规则处理  我先简便写一下
+        $accountsMap = [];
+        foreach ($accounts as $key => $val){
+            $timeslot = json_decode($val['timeslot'],true);
+            if ( strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+                $accountsMap[$key] = $val;
+            }
+        }
+        //判断可用
+        if (empty($accountsMap)){
             return ['errorCode' => '400008','msg' => '没有可用商户'];
         }
-        //先随机吧
-        $account =  $accounts[array_rand($accounts)];
-        $account['param'] = json_decode($account['param'],true);
+
+        $account =  $accountsMap[array_rand($accountsMap)];
+
+        //配置合并
+        $configMap = array_merge($channel, json_decode($account['param'],true));
+
+        //添加订单支付通道ID
+        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $account['id']);
         /*******************************/
         return [
-            'channel' => $channel['action'],
+            'channel' => $configMap['action'],
             'action' => $order['channel'],
-            'config' => $account
+            'config' =>  $configMap
         ];
 
     }
@@ -224,7 +249,7 @@ class Pay extends BaseLogic
 
             $action = isset($data['id']) ? '编辑' : '新增';
 
-            action_log($action,  '支付渠道,data:' . http_build_query($data) );
+            action_log($action,  '支付渠道' . $data['name'] );
 
             Db::commit();
             return ['code' =>  CodeEnum::SUCCESS,  'msg' => $action . '渠道成功'];
@@ -264,7 +289,7 @@ class Pay extends BaseLogic
 
             $action = isset($data['id']) ? '编辑' : '新增';
 
-            action_log($action,  '支付渠道账户,data:' . http_build_query($data) );
+            action_log($action,  '支付渠道账户,' . $data['name'] );
 
             Db::commit();
             return ['code' =>  CodeEnum::SUCCESS,  'msg' => $action . '渠道账户成功'];

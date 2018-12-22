@@ -65,11 +65,8 @@ class DoPay extends BaseApi
         //取出数据
         list($payment,$action,$config) = array_values($appChannel);
 
-        //添加订单支付通道ID
-        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $config['id']);
-
         //支付分发
-        $result = ApiPayment::$payment($config['param'])->$action($order);
+        $result = ApiPayment::$payment($config)->$action($order);
 
         return $result;
     }
