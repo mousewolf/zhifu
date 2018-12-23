@@ -55,7 +55,6 @@ class AutoOrderNotify
         $order = (new OrdersNotify())->where(['order_id' => $data['id']]);
         //处理队列
         $result = $this->doJob($data);
-
         if ($result) {
             //成功记录数据
             $order->update($result);
@@ -63,6 +62,7 @@ class AutoOrderNotify
             $job->delete();
             print("<info>The Order Job ID " . $data['id'] ." has been done and deleted"."</info>\n");
         }else{
+
             //失败记录数据
             $order->update([
                 'times'   => $job->attempts()
@@ -113,7 +113,7 @@ class AutoOrderNotify
 
             //签名头部
             $header = [
-                'user-agent'    =>  "Mozilla/4.0 (compatible; MSIE 7.0; Cmpay SDK SV1; Trident/4.0; SV1; .NET4.0C; .NET4.0E; SE 2.X MetaSr 1.0)",
+                'user-agent'    =>  "Mozilla/4.0 (compatible; MSIE 7.0; cmpay webhook 1.0; Trident/4.0; SV1; .NET4.0C; .NET4.0E; SE 2.X MetaSr 1.0)",
                 'content-type'  =>  "application/json; charset=UTF-8",
                 HttpHeader::X_CA_NONCE_STR     =>  Rest::createUniqid(),
                 HttpHeader::X_CA_TIMESTAMP     =>  Rest::getMicroTime()
@@ -136,14 +136,12 @@ class AutoOrderNotify
 
                 $statusCode = $response->getStatusCode();
                 $contents = $response->getBody()->getContents();
+                // JSON转换对象
+                $contentsObj = json_decode($contents);
 
-                if ( $statusCode == 200 && !is_null(json_decode($contents))){
-
-                    // 转换对象
-                    $resObj =  json_decode($contents);
-
+                if ( $statusCode == 200 && !is_null($contentsObj)){
                     //判断放回是否正确
-                    if ($resObj->result_code == "OK" && $resObj->result_msg == "SUCCESS"){
+                    if ($contentsObj->result_code == "OK" && $contentsObj->result_msg == "SUCCESS"){
                         //TODO 更新写入数据
                         return [
                             'result'   => $contents,
@@ -176,6 +174,8 @@ class AutoOrderNotify
         unset($data['cnl_id']);
         unset($data['trade_no']);
         unset($data['status']);
+        unset($data['create_time']);
+        unset($data['update_time']);
 
         //组合参数
         $payload['result_code'] = 'OK';
@@ -201,7 +201,7 @@ class AutoOrderNotify
             ."\n" . utf8_encode($header[HttpHeader::X_CA_TIMESTAMP])
             ."\n" . utf8_encode($to_sign_data);
 
-        return Rest::sign($_to_sign_data);
+        return Rest::sign(base64_encode($_to_sign_data));
     }
 
 }

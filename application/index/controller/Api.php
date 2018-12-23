@@ -15,6 +15,8 @@
 namespace app\index\controller;
 
 
+use app\common\library\RsaUtils;
+
 class Api extends Base
 {
 
@@ -43,6 +45,7 @@ class Api extends Base
         return $this->fetch();
     }
 
+
     /**
      * API公共
      *
@@ -59,5 +62,4 @@ class Api extends Base
         }
         $this->assign('api',$this->logicApi->getApiInfo(['uid' => is_login()]));
     }
-
 }

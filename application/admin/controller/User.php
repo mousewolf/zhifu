@@ -15,6 +15,7 @@
 namespace app\admin\controller;
 
 use app\common\library\enum\CodeEnum;
+use app\common\library\enum\UserStatusEnum;
 
 class User extends BaseAdmin
 {
@@ -50,7 +51,7 @@ class User extends BaseAdmin
         !empty($this->request->param('email')) && $where['account']
             = ['like', '%'.$this->request->param('email').'%'];
 
-        $where['status'] = ['eq', $this->request->get('status','2')];
+        $where['status'] = ['eq', $this->request->get('status',UserStatusEnum::ENABLE)];
 
         //时间搜索  时间戳搜素
         $where['create_time'] = $this->parseRequestDate();
@@ -240,7 +241,7 @@ class User extends BaseAdmin
             $this->result($this->logicUser->saveUserProfit($data_update));
         };
         //所有渠道列表
-        $channel = $this->logicPay->getChannelList([],true, 'create_time desc',false);
+        $channel = $this->logicPay->getAccountList([],true, 'create_time desc',false);
 
         //获取商户分润详细信息
         $userProfit = $this->logicUser->getUserProfitList(['uid' =>$this->request->param('id')]);
