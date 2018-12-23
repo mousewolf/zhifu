@@ -10,7 +10,7 @@ class Agent extends Base
 {
 
     /**
-     * 获取代理名下商户
+     * 获取数据统计
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
@@ -20,9 +20,8 @@ class Agent extends Base
     public function index(){
         $where = ['puid'=> is_login()];
         $this->assign('list', $this->logicUser->getUserList($where, true, 'create_time desc', 10));
-       return $this->fetch();
+        return $this->fetch();
     }
-
 
     /**
      * 下级交易明细
