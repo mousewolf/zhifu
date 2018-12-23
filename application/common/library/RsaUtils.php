@@ -301,10 +301,12 @@ class RsaUtils
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
+     * @param string $filename
      *
      */
-    public function exportOpenSSLFile(){
+    public function exportOpenSSLFile($filename = ''){
         $config = array(
+            //依据自己的配置文件
             "config" => "F:\phpStudy\PHPTutorial\Apache\conf\openssl.cnf",
             "digest_alg" => "sha512",
             "private_key_bits" => 2048, //字节数    512 1024  2048   4096 等
@@ -319,8 +321,7 @@ class RsaUtils
         $public_key = $pubKey["key"];
         //输出文件
         if (!is_dir(CRET_PATH . "/export/"))  mkdir(CRET_PATH . "/export/", 0777);
-        file_put_contents(CRET_PATH . "/export/". date('Ymd') ."_public.pem", $public_key);
-        file_put_contents(CRET_PATH . "/export/". date('Ymd') ."_private.pem", $private_key);
-        openssl_free_key($res);
+        file_put_contents(CRET_PATH . "/export/". $filename ."_public.pem", $public_key);
+        file_put_contents(CRET_PATH . "/export/". $filename ."_private.pem", $private_key);
     }
 }

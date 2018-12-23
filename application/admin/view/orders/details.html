@@ -14,6 +14,7 @@
     <div class="layui-card">
         <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
             <table class="layui-table" lay-skin="line">
+                <input type="text" name="order_id" value="{$order.id}" hidden>
                 <tr><td>代理编号：</td><td>{$order.puid == 0 ? '无代理' :'' }</td></tr>
                 <tr><td>商户编号：</td><td>{$order.uid}</td></tr>
                 <tr><td>商户订单号：</td><td><strong class="text-success">{$order.out_trade_no}</strong></td></tr>
@@ -25,19 +26,29 @@
                 <tr><td>提交时间：</td><td><strong class="text-warning">{$order.create_time|date='Y/m/d H:i:s',###}</strong></td></tr>
                 <tr><td>更新时间：</td><td><strong class="text-danger">{$order.update_time|date='Y/m/d H:i:s',###}</strong></td></tr>
                 <tr><td>交易通道：</td><td>{$order.channel}</td></tr>
-                <tr><td>页面返回地址：</td><td>{$order.return_url}</td></tr>
-                <tr><td>服务器通知地址：</td><td>{$order.notify_url}</td></tr>
+                <tr><td>返回地址：</td><td>{$order.return_url}</td></tr>
+                <tr><td>通知地址：</td><td>{$order.notify_url}</td></tr>
+                {if !empty($notify)}
+                <tr><td>通知状态：</td><td>
+                    {switch $notify.is_status}
+                    {case 0}<button class="layui-btn layui-btn-danger layui-btn-xs" lay-submit lay-filter="app-order-notify-submit"> 通知失败</button>{/case}
+                    {case 200}<button class="layui-btn layui-btn-normal layui-btn-xs">通知成功</button>{/case}
+                    {default}<button class="layui-btn layui-btn-danger layui-btn-xs" lay-submit lay-filter="app-order-notify-submit"> 通知失败</button>
+                    {/switch}
+                </td></tr>
+                <tr><td>通知结果：</td><td><strong class="text-dark">{$notify.result}</strong></td></tr>
+                {/if}
                 <tr><td>状态：</td><td>
                     {switch $order.status}
                     {case 0}<button class="layui-btn layui-btn-danger layui-btn-xs">订单关闭</button>{/case}
                     {case 1}<button class="layui-btn layui-btn-primary layui-btn-xs">等待支付</button>{/case}
                     {case 2}<button class="layui-btn layui-btn-normal layui-btn-xs">支付完成</button>{/case}
-                    {default}<button class="layui-btn layui-btn-primary layui-btn-xs">关闭</button>异常订单</label>{/case}
+                    {default}<button class="layui-btn layui-btn-primary layui-btn-xs">异常订单</button>
                     {/switch}
                 </td></tr>
             </table>
             <div class="layui-form-item layui-hide">
-                <input type="button" lay-submit lay-filter="app-user-profit-submit" id="app-user-profit-submit" value="确认">
+                <input type="button" lay-submit lay-filter="app-order-details" id="app-order-details" value="确认">
             </div>
         </div>
     </div>
@@ -53,6 +64,24 @@
         var $ = layui.$
             ,form = layui.form
             ,upload = layui.upload ;
+
+        //监听搜索
+        form.on('submit(app-order-notify-submit)', function(data){
+            let field = data.field;
+            console.log(field);
+            //提交
+            $.ajax({
+                url:"{:url('admin/Orders/subnotify')}",
+                method:"POST",
+                data:field, success:function (res) {
+                    layer.alert(res.msg, {
+                        closeBtn: 0
+                    }, function(){
+                        window.location.reload();
+                    });
+                }
+            });
+        });
     });
 </script>
 </body>

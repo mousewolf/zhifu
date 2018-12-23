@@ -100,7 +100,7 @@ class Common extends Controller
         list($start,$end) = Time::month();
         return [
             'between',!empty($this->request->param('end'))
-                ? [strtotime($this->request->param('start')), strtotime($this->request->param('end'))]
+                ? [strtotime($this->request->param('start')), bcadd(strtotime($this->request->param('end')), 86400)]
                 : [$start, $end]
         ];
     }

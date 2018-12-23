@@ -15,6 +15,7 @@
 namespace app\common\logic;
 
 
+use app\common\library\enum\CodeEnum;
 use app\common\library\exception\OrderException;
 use think\Db;
 use think\Log;
@@ -45,12 +46,26 @@ class Orders extends BaseLogic
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param array $where
-     * @param bool $field
+     * @param bool|string $field
      *
      * @return mixed
      */
     public function getOrderInfo($where = [], $field = true){
         return $this->modelOrders->getInfo($where, $field);
+    }
+
+    /**
+     * 获取订单异步信息
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param array $where
+     * @param bool $field
+     *
+     * @return mixed
+     */
+    public function getOrderNotify($where = [], $field = true){
+        return $this->modelOrdersNotify->getInfo($where, $field);
     }
 
     /**
@@ -165,6 +180,27 @@ class Orders extends BaseLogic
         );
     }
 
+    /**
+     * 推送队列
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order_id
+     * @return array
+     */
+    public function pushOrderNotify($order_id = ''){
+        //订单
+        $order = $this->logicOrders->getOrderInfo(['id' => $order_id]);
+        //加入队列
+        $result = $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
+        if ($result){
+            $returnmsg = [ 'code' =>  CodeEnum::SUCCESS, 'msg'  => '推送队列成功'];
+        }else{
+            $returnmsg = [ 'code' =>  CodeEnum::SUCCESS, 'msg'  => '推送队列成功'];
+        }
+        action_log('推送','推送异步订单通知，单号：' . $order['out_trade_no']);
+        return $returnmsg;
+    }
     /**
      * 创建支付订单
      *

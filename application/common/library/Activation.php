@@ -42,7 +42,7 @@ class Activation
         //邮件标题
         $subject    =   "【聚合支付】用户注册 - 注册邮箱验证";
         //邮件主体  也可以使用邮件模板文件
-        $content = self::getRegActiveContent($user);
+        $content =  self::getRegActiveContent($user);
         //读数据库配置
         $config = config();
         //发送激活邮件
@@ -140,7 +140,7 @@ class Activation
         //生成code
         $activecode = urlencode($this->createActiveCode($user));
         //激活地址
-        $activeUrl = "http://" . config('site')['app_domain'] . "/active/{$activecode}";
+        $activeUrl = "https://pay.iredcap.cn/active/{$activecode}";
 
         return "<div style=\"margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;\">
             <div style=\"width: 750px; margin: 0 auto; background-color: #fff;\">
