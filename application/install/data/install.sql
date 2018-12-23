@@ -442,7 +442,7 @@ DROP TABLE IF EXISTS `cm_orders_notify`;
 CREATE TABLE `cm_orders_notify` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` int(10) unsigned NOT NULL,
-  `is_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `is_status` int(3) unsigned NOT NULL DEFAULT '404',
   `result` varchar(300) NOT NULL DEFAULT '' COMMENT '请求相响应',
   `times` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '请求次数',
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
