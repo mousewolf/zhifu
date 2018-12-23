@@ -13,21 +13,13 @@
 
 namespace app\api\service\payment;
 
-
 use app\api\service\ApiPayment;
 use app\common\library\exception\OrderException;
+use app\common\library\exception\SignatureException;
 use think\Log;
-
-header('Content-type:text/html; Charset=utf-8');
 
 class Alipay extends ApiPayment
 {
-    /**
-     * 支付宝公钥
-     * @var string
-     */
-    private $public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAix0lmphMY4htd8sw6kLMBGyju6p2y4pQtmiUpk7KxIV2NaUj0Zve2WJvPDptbKB0Lmn3EksPVG8VCrlh97shKjerm0gW314YN1DY/7RFPqxeeYNIFaMiGgf1ecMZUAOwO/v8NKn2nKH5hA0eMFxXNTtAXfSY/UBBnMFWOd765uQsXNn6r0PjhIpC2T9Hk+KfVm2eQ3QqY82/s0SaeebN/xjbkTsAc6yKGPCJxbe2vyE5coQ8iCj4pVvlFX6+SO+lEFvB56r8H+dQlDixPGgEGz+PZkUny7SZjFBZm5amH6XEl40ac9iWuuaW2C28FMoHX6XjJgu95aZMeVa5ZCrqmQIDAQAB";
-
     /**
      * 支付宝扫码支付
      *
@@ -35,8 +27,9 @@ class Alipay extends ApiPayment
      *
      * @param $order
      *
-     * @return array|bool
+     * @return array
      * @throws OrderException
+     * @throws SignatureException
      */
     public function ali_qr($order){
         //请求参数
@@ -63,6 +56,7 @@ class Alipay extends ApiPayment
      *
      * @return array
      * @throws OrderException
+     * @throws SignatureException
      */
     public function notify(){
         return $this->verifyAliOrderNotify();
@@ -97,6 +91,7 @@ class Alipay extends ApiPayment
      *
      * @return mixed
      * @throws OrderException
+     * @throws SignatureException
      */
     private function getGenerateAlipayOrder($requestConfigs, $trade_type = 'alipay.trade.pay'){
 
@@ -140,6 +135,7 @@ class Alipay extends ApiPayment
      *
      * @return array
      * @throws OrderException
+     * @throws SignatureException
      */
     public function verifyAliOrderNotify(){
 
@@ -152,9 +148,9 @@ class Alipay extends ApiPayment
         //验签
         $result = $this->verify($this->getSignContent($response, true), $response['sign'], $response['sign_type']);
         if (!$result) {
-            Log::error('Verify AliOrder Notify Error');
+            Log::error('Verify Alipay Sign Error: 请检查支付宝配置是否正确');
             throw new OrderException([
-                'msg'   => 'Verify AliOrder Notify Error',
+                'msg'   => 'Verify Alipay Sign Error. [Check RSA Public Key Configuration]',
                 'errCode'   => 200010
             ]);
         }
@@ -171,6 +167,7 @@ class Alipay extends ApiPayment
      * @param $signType
      *
      * @return string
+     * @throws SignatureException
      */
     protected function generateAlipaySign($params, $signType){
 
@@ -186,19 +183,31 @@ class Alipay extends ApiPayment
      * @param string $signType
      *
      * @return string
+     * @throws SignatureException
      */
     protected function sign($data, $signType = "RSA") {
         $priKey = $this->config['private_key'];
+
         $res = "-----BEGIN RSA PRIVATE KEY-----\n" .
             wordwrap($priKey, 64, "\n", true) .
             "\n-----END RSA PRIVATE KEY-----";
-        ($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
-        if ("RSA2" == $signType) {
-            openssl_sign($data, $sign, $res, version_compare(PHP_VERSION,'5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
-        } else {
-            openssl_sign($data, $sign, $res);
+
+        try{
+            if ("RSA2" == $signType) {
+                openssl_sign($data, $sign, $res, version_compare(PHP_VERSION,'5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
+            } else {
+                openssl_sign($data, $sign, $res);
+            }
+        }catch (\Exception $e){
+            Log::error('Verify Alipay Sign Error: 支付宝私钥格式错误，请检查RSA私钥配置');
+            throw new SignatureException([
+                'msg'   => 'Verify Alipay Sign Error. [Alipay Private Key Format Error].',
+                'errCode'   => 10009
+            ]);
         }
+
         $sign = base64_encode($sign);
+
         return $sign;
     }
 
@@ -212,23 +221,34 @@ class Alipay extends ApiPayment
      * @param string $signType
      *
      * @return bool
+     * @throws SignatureException
      */
     protected function verify($data, $sign, $signType = 'RSA') {
-        $pubKey= $this->public_key;
+        $pubKey= $this->config['public_key'];
 
         $res = "-----BEGIN PUBLIC KEY-----\n" .
             wordwrap($pubKey, 64, "\n", true) .
             "\n-----END PUBLIC KEY-----";
-        ($res) or die('支付宝RSA公钥错误。请检查公钥文件格式是否正确');
-        //调用openssl内置方法验签，返回bool值
-        if ("RSA2" == $signType) {
-            $result = (bool)openssl_verify($data, base64_decode($sign), $res, version_compare(PHP_VERSION,'5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256);
-        } else {
-            $result = (bool)openssl_verify($data, base64_decode($sign), $res);
+
+        try{
+
+            //调用openssl内置方法验签，返回bool值
+            if ("RSA2" == $signType) {
+                $result = (bool)openssl_verify($data, base64_decode($sign), $res, version_compare(PHP_VERSION,'5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256);
+            } else {
+                $result = (bool)openssl_verify($data, base64_decode($sign), $res);
+            }
+        }catch (\Exception $e){
+            Log::error('Verify Alipay Sign Error: 支付宝公钥格式错误，请检查RSA公钥配置');
+            throw new SignatureException([
+                'msg'   => 'Verify Alipay Sign Error. [Alipay Public Key Format Error].',
+                'errCode'   => 10009
+            ]);
         }
 
         return $result;
     }
+
     /**
      * 校验$value是否非空
      *

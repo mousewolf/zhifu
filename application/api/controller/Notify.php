@@ -66,25 +66,13 @@ class Notify extends BaseApi
      *
      * @param string $channel
      *
-     * @return mixed
-     * @throws ForbiddenException
      */
     public function notify($channel = 'wxpay'){
 
-        try{
+         //支付分发
+        $result = ApiPayment::$channel()->notify();
 
-             //支付分发
-            $result = ApiPayment::$channel()->notify();
+        $this->logicNotify->handle($result);
 
-            $this->logicNotify->handle($result);
-
-            return $result;
-        } catch (OrderException $e) {
-            Log::error('支付验签失败:['. $e->getMessage() .']');
-            throw new ForbiddenException([
-                'errcode'   => '100003',
-                'msg'   => '支付验签失败，请检查数据'
-            ]);
-        }
     }
 }

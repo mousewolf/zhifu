@@ -51,6 +51,7 @@ Route::rule('user/info','index/User/info','GET|POST');
 Route::rule('user/auth','index/User/auth','GET|POST');
 Route::rule('user/password','index/User/password','GET|POST');
 Route::get('user/log','index/User/log');
+Route::get('user/faq','index/User/faq');
 Route::get('notice/:id','index/User/notice');
 /**
  * 代理
