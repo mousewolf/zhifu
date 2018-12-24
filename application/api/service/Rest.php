@@ -16,6 +16,7 @@ namespace app\api\service;
 
 use app\common\controller\BaseApi;
 use app\common\library\exception\ParameterException;
+use app\common\library\exception\SignatureException;
 use app\common\library\RsaUtils;
 use app\common\model\Api;
 use think\Db;
@@ -243,7 +244,7 @@ class Rest extends BaseApi
      * @param $key
      *
      * @return bool
-     * @throws ParameterException
+     * @throws SignatureException
      */
     public static function verify($data, $sign, $key){
         if (is_array($data)){
@@ -253,14 +254,20 @@ class Rest extends BaseApi
         //读取用户数据公钥
         $certificate = (new Api())->where(['key'  => $key])
             ->cache($key,'300')->value('secretkey');
-        //验签
-        $rsaUtils = new RsaUtils($certificate);
-        $result = $rsaUtils->verify($data, $sign, $code = 'base64');
-        if (!$result){
-            throw new ParameterException([
-                'msg'   => 'Sign Verify Failure.[ Platform Sign Key File Not Exists.]'
-            ]);
+        //没有数据
+        if(!empty($certificate)){
+            //验签
+            $rsaUtils = new RsaUtils($certificate);
+            $result = $rsaUtils->verify($data, $sign, $code = 'base64');
+            if (!$result){
+                throw new SignatureException([
+                    'msg'   => 'Sign Verify Failure.[ Merchant Sign Key May Be Incorrectly.]'
+                ]);
+            }
+            return true;
         }
-        return true;
+        throw new SignatureException([
+            'msg'   => 'Sign Verify Failure.[ Merchant Sign Key Not Set.]'
+        ]);
     }
 }
