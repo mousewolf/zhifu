@@ -48,8 +48,8 @@ class Pay extends BaseLogic
             }
         }
         //判断可用
-        if (empty($channels)){
-            return ['errorCode' => '400006','msg' => '没有可用渠道'];
+        if (empty($channelsMap)){
+            return ['errorCode' => '400006','msg' => 'No available channels'];
         }
         $channel =  $channelsMap[array_rand($channelsMap)];
 
@@ -72,13 +72,17 @@ class Pay extends BaseLogic
         }
         //判断可用
         if (empty($accountsMap)){
-            return ['errorCode' => '400008','msg' => '没有可用商户'];
+            return ['errorCode' => '400008','msg' => 'No available merchants.'];
         }
 
         $account =  $accountsMap[array_rand($accountsMap)];
-
+        $accountConf = json_decode($account['param'],true);
+        //判断配置是否正确
+        if (is_null($accountConf)){
+            return ['errorCode' => '400008','msg' => 'Maybe the payment account was misconfigured.'];
+        }
         //配置合并
-        $configMap = array_merge($channel, json_decode($account['param'],true));
+        $configMap = array_merge($channel, $accountConf);
 
         //添加订单支付通道ID
         $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $account['id']);
