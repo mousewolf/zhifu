@@ -82,10 +82,10 @@ class Notify extends BaseApi
         if(empty($profit)) $profit = $account;
         //2.数据计算
         //实付金额 - 扣除渠道费率后
-        $income = bcmul($order->amount, bcsub(1 , $account['rate'],3),  3);
+        $income =  bcsub($order->amount , bcmul($order->amount,$account['rate'],3),  3);
         $agent_in = "0.000";
         //商户收入
-        $user_in = bcmul(bcmul($income, $profit['urate'], 3), $profit['urate'], 3);
+        $user_in =bcmul($income, $profit['urate'], 3);
         //是否有代理
         if ($order->puid != 0){
             //1.获取代理的费率
@@ -93,7 +93,7 @@ class Notify extends BaseApi
             //2.代理收入
             $agent_in = bcsub($income, bcmul($income, $agent_profit['urate'], 3),3);
             //3.商户收入
-            $user_in = bcmul(bcmul($income, $agent_profit['urate'], 3), $profit['urate'], 3);
+            $user_in = bcmul($income, bcmul($agent_profit['urate'], $profit['urate'], 3),3);
             /*************写入商户代理资金******************/
             //支付成功  写入结算金额
             $this->logicBalanceChange->creatBalanceChange($order->puid,$agent_in,'商户单号'. $order->out_trade_no . '支付成功，代理分润金额转入','enable',false);
@@ -106,7 +106,7 @@ class Notify extends BaseApi
         $this->logicBalanceChange->creatBalanceChange($order->uid,$user_in,'单号'. $order->out_trade_no . '支付成功，待支付金额转入','enable',false);
         /**************写入商户资金结束*****************/
         //平台收入
-        $platform_in = bcsub(bcsub($income,$user_in,3), $agent_in,3);
+        $platform_in = bcsub($income, bcadd($user_in,$agent_in,3),3);
         //3.数据存储
         $this->modelOrders->changeOrderStatusValue([
             'income'    => $income,

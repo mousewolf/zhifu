@@ -19,19 +19,17 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">商户ID</label>
                     <div class="layui-input-block">
-                        <input type="text" name="id" placeholder="请输入ID" autocomplete="off" class="layui-input">
+                        <input type="text" name="uid" placeholder="请输入ID" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">开始时间</label>
+                    <label class="layui-form-label">提现状态</label>
                     <div class="layui-input-block">
-                        <input type="text" name="start" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">结束时间</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="end" class="layui-input app-laydate-item" placeholder="yyyy-MM-dd">
+                        <select name="status" lay-filter="status">
+                            <option value="">请选择一个状态</option>
+                            <option {$Request.get.status == '0' ? 'selected' : '' } value="0">等待处理</option>
+                            <option {$Request.get.status == '1' ? 'selected' : '' } value="1">处理完成</option>
+                        </select>
                     </div>
                 </div>
                 <div class="layui-inline">

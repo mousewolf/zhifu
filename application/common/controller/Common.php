@@ -45,13 +45,16 @@ class Common extends Controller
         $model = model('app\common\model\Config');
 
         $config_list = auto_cache('config_list', create_closure($model, 'all'));
+
         $config_array =[];
         foreach ($config_list as $info) {
 
-            $config_array[$info['name']] = $info['value'];
+            $config_array[$info['group']][$info['name']] = is_numeric($info['value'])
+                ? parse_config_attr($info['extra'])[$info['value']] : $info['value'];
         }
-        //写入配置
-        config('site' ,$config_array);
+        //写入配置  先这样吧  懒得写了
+        config('site' ,$config_array[0]);
+        config('email' ,$config_array[1]);
 
     }
 

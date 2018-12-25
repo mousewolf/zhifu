@@ -251,17 +251,19 @@ CREATE TABLE `cm_config` (
 -- ----------------------------
 -- Records of cm_config
 -- ----------------------------
-INSERT INTO `cm_config` VALUES ('1', 'seo_title', '网站标题', '1', '1', '1', '聚合支付', '', '', '1', '1378898976', '1545131346');
-INSERT INTO `cm_config` VALUES ('8', 'email_port', 'SMTP端口号', '1', '8', '2', '465', '', '如：一般为 25 或 465', '1', '0', '1545131349');
-INSERT INTO `cm_config` VALUES ('2', 'seo_description', '网站描述', '2', '3', '1', '聚合支付', '', '网站搜索引擎描述，优先级低于SEO模块', '1', '1378898976', '1545131346');
-INSERT INTO `cm_config` VALUES ('3', 'seo_keywords', '网站关键字', '2', '4', '1', '聚合支付', '', '网站搜索引擎关键字，优先级低于SEO模块', '1', '1378898976', '1542443678');
-INSERT INTO `cm_config` VALUES ('4', 'app_index_title', '首页标题', '1', '2', '1', '小红帽科技|草帽聚合支付|Cmpay聚合支付', '', '', '1', '1378898976', '1545131346');
-INSERT INTO `cm_config` VALUES ('5', 'app_domain', '网站域名', '1', '5', '1', 'caomao.com', '', '网站域名', '1', '1378898976', '1545131346');
-INSERT INTO `cm_config` VALUES ('6', 'app_copyright', '版权信息', '2', '6', '1', '© 2018聚合支付. ', '', '版权信息', '1', '1378898976', '1545131346');
-INSERT INTO `cm_config` VALUES ('7', 'email_host', 'SMTP服务器', '3', '7', '2', '2', '1:smtp.163.com,2:smtp.aliyun.com,3:smtp.qq.com', '如：smtp.163.com', '1', '1378898976', '1545131349');
-INSERT INTO `cm_config` VALUES ('9', 'send_email', '发件人邮箱', '1', '9', '2', 'me@iredcap.cn', '', '', '1', '0', '1545131349');
-INSERT INTO `cm_config` VALUES ('10', 'send_nickname', '发件人昵称', '1', '10', '2', '小红帽', '', '', '1', '0', '1545131349');
-INSERT INTO `cm_config` VALUES ('11', 'email_password', '邮箱密码', '1', '11', '2', 'xzx595...', '', '', '1', '0', '1545131349');
+INSERT INTO `cm_config` VALUES ('1', 'seo_title', '网站标题', '1', '1', '0', '聚合支付', '', '', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('8', 'email_port', 'SMTP端口号', '1', '8', '1', '2', '1:25,2:465', '如：一般为 25 或 465', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('2', 'seo_description', '网站描述', '2', '3', '0', '聚合支付', '', '网站搜索引擎描述，优先级低于SEO模块', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('3', 'seo_keywords', '网站关键字', '2', '4', '0', '聚合支付', '', '网站搜索引擎关键字，优先级低于SEO模块', '1', '1378898976', '1542443678');
+INSERT INTO `cm_config` VALUES ('4', 'app_index_title', '首页标题', '1', '2', '0', '小红帽科技|草帽聚合支付|Cmpay聚合支付', '', '', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('5', 'app_domain', '网站域名', '1', '5', '0', 'caomao.com', '', '网站域名', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('6', 'app_copyright', '版权信息', '2', '6', '0', '© 2018聚合支付. ', '', '版权信息', '1', '1378898976', '1545131346');
+INSERT INTO `cm_config` VALUES ('7', 'email_host', 'SMTP服务器', '3', '7', '1', '2', '1:smtp.163.com,2:smtp.aliyun.com,3:smtp.qq.com', '如：smtp.163.com', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('9', 'send_email', '发件人邮箱', '1', '9', '1', 'me@iredcap.cn', '', '', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('10', 'send_nickname', '发件人昵称', '1', '10', '1', '小红帽', '', '', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('11', 'email_password', '邮箱密码', '1', '11', '1', 'xxxxxx', '', '', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('12', 'rsa_public_key', '平台数据公钥', '2', '6', '0', 'xxxxxx', '', '平台数据公钥（RSA 2048）', '1', '1378898976', '1545131349');
+INSERT INTO `cm_config` VALUES ('13', 'rsa_private_key', '平台数据私钥', '2', '6', '0', 'xxxxxx', '', '平台数据私钥（RSA 2048）', '1', '1378898976', '1545131349');
 
 -- ----------------------------
 -- Table structure for cm_menu
