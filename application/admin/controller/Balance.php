@@ -137,7 +137,7 @@ class Balance extends BaseAdmin
         !empty($this->request->param('cash_no')) && $where['a.cash_no']
             = ['like', '%'.$this->request->param('a.cash_no').'%'];
 
-        $where['a.status'] = $this->request->get('status',CodeEnum::SUCCESS);
+        //$where['a.status'] = $this->request->get('status',CodeEnum::SUCCESS);
 
         $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,b.*', false, false);
 

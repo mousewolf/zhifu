@@ -90,7 +90,7 @@ class Orders extends BaseLogic
      */
     public function getOrdersAllStat($where = []){
         return [
-            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid,sum(user_in) as user,sum(agent_in) as agent,sum(platform_in) as platform")
+            'fees' => $this->modelOrders->getInfo($where,"COALESCE(sum(amount),0) as total,COALESCE(sum(if(status=2,amount,0)),0) as paid,COALESCE(sum(user_in),0) as user,COALESCE(sum(agent_in),0) as agent,COALESCE(sum(platform_in),0) as platform")
         ];
     }
 
@@ -105,10 +105,10 @@ class Orders extends BaseLogic
     public function getWelcomeStat($where = []){
         $order = 'create_time desc';
         return [
-            'order' => $this->modelOrders->getInfo($where,"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,sum(amount) as fees,sum(if(status=1,amount,0)) as unpaid,sum(if(status=2,amount,0)) as paid", $order, $paginate = false),
+            'order' => $this->modelOrders->getInfo($where,"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,COALESCE(sum(amount),0) as fees,COALESCE(sum(if(status=1,amount,0)),0) as unpaid,COALESCE(sum(if(status=2,amount,0)),0) as paid", $order, $paginate = false),
             'user'  => $this->modelUser->getInfo($where,"count(uid) as total,count(if(is_verify=0,true,null)) as failed", $order, $paginate = false),
-            'cash' => $this->modelBalanceCash->getInfo($where,'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed,sum(if(status=1,amount,0)) as paid', $order, $paginate = false),
-            'fees' => $this->modelOrders->getInfo($where,"sum(amount) as total,sum(if(status=2,amount,0)) as paid")
+            'cash' => $this->modelBalanceCash->getInfo($where,'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed,COALESCE(sum(if(status=1,amount,0)),0) as paid', $order, $paginate = false),
+            'fees' => $this->modelOrders->getInfo($where,"COALESCE(sum(amount),0) as total,COALESCE(sum(if(status=2,amount,0)),0) as paid")
         ];
     }
 
@@ -122,7 +122,7 @@ class Orders extends BaseLogic
      */
     public function getOrdersMonthStat($where = []){
         $this->modelOrders->group = 'month';
-        return $this->modelOrders->getList($where,"count(id) as total_orders,sum(`amount`) as total_amount,FROM_UNIXTIME(create_time,'%m') as month",false,false);
+        return $this->modelOrders->getList($where,"count(id) as total_orders,COALESCE(sum(`amount`),0) as total_amount,FROM_UNIXTIME(create_time,'%m') as month",false,false);
     }
 
     /**
@@ -136,7 +136,7 @@ class Orders extends BaseLogic
      * @param int $paginate
      * @return mixed
      */
-    public function getOrderUserStat($where = [],$field = "uid,count(uid) as total_orders,sum(amount) as total_fee_all,sum(if(status=1,amount,0)) as total_fee_dis,sum(if(status=2,amount,0)) as total_fee_paid",$order = 'create_time desc', $paginate = 15){
+    public function getOrderUserStat($where = [],$field = "uid,count(uid) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=1,amount,0)),0) as total_fee_dis,COALESCE(sum(if(status=2,amount,0)),0) as total_fee_paid",$order = 'create_time desc', $paginate = 15){
         $this->modelOrders->group = 'uid';
         return $this->modelOrders->getList($where,$field, $order, $paginate = false);
     }
@@ -152,7 +152,7 @@ class Orders extends BaseLogic
      * @param int $paginate
      * @return mixed
      */
-    public function getOrderChannelStat($where = [],$field = "a.cnl_id,count(a.cnl_id) as total_orders,sum(a.amount) as total_fee_all,sum(if(a.status = 1,a.amount,0)) as total_fee_dis,sum(if(a.status = 2,a.amount,0)) as total_fee_paid,b.id,b.name,b.remarks,b.daily,b.rate",$order = 'a.create_time desc', $paginate = 15){
+    public function getOrderChannelStat($where = [],$field = "a.cnl_id,count(a.cnl_id) as total_orders,COALESCE(sum(a.amount),0) as total_fee_all,COALESCE(sum(if(a.status = 1,a.amount,0)),0) as total_fee_dis,COALESCE(sum(if(a.status = 2,a.amount,0)),0) as total_fee_paid,b.id,b.name,b.remarks,b.daily,b.rate",$order = 'a.create_time desc', $paginate = 15){
         $this->modelOrders->group = 'a.cnl_id';
         $this->modelOrders->alias('a');
 
