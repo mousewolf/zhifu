@@ -19,6 +19,7 @@ use app\common\library\exception\ParameterException;
 use app\common\library\exception\SignatureException;
 use app\common\library\RsaUtils;
 use app\common\model\Api;
+use app\common\model\Config;
 use think\Db;
 
 class Rest extends BaseApi
@@ -216,21 +217,23 @@ class Rest extends BaseApi
      * @param $to_sign_data
      *
      * @return string
-     * @throws ParameterException
+     * @throws SignatureException
      */
     public static function sign($to_sign_data){
         if (is_array($to_sign_data)){
             $to_sign_data = json_encode($to_sign_data);
         }
-        //生成签名
-        $rsaUtils = new RsaUtils('', CRET_PATH . 'rsa_private_key.pem');
-        $sign =  $rsaUtils->sign($to_sign_data);
-        if($sign && !empty($sign)){
+        //读取平台数据私钥
+        $certificate = (new Config())->where(['name'  => 'rsa_private_key'])
+            ->cache('rsa_private_key','300')->value('value');
+        if(!empty($certificate)){
+            $rsaUtils = new RsaUtils('', $certificate);
+            $sign =  $rsaUtils->sign($to_sign_data);
             //返回
             return $sign;
         }
-        throw new ParameterException([
-            'msg'   => 'Sign Build Failure.[ Platform Sign Key File Not Exists.]'
+        throw new SignatureException([
+            'msg'   => 'Sign Build Failure.[ Platform Sign Key Incorrectly.]'
         ]);
     }
 
@@ -258,16 +261,10 @@ class Rest extends BaseApi
         if(!empty($certificate)){
             //验签
             $rsaUtils = new RsaUtils($certificate);
-            $result = $rsaUtils->verify($data, $sign, $code = 'base64');
-            if (!$result){
-                throw new SignatureException([
-                    'msg'   => 'Sign Verify Failure.[ Merchant Sign Key May Be Incorrectly.]'
-                ]);
-            }
-            return true;
+            return $rsaUtils->verify($data, $sign, $code = 'base64');
         }
         throw new SignatureException([
-            'msg'   => 'Sign Verify Failure.[ Merchant Sign Key Not Set.]'
+            'msg'   => 'Sign Verify Failure.[ Merchant Sign Key Incorrectly.]'
         ]);
     }
 }

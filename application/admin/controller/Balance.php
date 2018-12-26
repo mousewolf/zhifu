@@ -130,7 +130,6 @@ class Balance extends BaseAdmin
      */
     public function paidList(){
         $where = [];
-        $data = [];
         //组合搜索
         !empty($this->request->param('id')) && $where['a.id|a.uid']
             = ['like', '%'.$this->request->param('id').'%'];
@@ -138,9 +137,9 @@ class Balance extends BaseAdmin
         !empty($this->request->param('cash_no')) && $where['a.cash_no']
             = ['like', '%'.$this->request->param('a.cash_no').'%'];
 
-        !empty($this->request->param('end')) && !empty($this->request->param('start'))
-        && $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,b.account as myaccount', 'a.create_time desc', false);
+        //$where['a.status'] = $this->request->get('status',CodeEnum::SUCCESS);
 
+        $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,b.*', false, false);
 
         $count = $this->logicBalanceCash->getOrderCashCount($where);
 

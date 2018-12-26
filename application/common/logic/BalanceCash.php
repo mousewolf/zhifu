@@ -17,6 +17,7 @@ namespace app\common\logic;
 
 use app\common\library\enum\CodeEnum;
 use think\Db;
+use think\Log;
 
 class BalanceCash extends BaseLogic
 {
@@ -37,10 +38,11 @@ class BalanceCash extends BaseLogic
         $this->modelBalanceCash->alias('a');
 
         $join = [
-            ['user_account b', ' b.uid = a.uid'],
+            ['user_account b', 'a.account = b.id'],
         ];
 
         $this->modelBalanceCash->join = $join;
+
         return $this->modelBalanceCash->getList($where, $field, $order, $paginate);
     }
 
@@ -79,7 +81,7 @@ class BalanceCash extends BaseLogic
             //提现
             $this->modelBalanceCash->setInfo($data);
             //资金变动 - 资金记录
-           $this->logicBalanceChange->creatBalanceChange($data['uid'],$data['amount'],$remarks = '提现扣减可用金额', 'balance', true);
+           $this->logicBalanceChange->creatBalanceChange($data['uid'],$data['amount'],$remarks = '提现扣减可用金额', 'enable', true);
 
             Db::commit();
 
@@ -87,6 +89,7 @@ class BalanceCash extends BaseLogic
 
             return ['code' => CodeEnum::SUCCESS, 'msg' => '新增提现申请成功'];
         }catch (\Exception $ex){
+            Log::error("新增提现申请出现错误 : " . $ex->getMessage());
             Db::rollback();
             return ['code' => CodeEnum::ERROR, 'msg' => config('app_debug') ? $ex->getMessage()
                 : '新增提现申请出现错误' ];

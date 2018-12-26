@@ -47,6 +47,19 @@ class Alipay extends ApiPayment
         ];
     }
 
+    public function ali_pc($order){
+        //alipay.trade.page.pay  product_code
+        //请求参数
+        $requestConfigs = array(
+            'out_trade_no'=> $order['trade_no'],
+            'total_amount'=> sprintf("%.2f", $order['amount']), //支付宝交易范围  [0.01,100000000]
+            'subject'=> $order['subject'],  //订单标题
+            'product_code'=> 'FAST_INSTANT_TRADE_PAY',  //product_code
+            'timeout_express'=>'10m'       //该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+        );
+
+        $result = self::getGenerateAlipayOrder($requestConfigs, 'alipay.trade.page.pay');
+    }
 
     /**
      * 异步回调地址 /默认按类名称  【 https://pay.iredcap.cn/notify/alipay 】
@@ -111,7 +124,7 @@ class Alipay extends ApiPayment
         $commonConfigs["sign"] = $this->generateAlipaySign($commonConfigs, $commonConfigs['sign_type']);
 
         $response = $this->curlPost('https://openapi.alipay.com/gateway.do',$commonConfigs);
-
+        Log::notice('Alipay API Response : '. json_encode($response));
         $response = json_decode($response,true);
 
         $result = $response['alipay_trade_precreate_response'];

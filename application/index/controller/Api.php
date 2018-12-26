@@ -61,5 +61,7 @@ class Api extends Base
             }
         }
         $this->assign('api',$this->logicApi->getApiInfo(['uid' => is_login()]));
+
+        $this->assign('rsa',$this->logicConfig->getConfigInfo(['name' => 'rsa_public_key'],'value'));
     }
 }
