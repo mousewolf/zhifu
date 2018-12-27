@@ -44,7 +44,7 @@ class Register extends Base
         'account.require'     => '邮箱不能为空',
         'account.email'       => '邮箱不正确',
         'password.require'    => '登录密码不能为空',
-        'password.length'     => '登陆密码长度不足',
+        'password.length'     => '登陆密码长度6-12',
         'phone.require'       => '手机号不能为空',
         'phone.length'        => '手机号长度不足',
         'vercode.checkCode'   => '验证码不正确',

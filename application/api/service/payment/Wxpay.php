@@ -124,6 +124,25 @@ class Wxpay extends ApiPayment
     }
 
     /**
+     * 微信H5支付
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $order
+     *
+     * @return array
+     * @throws OrderException
+     */
+    public function wx_h5($order){
+        //获取预下单
+        $unifiedOrder = self::getWxpayUnifiedOrder($order, 'MWEB');
+        //数据返回
+        return [
+            'mweb_url' => $unifiedOrder['mweb_url']
+        ];
+    }
+
+    /**
      * 异步回调地址 /默认按类名称  【 https://pay.iredcap.cn/notify/wxpay 】
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
@@ -193,11 +212,11 @@ class Wxpay extends ApiPayment
         }
         //签名
         $unified['sign'] = self::getWxpaySign($unified, $this->config['mch_key']);
-        Log::notice("order : " . json_encode($order));
-        Log::notice("unified : " . json_encode($unified));
+        //数据请求
         $responseXml = self::curlPost('https://api.mch.weixin.qq.com/pay/unifiedorder', self::arrayToXml($unified));
-
+        //XML转ARRAY
         $result = self::xmlToArray($responseXml);
+        Log::notice('Wxpay API Response : '. json_encode($result));
         //判断成功
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
             Log::error('Create Wechat API Error:'.($result['return_msg'] ?? $result['retmsg']));

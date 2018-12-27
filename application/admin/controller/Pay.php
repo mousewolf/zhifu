@@ -381,4 +381,23 @@ class Pay extends BaseAdmin
         // get 直接报错
         $this->error('未知错误');
     }
+
+    /**
+     * 删除渠道账户
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     */
+    public function delAccount(){
+        // post 是提交数据
+        $this->request->isPost() && $this->result(
+            $this->logicPay->delAccount(
+                [
+                    'id' => $this->request->param('id')
+                ])
+        );
+
+        // get 直接报错
+        $this->error('未知错误');
+    }
 }

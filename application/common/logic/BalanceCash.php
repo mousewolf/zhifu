@@ -38,7 +38,8 @@ class BalanceCash extends BaseLogic
         $this->modelBalanceCash->alias('a');
 
         $join = [
-            ['user_account b', 'a.account = b.id'],
+            ['user_account u', 'a.account = u.id'],
+            ['banker b', 'u.bank_id = b.id']
         ];
 
         $this->modelBalanceCash->join = $join;

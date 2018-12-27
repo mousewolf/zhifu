@@ -120,13 +120,13 @@ class Alipay extends ApiPayment
             'notify_url' => $this->config['notify_url'],
             'biz_content'=>json_encode($requestConfigs),
         );
-
+        //签名
         $commonConfigs["sign"] = $this->generateAlipaySign($commonConfigs, $commonConfigs['sign_type']);
-
+        //请求
         $response = $this->curlPost('https://openapi.alipay.com/gateway.do',$commonConfigs);
         Log::notice('Alipay API Response : '. json_encode($response));
         $response = json_decode($response,true);
-
+        //读数据
         $result = $response['alipay_trade_precreate_response'];
 
         if (!isset($result['code']) || $result['code'] != '10000') {

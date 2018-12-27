@@ -139,7 +139,7 @@ class Balance extends BaseAdmin
 
         //$where['a.status'] = $this->request->get('status',CodeEnum::SUCCESS);
 
-        $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,b.*', false, false);
+        $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,u.account,b.name as method', false, false);
 
         $count = $this->logicBalanceCash->getOrderCashCount($where);
 
