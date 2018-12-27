@@ -383,7 +383,7 @@ class Pay extends BaseLogic
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '删除支付方式失败'];
         }
     }
 
@@ -405,7 +405,28 @@ class Pay extends BaseLogic
         }catch (\Exception $ex){
             Db::rollback();
             Log::error($ex->getMessage());
-            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '未知错误'];
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '删除渠道失败'];
+        }
+    }
+    /**
+     * 删除一个渠道账户
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @param $where
+     * @return array
+     */
+    public function delAccount($where){
+        Db::startTrans();
+        try{
+            $this->modelPayAccount->deleteInfo($where);
+            action_log('删除', '删除支付渠道账户，ID：'. $where['id']);
+            Db::commit();
+            return [ 'code' => CodeEnum::SUCCESS, 'msg' => '删除渠道账户成功'];
+        }catch (\Exception $ex){
+            Db::rollback();
+            Log::error($ex->getMessage());
+            return [ 'code' => CodeEnum::ERROR,  'msg' => config('app_debug') ? $ex->getMessage() : '删除渠道账户失败'];
         }
     }
 }

@@ -14,6 +14,8 @@
 define('APP_PATH', __DIR__ . '/application/');
 // 定义数据目录
 define('DATA_PATH', __DIR__ . '/data/');
+// 定义配置目录
+define('CONF_PATH', DATA_PATH . 'conf/');
 // 定义证书目录
 define('CRET_PATH', DATA_PATH . 'cret/');
 // 定义EXTEND目录
