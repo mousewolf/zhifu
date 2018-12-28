@@ -1,5 +1,5 @@
 .idea
-application/database.php
+data/conf/database.php
 runtime
 install.lock
 composer.lock
