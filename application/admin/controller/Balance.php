@@ -139,7 +139,7 @@ class Balance extends BaseAdmin
 
         //$where['a.status'] = $this->request->get('status',CodeEnum::SUCCESS);
 
-        $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,u.account,b.name as method', false, false);
+        $data = $this->logicBalanceCash->getOrderCashList($where, 'a.*,u.account,b.name as method', 'a.create_time desc', false);
 
         $count = $this->logicBalanceCash->getOrderCashCount($where);
 
@@ -155,6 +155,30 @@ class Balance extends BaseAdmin
                 'count'=>$count,
                 'data'=>$data
             ]
+        );
+    }
+
+    /**
+     * 通过  提交队列后台打款
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     */
+    public function deal(){
+        $this->result($this->logicBalanceCash->pushBalanceCash(['a.id' => $this->request->param('cash_id')]));
+    }
+
+
+    /**
+     * 驳回申请
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     */
+    public function rebut(){
+        $this->result($this->logicBalanceCash->rebutBalanceCash(['a.id' => $this->request->param('cash_id')])
         );
     }
 }

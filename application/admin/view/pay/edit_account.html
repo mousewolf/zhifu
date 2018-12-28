@@ -19,11 +19,19 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">支付渠道：</label>
+        <label class="layui-form-label">支持方式：</label>
+        <div class="layui-input-block">
+            {volist name="codes" id="vo"}
+            <input type="checkbox" name="co_id[]" value="{$vo.id}" {in name="$vo.id" value="$account.co_id"}checked{/in} title="{$vo.name}" lay-skin="primary">
+            {/volist}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">对应渠道：</label>
         <div class="layui-input-block">
             <select name="cnl_id" disabled="disabled">
                 <option value="">请选择支付渠道</option>
-                {volist name="channel" id="vo"}
+                {volist name="channels" id="vo"}
                 <option {$account.cnl_id == $vo.id ? 'selected' : ''} value="{$vo.id}" >{$vo.name}</option>
                 {/volist}
             </select>

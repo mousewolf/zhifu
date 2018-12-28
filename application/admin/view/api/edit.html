@@ -52,9 +52,9 @@
             <label class="layui-form-label">角色权限：</label>
             <div class="layui-input-inline">
                 <select name="role" lay-verify="required">
-                    <option value="0" {$api.role == '0' ?? 'selected'}>普通商户</option>
-                    <option value="1" {$api.role == '1' ?? 'selected'}>代理商户</option>
-                    <option value="2" {$api.role == '2' ?? 'selected'}>特约商户</option>
+                    <option value="0" {$api.role == '0' ? 'selected' : ''}>普通商户</option>
+                    <option value="1" {$api.role == '1' ? 'selected' : ''}>代理商户</option>
+                    <option value="2" {$api.role == '2' ? 'selected' : ''}>特约商户</option>
                 </select>
             </div>
         </div>
@@ -62,8 +62,8 @@
             <label class="layui-form-label">允许访问：</label>
             <div class="layui-input-inline">
                 <select name="status" lay-verify="required">
-                    <option value="0" {$api.status == '0'?'selected':''}>禁止</option>
-                    <option value="1" {$api.status == '1'?'selected':''}>允许</option>
+                    <option value="0" {$api.status == '0' ? 'selected' : ''}>禁止</option>
+                    <option value="1" {$api.status == '1' ? 'selected' : ''}>允许</option>
                 </select>
             </div>
         </div>

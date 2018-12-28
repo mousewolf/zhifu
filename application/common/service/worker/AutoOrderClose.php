@@ -100,9 +100,6 @@ class AutoOrderClose
                     ],
                     ['id' => $data['id']]);
 
-                // 减掉商户待支付金额
-                (new BalanceChange())->creatBalanceChange($data['uid'], $data['amount'], '单号'.$data['out_trade_no'] .'超时回退','disable', true);
-
                 //提交更改
                 Db::commit();
                 return true;

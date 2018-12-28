@@ -107,7 +107,7 @@ class Orders extends BaseLogic
         return [
             'order' => $this->modelOrders->getInfo($where,"count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,count(if(status=0,true,null)) as failed,COALESCE(sum(amount),0) as fees,COALESCE(sum(if(status=1,amount,0)),0) as unpaid,COALESCE(sum(if(status=2,amount,0)),0) as paid", $order, $paginate = false),
             'user'  => $this->modelUser->getInfo($where,"count(uid) as total,count(if(is_verify=0,true,null)) as failed", $order, $paginate = false),
-            'cash' => $this->modelBalanceCash->getInfo($where,'count(id) as total,count(if(status=1,true,null)) as success,count(if(status=0,true,null)) as failed,COALESCE(sum(if(status=1,amount,0)),0) as paid', $order, $paginate = false),
+            'cash' => $this->modelBalanceCash->getInfo($where,'count(id) as total,count(if(status=2,true,null)) as success,count(if(status=1,true,null)) as wait,COALESCE(sum(if(status=0,amount,0)),0) as failed', $order, $paginate = false),
             'fees' => $this->modelOrders->getInfo($where,"COALESCE(sum(amount),0) as total,COALESCE(sum(if(status=2,amount,0)),0) as paid")
         ];
     }
@@ -190,7 +190,7 @@ class Orders extends BaseLogic
      */
     public function pushOrderNotify($order_id = ''){
         //订单
-        $order = $this->logicOrders->getOrderInfo(['id' => $order_id]);
+        $order = $this->getOrderInfo(['id' => $order_id]);
         //加入队列
         $result = $this->logicQueue->pushJobDataToQueue('AutoOrderNotify' , $order , 'AutoOrderNotify');
         if ($result){
@@ -256,9 +256,10 @@ class Orders extends BaseLogic
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
      *
      * @param array $where
+     * @param string $field
      * @param string $value
      */
-    public function setValue($where = [],$value = ''){
-        $this->modelOrders->setFieldValue($where, 'cnl_id', $value);
+    public function setOrderValue($where = [], $field = 'cnl_id', $value = ''){
+        $this->modelOrders->setFieldValue($where, $field, $value);
     }
 }
