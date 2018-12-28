@@ -28,9 +28,8 @@ class Base extends Common
         !is_login() && $this->redirect(url('index/Login/login'));
 
         // 登录信息
-        $this->assign('user_info', session('user_info'));
+        $this->assign('user_info', $this->logicUser->getUserInfo(['uid' => is_login()]));
 
-        //$this->checkAuth();
     }
 
     /**
