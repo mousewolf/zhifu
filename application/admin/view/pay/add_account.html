@@ -18,6 +18,14 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">支持方式：</label>
+        <div class="layui-input-block">
+            {volist name="codes" id="vo"}
+            <input type="checkbox" name="co_id[]" value="{$vo.id}" title="{$vo.name}" lay-skin="primary">
+            {/volist}
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">支付渠道：</label>
         <div class="layui-input-block">
             <select name="cnl_id" disabled="disabled">

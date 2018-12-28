@@ -30,10 +30,10 @@ class Pay extends BaseLogic
      */
     public function getAllowedAccount($order){
         //1.传入支付方式获取对应渠道cnl_id
-        $cnl_id = $this->modelPayCode->getValue(['code' => $order['channel']], 'cnl_id');
+        $codeInfo = $this->modelPayCode->getInfo(['code' => $order['channel']], 'id as co_id,cnl_id')->toArray();
 
         //2.cnl_id获取支持该方式的渠道列表
-        $channels = $this->modelPayChannel->getColumn(['id' => ['in',$cnl_id], 'status' => ['eq','1']],
+        $channels = $this->modelPayChannel->getColumn(['id' => ['in', $codeInfo['cnl_id']], 'status' => ['eq','1']],
             'id,name,action,timeslot,return_url,notify_url');
 
         //3.规则排序选择合适渠道
@@ -47,45 +47,46 @@ class Pay extends BaseLogic
                 $channelsMap[$key] = $val;
             }
         }
+
         //判断可用
         if (empty($channelsMap)){
-            return ['errorCode' => '400006','msg' => 'No available channels'];
+            return ['errorCode' => '400006','msg' => 'Route Payment Error. [No available channels]'];
         }
         $channel =  $channelsMap[array_rand($channelsMap)];
 
         /*******************************/
         //3.获取该渠道下可用账户
         $accounts = $this->modelPayAccount->getColumn(['cnl_id' => ['eq',$channel['id']], 'status' => ['eq','1']],
-            'id,single,daily,timeslot,param');
+            'id,co_id,name,single,daily,timeslot,param');
 
         //4.规则取出可用账户
         /*******************************/
         //TODO 写选择规则  时间、状态、费率 等等
-
         //规则处理  我先简便写一下
         $accountsMap = [];
         foreach ($accounts as $key => $val){
             $timeslot = json_decode($val['timeslot'],true);
-            if ( strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
+            if ( in_array($codeInfo['co_id'], str2arr($val['co_id'])) && strtotime($timeslot['start']) < time() && time() < strtotime($timeslot['end']) ){
                 $accountsMap[$key] = $val;
             }
         }
+
         //判断可用
         if (empty($accountsMap)){
-            return ['errorCode' => '400008','msg' => 'No available merchants.'];
+            return ['errorCode' => '400008','msg' => 'Route Payment Error. [No available merchants account.]'];
         }
 
         $account =  $accountsMap[array_rand($accountsMap)];
         $accountConf = json_decode($account['param'],true);
         //判断配置是否正确
         if (is_null($accountConf)){
-            return ['errorCode' => '400008','msg' => 'Maybe the payment account was misconfigured.'];
+            return ['errorCode' => '400008','msg' => 'Route Payment Error. [Payment account was misconfigured.]'];
         }
         //配置合并
         $configMap = array_merge($channel, $accountConf);
 
         //添加订单支付通道ID
-        $this->logicOrders->setValue(['trade_no' => $order['trade_no']], $account['id']);
+        $this->logicOrders->setOrderValue(['trade_no' => $order['trade_no']], 'cnl_id', $account['id']);
         /*******************************/
         return [
             'channel' => $configMap['action'],
@@ -288,6 +289,8 @@ class Pay extends BaseLogic
 
             //时间存储
             $data['timeslot'] = json_encode($data['timeslot']);
+            //方式存储
+            $data['co_id'] =  isset($data['co_id']) ? arr2str($data['co_id']) : '';
 
             $this->modelPayAccount->setInfo($data);
 
@@ -324,7 +327,7 @@ class Pay extends BaseLogic
         Db::startTrans();
         try{
 
-            if (isset($data['cnl_id'])) $data['cnl_id'] = arr2str($data['cnl_id'],',');
+            $data['cnl_id'] =  isset($data['cnl_id']) ? arr2str($data['cnl_id']) : '';
 
             $this->modelPayCode->setInfo($data);
 

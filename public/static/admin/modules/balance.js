@@ -240,44 +240,28 @@ layui.define(["table", "form"],
                     //加载完成
                 }
             }),
-            i.on("tool(table-balance-tool)",
+            i.on("tool(app-order-paid-list)",
                 function(e) {
                 console.log(e);
-                if ("deal" === e.event) layer.prompt({
+                if ("deal" === e.event)
+                    layer.prompt({
                         formType: 1,
                         title: "敏感操作，请验证口令"
                     },
-                    function(d, i) {
-                        layer.close(i),
-                            layer.confirm("真的删除此账户？", function(d) {
-                                $.ajax({
-                                    url: 'deal?id='+ e.data.id,
-                                    method:'POST',
-                                    success:function (res) {
-                                        if (res.code == 1){
-                                            e.del()
-                                        }
-                                        layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                    function(d, f) {
+                        layer.close(f),
+                            layer.confirm("确定审核吗？", function(d) {
+                                t.post("deal",{cash_id:e.data.id},function (res) {
+                                    layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
                                         layer.close(d); //关闭弹层
-                                    }
+                                    i.reload('app-order-paid-list')
                                 });
                             })
                     });
                 else if ("rebut" === e.event) {
-                    t(e.tr);
-                    $.post("rebut",function (res) {
-                        if (res.code == 1){
-                            //更新数据表
-                            e.update({
-                                account: l.account,
-                                remarks: l.remarks,
-                                address: l.address,
-                                status: l.status
-                            }),
-                                i.render(),
-                                layer.close(f)
-                        }
+                    t.post("rebut",{cash_id:e.data.id},function (res) {
                         layer.msg(res.msg, {icon: res.code == 1 ? 1: 2,time: 1500});
+                        i.reload('app-order-paid-list')
                     });
                 }
             }),

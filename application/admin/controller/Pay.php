@@ -229,10 +229,13 @@ class Pay extends BaseAdmin
 
         //获取渠道列表
         $channel = $this->logicPay->getChannelList([], true, 'create_time desc',false);
+        //获取方式列表
+        $codes = $this->logicPay->getCodeList([], true, 'create_time desc',false);
 
         $this->assign('cnl_id',$this->request->param('cnl_id'));
 
         $this->assign('channel',$channel);
+        $this->assign('codes',$codes);
 
         return $this->fetch();
     }
@@ -248,6 +251,8 @@ class Pay extends BaseAdmin
     {
         // post 是提交数据
         $this->request->isPost() && $this->result($this->logicPay->saveCodeInfo($this->request->post()));
+        //支持渠道列表
+        $this->assign('channel',$this->logicPay->getChannelList([],'id,name','id asc'));
 
         return $this->fetch();
     }
@@ -301,10 +306,13 @@ class Pay extends BaseAdmin
         $account = $this->logicPay->getAccountInfo(['id' =>$this->request->param('id')]);
         //时间转换
         $account['timeslot'] = json_decode($account['timeslot'],true);
+        //获取方式列表
+        $codes = $this->logicPay->getCodeList([], true, 'create_time desc',false);
         //获取渠道列表
-        $channel = $this->logicPay->getChannelList([], true, 'create_time desc',false);
+        $channels = $this->logicPay->getChannelList([], true, 'create_time desc',false);
 
-        $this->assign('channel',$channel);
+        $this->assign('codes',$codes);
+        $this->assign('channels',$channels);
         $this->assign('account',$account);
 
         return $this->fetch();

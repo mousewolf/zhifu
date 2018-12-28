@@ -168,7 +168,7 @@ CREATE TABLE `cm_balance_cash` (
   `amount` decimal(12,3) NOT NULL DEFAULT '0.000' COMMENT '取现金额',
   `account` int(2) NOT NULL COMMENT '取现账户（关联商户结算账户表）',
   `remarks` varchar(255) NOT NULL COMMENT '取现说明',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '取现状态',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '取现状态',
   `create_time` int(10) unsigned NOT NULL COMMENT '申请时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '处理时间',
   PRIMARY KEY (`id`),
@@ -457,6 +457,7 @@ CREATE TABLE `cm_orders_notify` (
 -- Records of cm_orders_notify
 -- ----------------------------
 
+
 -- ----------------------------
 -- Table structure for cm_pay_account
 -- ----------------------------
@@ -464,6 +465,7 @@ DROP TABLE IF EXISTS `cm_pay_account`;
 CREATE TABLE `cm_pay_account` (
   `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '账号ID',
   `cnl_id` bigint(10) NOT NULL COMMENT '所属渠道ID',
+  `co_id` text NOT NULL COMMENT '支持的方式(有多个)',
   `name` varchar(30) NOT NULL COMMENT '渠道账户名称',
   `rate` decimal(4,3) NOT NULL COMMENT '渠道账户费率',
   `urate` decimal(4,3) NOT NULL DEFAULT '0.998',
@@ -477,16 +479,17 @@ CREATE TABLE `cm_pay_account` (
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道账户表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道账户表';
 
 -- ----------------------------
 -- Records of cm_pay_account
 -- ----------------------------
-INSERT INTO `cm_pay_account` VALUES ('1', '1', '官方微信支付', '0.006', '0.998', '0.996', '20000.000', '2000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"\",\"mch_key\":\"\",\"app_id\":\"\",\"app_key\":\"\"}', 'XX微信支付', '1', '1535983487', '1545457283');
-INSERT INTO `cm_pay_account` VALUES ('2', '2', '官方支付宝', '0.006', '0.998', '0.996', '200000.000', '3000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"app_id\":\"\",\"private_key\":\"\",\"public_key\":\"\"}', 'XX支付宝', '1', '1543082772', '1545142376');
-INSERT INTO `cm_pay_account` VALUES ('3', '3', '官方QQ支付', '0.006', '0.998', '0.996', '200000.000', '5000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"\",\"app_id\":\"\",\"mch_key\":\"\"}', 'XXQQ钱包', '1', '1544264384', '1545142415');
-INSERT INTO `cm_pay_account` VALUES ('4', '4', '官方Paypal支付', '0.006', '0.998', '0.996', '200000.000', '6000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"client_id\":\"\",\"client_secret\":\"\"}', 'XXPaypal', '1', '1544368985', '1545141245');
-INSERT INTO `cm_pay_account` VALUES ('5', '1', '官方小程序支付', '0.006', '0.998', '0.996', '500000.000', '2000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"\",\"mch_key\":\"\",\"app_id\":\"\",\"app_key\":\"\"}', 'XX小程序支付', '1', '1545143235', '1545457162');
+INSERT INTO `cm_pay_account` VALUES ('1', '1', '6,1', '微信扫码支付', '0.006', '0.998', '0.996', '20000.000', '2000.000', '{\"start\":\"0:0\",\"end\":\"12:30\"}', '{\"mch_id\":\"\",\"mch_key\":\"\",\"app_id\":\"\",\"app_key\":\"\"}', 'XX微信支付', '1', '1535983487', '1545980754');
+INSERT INTO `cm_pay_account` VALUES ('2', '2', '0', '官方支付宝', '0.006', '0.998', '0.996', '200000.000', '3000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"app_id\":\"\",\"private_key\":\"\",\"public_key\":\"\"}', 'XX支付宝', '1', '1543082772', '1545142376');
+INSERT INTO `cm_pay_account` VALUES ('3', '3', '0', '官方QQ支付', '0.006', '0.998', '0.996', '200000.000', '5000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"\",\"app_id\":\"\",\"mch_key\":\"\"}', 'XXQQ钱包', '1', '1544264384', '1545142415');
+INSERT INTO `cm_pay_account` VALUES ('4', '4', '0', '官方Paypal支付', '0.006', '0.998', '0.996', '200000.000', '6000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"client_id\":\"\",\"client_secret\":\"\"}', 'XXPaypal', '1', '1544368985', '1545923960');
+INSERT INTO `cm_pay_account` VALUES ('5', '1', '6,1', 'XX商户支付账号', '0.006', '0.998', '0.996', '500000.000', '2000.000', '{\"start\":\"0:0\",\"end\":\"23:30\"}', '{\"mch_id\":\"\",\"mch_key\":\"\",\"app_id\":\"\",\"app_key\":\"\"}', 'XX小程序支付', '1', '1545143235', '1545980411');
+INSERT INTO `cm_pay_account` VALUES ('6', '6', '0', '测试账户', '0.006', '0.998', '0.998', '1000000.000', '2000.000', '{\"start\":\"0:0\",\"end\":\"23:0\"}', '{\"mer_id\":\"商户支付号\",\"mch_key\":\"商户支付KEY\",\"app_id\":\"商户应用号\",\"app_key\":\"应用KEY\"}', '测试账户', '1', '1545833295', '1545833295');
 
 -- ----------------------------
 -- Table structure for cm_pay_channel
@@ -506,7 +509,7 @@ CREATE TABLE `cm_pay_channel` (
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道表';
 
 -- ----------------------------
 -- Records of cm_pay_channel
@@ -515,7 +518,8 @@ INSERT INTO `cm_pay_channel` VALUES ('1', '微信支付', 'Wxpay', '0.998', '0.9
 INSERT INTO `cm_pay_channel` VALUES ('2', '支付宝', 'Alipay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/alipay', 'https://pay.iredcap.cn/notify/alipay', '官方支付宝', '1', '1543082772', '1545142376');
 INSERT INTO `cm_pay_channel` VALUES ('3', 'QQ支付', 'Qpay', '0.998', '0.996', '{\"start\":\"6:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/qpay', 'https://pay.iredcap.cn/notify/qpay', '官方QQ支付', '1', '1544264384', '1545142415');
 INSERT INTO `cm_pay_channel` VALUES ('4', 'Paypal支付', 'Paypal', '0.998', '0.996', '{\"start\":\"8:0\",\"end\":\"23:59\"}', 'https://pay.iredcap.cn/callback/paypal', 'https://pay.iredcap.cn/notify/paypal', 'Paypal支付', '1', '1544368985', '1545415845');
-INSERT INTO `cm_pay_channel` VALUES ('5', 'XX微信支付', 'Xpay', '0.998', '0.998', '{\"start\":\"0:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/xxpay', 'https://pay.iredcap.cn/notify/xxpay', 'XX微信支付', '1', '1545417463', '1545417463');
+INSERT INTO `cm_pay_channel` VALUES ('5', 'XX微信支付', 'Xpay', '0.998', '0.998', '{\"start\":\"0:0\",\"end\":\"23:0\"}', 'https://pay.iredcap.cn/callback/xxpay', 'https://pay.iredcap.cn/notify/xxpay', 'XX微信支付', '1', '1545417463', '1545923720');
+INSERT INTO `cm_pay_channel` VALUES ('6', '汇畅支付', 'Hcpay', '0.998', '0.998', '{\"start\":\"0:0\",\"end\":\"23:0\"}', 'https://www.baidu.com', 'https://www.baidu.com', 'https://www.baidu.com', '1', '1545832842', '1545923712');
 
 -- ----------------------------
 -- Table structure for cm_pay_code
@@ -523,7 +527,7 @@ INSERT INTO `cm_pay_channel` VALUES ('5', 'XX微信支付', 'Xpay', '0.998', '0.
 DROP TABLE IF EXISTS `cm_pay_code`;
 CREATE TABLE `cm_pay_code` (
   `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '渠道ID',
-  `cnl_id` varchar(10) DEFAULT NULL,
+  `cnl_id` text,
   `name` varchar(30) NOT NULL COMMENT '支付方式名称',
   `code` varchar(30) NOT NULL COMMENT '支付方式代码,如:wx_native,qq_native,ali_qr;',
   `remarks` varchar(128) DEFAULT NULL COMMENT '备注',
@@ -531,17 +535,18 @@ CREATE TABLE `cm_pay_code` (
   `create_time` int(10) unsigned NOT NULL COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='交易方式表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='交易方式表';
 
 -- ----------------------------
 -- Records of cm_pay_code
 -- ----------------------------
 INSERT INTO `cm_pay_code` VALUES ('1', '1', '微信原生扫码支付', 'wx_native', '微信扫码支付', '1', '1535983487', '1545417484');
 INSERT INTO `cm_pay_code` VALUES ('2', '2', '支付宝扫码', 'ali_qr', '支付宝扫码', '1', '1544173543', '1545420586');
-INSERT INTO `cm_pay_code` VALUES ('3', '3', 'QQ扫码', 'qq_native', 'QQ扫码', '1', '1544264177', '1545141844');
+INSERT INTO `cm_pay_code` VALUES ('3', '3', 'QQ扫码', 'qq_native', 'QQ扫码', '1', '1544264177', '1545980274');
 INSERT INTO `cm_pay_code` VALUES ('4', '4', 'Paypal支付', 'pp_web', '返回支付地址', '1', '1544363537', '1545141309');
 INSERT INTO `cm_pay_code` VALUES ('5', '1', '微信公众号支付', 'wx_jsapi', '微信公众号支付，返回数据包', '1', '1545142906', '1545143662');
-INSERT INTO `cm_pay_code` VALUES ('6', '5', '微信小程序支付', 'wx_mini', '微信小程序支付，返回支付包', '1', '1545143540', '1545423439');
+INSERT INTO `cm_pay_code` VALUES ('6', '1', '微信小程序支付', 'wx_mini', '微信小程序支付，返回支付包', '1', '1545143540', '1545975942');
+INSERT INTO `cm_pay_code` VALUES ('7', null, 'XX银联扫码', 'unionpay', 'XXXX', '1', '1545832802', '1545832802');
 
 -- ----------------------------
 -- Table structure for cm_transaction

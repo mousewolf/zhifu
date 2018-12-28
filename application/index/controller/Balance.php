@@ -104,6 +104,31 @@ class Balance extends Base
     }
 
     /**
+     * 新增
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     * @return mixed
+     */
+    public function editAccount(){
+
+        if($this->request->isPost()){
+            if ($this->request->post('b/a')['uid'] == is_login()){
+                $this->result($this->logicUserAccount->saveUserAccount($this->request->post('b/a')));
+            }else{
+                $this->result(0,'非法操作，请重试！');
+            }
+        }
+        //银行
+        $this->assign('banker', $this->logicBanker->getBankerList());
+
+        //详情信息
+        $this->assign('info', $this->logicUserAccount->getAccountInfo(['uid' => is_login(),'id' => $this->request->param('id')]));
+
+        return $this->fetch();
+    }
+
+    /**
      * 打款记录
      *
      * @author 勇敢的小笨羊 <brianwaring98@gmail.com>

@@ -52,7 +52,8 @@ class Notify extends BaseApi
      *
      */
     public function callback($channel = 'wxpay'){
-
+        //默认跳转
+        $result['return_url'] = "https://www.iredcap.cn";
         //支付分发
         $result = ApiPayment::$channel()->callback();
 
