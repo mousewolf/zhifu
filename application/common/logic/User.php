@@ -263,7 +263,7 @@ class User extends BaseLogic
         try{
 
             if(!empty($data['card']))  $data['card'] = json_encode(array_values($data['card']));
-
+            //修改数据
             $this->modelUserAuth->setInfo($data);
 
             $action = isset($data['id']) ? '编辑' : '新增';
