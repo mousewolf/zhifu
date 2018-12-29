@@ -164,8 +164,6 @@ class User extends BaseLogic
         try{
             //密码
             $data['password'] = data_md5_key($data['password']);
-            //生成安全码
-            $data['code']   = getRandChar();
             //基本信息
             $user = $this->modelUser->setInfo($data);
             //账户记录

@@ -320,6 +320,7 @@ class RsaUtils
         $pubKey = openssl_pkey_get_details($res);
         $public_key = $pubKey["key"];
         //输出文件
+        $filename =  !empty($filename) ? $filename : date('Ymd');
         if (!is_dir(CRET_PATH . "/export/"))  mkdir(CRET_PATH . "/export/", 0777);
         file_put_contents(CRET_PATH . "/export/". $filename ."_public.pem", $public_key);
         file_put_contents(CRET_PATH . "/export/". $filename ."_private.pem", $private_key);

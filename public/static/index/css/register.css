@@ -133,7 +133,7 @@
 }
 
 .account-free-btn {
-    width: 154px;
+    width: 30%;
     height: 50px;
     border: 1px solid #00B374;
     border-radius: 4px 0 0 4px;
@@ -145,7 +145,7 @@
 }
 
 .account-tel {
-    width: 282px;
+    width: 70%;
     height: 50px;
     border-radius: 0 4px 4px 0;
     border: 1px solid #AAA;
@@ -162,14 +162,14 @@
 }
 
 .account-verify-input {
-    width: 108px;
+    width: 50%;
     height: 50px;
     border: 1px solid #AAA;
     border-radius: 4px;
     float: left;
     margin-right: 20px;
     padding: 0 20px;
-    font-size: 22px;
+    font-size: 16px;
 }
 
 .c-btn-primary {
@@ -185,13 +185,13 @@
 }
 
 .account-verify-btn {
-    width: 309px;
+    width: 38%;
     height: 52px;
     color: #FFF;
     background-color: #00ceff;
     text-align: center;
     line-height: 52px;
-    font-size: 22px;
+    font-size: 18px;
     border-radius: 4px;
     float: left;
     cursor: pointer;
