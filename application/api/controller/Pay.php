@@ -16,6 +16,7 @@ namespace app\api\controller;
 
 use app\api\service\ApiRespose;
 use app\common\controller\BaseApi;
+use app\common\library\exception\ForbiddenException;
 
 
 /**
@@ -32,6 +33,18 @@ class Pay extends BaseApi
     protected $beforeActionList = [
         'checkRequestParam'  =>  ['only'=>'unifiedorder,orderquery'],
     ];
+
+    /**
+     * 收银台跳转支付
+     *
+     * @author 勇敢的小笨羊 <brianwaring98@gmail.com>
+     *
+     *
+     * @throws ForbiddenException
+     */
+    public function cashier(){
+        throw new ForbiddenException(['msg' => '等待开发...']);
+    }
 
     /**
      * 统一扫码支付
