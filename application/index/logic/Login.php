@@ -17,6 +17,7 @@ namespace app\index\logic;
 use app\common\library\Activation;
 use app\common\library\enum\CodeEnum;
 use app\common\library\enum\UserStatusEnum;
+use app\common\library\RsaUtils;
 use think\Db;
 use think\Log;
 
@@ -200,12 +201,11 @@ class Login extends Base
                 //邮件场景
                 $jobData['scene']   = 'regcallback';
                 $this->logicQueue->pushJobDataToQueue('AutoEmailWork' , $jobData , 'AutoEmailWork');
-
                 //数据处理
                 $this->modelUser->updateInfo(
                     ['uid'=>$Verification->uid],
                     [
-                        'is_verify' => UserStatusEnum::ENABLE,
+                        'is_verify_phone' => UserStatusEnum::ENABLE,
                         'status' => UserStatusEnum::ENABLE,
                         'auth_code' => data_md5($auth_code)
                     ]);
