@@ -86,7 +86,7 @@ class Login extends Base
         //数据检验
         if (!$validate) {
 
-            return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateRegister->getError()];
+         //   return [ 'code' => CodeEnum::ERROR, 'msg' => $this->validateRegister->getError()];
         }
 
         //TODO 添加数据

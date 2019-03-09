@@ -59,6 +59,7 @@ class Pay extends BaseLogic
         $accounts = $this->modelPayAccount->getColumn(['cnl_id' => ['eq',$channel['id']], 'status' => ['eq','1']],
             'id,co_id,name,single,daily,timeslot,param');
 
+
         //4.规则取出可用账户
         /*******************************/
         //TODO 写选择规则  时间、状态、费率 等等

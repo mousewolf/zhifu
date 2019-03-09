@@ -64,11 +64,11 @@ class CheckFrequent extends ApiCheck
             $cache->set($key, 0, $this->timeScope);
         }
         if ($value >= $this->times) {
-            Log::error($key . '[ Trigger Restriction And Flow Control.]');
+        /*    Log::error($key . '[ Trigger Restriction And Flow Control.]');
             throw new ForbiddenException([
                 'msg' => "Invalid Request.[ Trigger Restriction And Flow Control.]",
                 'errorCode' => 100003
-            ]);
+            ]);*/
         }
         $cache->inc($key);
     }

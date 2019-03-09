@@ -39,6 +39,7 @@ class ApiRequest extends Rest
     public static function check(){
         // 初始化一个：访问频次校验的check
         $checkFrequent    =  new CheckFrequent();
+
         // 初始化一个：访问IP校验的check
         $CheckAllowed    =  new CheckAllowed();
         // 初始化一个：签名校验的check

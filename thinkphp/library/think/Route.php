@@ -1268,9 +1268,9 @@ class Route
                 $name2 = strtolower(Loader::parseName($controller, 1) . '/' . $action);
             }
 
-            if (isset(self::$rules['name'][$name]) || isset(self::$rules['name'][$name2])) {
+         /*   if (isset(self::$rules['name'][$name]) || isset(self::$rules['name'][$name2])) {
                 throw new HttpException(404, 'invalid request:' . str_replace('|', $depr, $url));
-            }
+            }*/
         }
         return ['type' => 'module', 'module' => $route];
     }

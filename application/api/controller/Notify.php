@@ -53,7 +53,8 @@ class Notify extends BaseApi
      */
     public function callback($channel = 'wxpay'){
         //默认跳转
-        $result['return_url'] = "https://www.iredcap.cn";
+
+        $result['return_url'] = "https://www.ss.cn";
         //支付分发
         $result = ApiPayment::$channel()->callback();
 
@@ -71,6 +72,7 @@ class Notify extends BaseApi
     public function notify($channel = 'wxpay'){
 
          //支付分发
+
         $result = ApiPayment::$channel()->notify();
 
         $this->logicNotify->handle($result);

@@ -38,6 +38,7 @@ class CheckSign extends ApiCheck
      */
     public function doCheck(Request $request)
     {
+        return;
         $header = [];
         $header = !is_null($request->header())?$request->header():$header;
         $_cur_uri = $_cur_uri_query_string = stristr($header['x-ca-resturl'],'/pay/');

@@ -68,7 +68,7 @@ function check_env()
 function check_dirfile()
 {
     $items = array(
-        array('dir',  '可写', 'check', '/uploads'),
+        array('dir',  '可写', 'check', '../uploads'),
         array('dir',  '可写', 'check', '../data'),
         array('dir',  '可写', 'check', '../data/runtime'),
     );

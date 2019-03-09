@@ -25,7 +25,7 @@ Route::rule('pay/cashier','api/Pay/cashier');//收银台
 Route::post('pay/unifiedorder','api/Pay/unifiedorder');//统一下单
 Route::post('pay/orderquery','api/Pay/orderquery');//查询订单
 /**
- * Notify
+ * Notify  http://www.zf.com/callback/wxpay
  */
 Route::post('notify/:channel','api/Notify/notify');//官方异步通知
 Route::get('callback/:channel','api/Notify/callback');//官方同步通知

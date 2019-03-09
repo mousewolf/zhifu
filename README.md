@@ -11,6 +11,11 @@ Cmpay_v20181220(测试版本)
 > [小红帽科技：https://www.iredcap.cn](https://www.iredcap.cn "小红帽科技")
 
 
+
+
+
+
+
 > 运行环境要求PHP > 5.6以上(推荐7.0.*)。
 
 使用系统前请：

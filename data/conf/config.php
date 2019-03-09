@@ -23,12 +23,12 @@ return [
     'url_domain_deploy'      => true,
     // 视图输出字符串内容替换
     'view_replace_str'       => [
-        '__STATIC__'    => '/static',
-        '__COMMON__'    => '/static/common',
-        '__ADMIN__'    => '/static/admin',
-        '__CLOUD__'    => '/static/cloudui',
-        '__INDEX__'    => '/static/index',
-        '__LAYUI__'    => '/static/layui'
+        '__STATIC__'    => '/public/static',
+        '__COMMON__'    => '/public/static/common',
+        '__ADMIN__'    => '/public/static/admin',
+        '__CLOUD__'    => '/public/static/cloudui',
+        '__INDEX__'    => '/public/static/index',
+        '__LAYUI__'    => '/public/static/layui'
     ],
 
     // 自定义跳转页面对应的模板文件

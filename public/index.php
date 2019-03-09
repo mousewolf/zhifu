@@ -11,7 +11,6 @@
 
 // [ 应用入口文件 ]
 
-
 //检测安装
 if(!file_exists(__DIR__ . '/../data/install.lock')){
     // 绑定安装模块
