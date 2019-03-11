@@ -1,0 +1,115 @@
+
+<head>
+    <title></title>
+    <style type="text/css">
+        table
+        {
+            border-collapse: collapse;
+            margin: 0 auto;
+            text-align: center;
+        }
+        table td, table th
+        {
+            border: 1px solid #cad9ea;
+            color: #666;
+            height: 30px;
+        }
+        table thead th
+        {
+            background-color: #CCE8EB;
+            width: 100px;
+        }
+        table tr:nth-child(odd)
+        {
+            background: #fff;
+        }
+        table tr:nth-child(even)
+        {
+            background: #F5FAFA;
+        }
+    </style>
+</head>
+<body>
+<table width="90%" class="table">
+    <caption>
+        <h2>
+            订单列表</h2>
+    </caption>
+    <thead>
+    <tr>
+        <th>
+            商铺名称
+        </th>
+        <th>
+            订单号
+        </th>
+        <th width="14%">
+            下单时间
+        </th>
+        <th>
+            用户名
+        </th>
+        <th>
+            金额
+        </th>
+        <th>
+            支付状态
+        </th>
+        <th>
+            支付链接
+        </th>
+        <th>
+            支付时间
+        </th>
+    </tr>
+    </thead>
+    {volist name="datas" id="data"}
+    <tr>
+        <td>
+            {$data.storeName}
+        </td>
+
+        <td>
+            {$data.orderNum}
+        </td>
+        <td width="10%">
+            {$data.addTime|date="m/d H:i:s",###}
+        </td>
+        <td>
+            {$data.username}
+        </td>
+        <td>
+            {$data.orderPrice}
+        </td>
+        <td>
+            {switch name="$data['status']" }
+            {case value="0"}<font  color="green">待用户上传</font>{/case}
+            {case value="1"}待支付{/case}
+            {case value="2"}<font  color="red">已经支付</font>{/case}
+            {default /}默认情况
+            {/switch}
+        </td>
+        <td>
+            {switch name="$data['status']" }
+            {case value="0"}<font  color="green">待用户上传</font>{/case}
+            {case value="1"}<a href="{$pay_url}{$data.id}">链接</a>{/case}
+            {case value="2"}<font  color="red">已经支付</font>{/case}
+            {default /}默认情况
+            {/switch}
+
+        </td>
+        <th>
+            {switch name="$data['status']" }
+            {case value="0"}------{/case}
+            {case value="1"}------{/case}
+            {case value="2"}{$data.payTime|date="m/d H:i:s",###}{/case}
+            {default /}默认情况
+            {/switch}
+
+        </th>
+    </tr>
+    {/volist}
+
+</table>
+</body>
+</html>

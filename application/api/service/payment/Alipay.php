@@ -123,6 +123,7 @@ class Alipay extends ApiPayment
         //签名
         $commonConfigs["sign"] = $this->generateAlipaySign($commonConfigs, $commonConfigs['sign_type']);
         //请求
+        Log::notice('Alipay API Response : '. json_encode($commonConfigs));
         $response = $this->curlPost('https://openapi.alipay.com/gateway.do',$commonConfigs);
         Log::notice('Alipay API Response : '. json_encode($response));
         $response = json_decode($response,true);
@@ -136,6 +137,7 @@ class Alipay extends ApiPayment
                 'errCode'   => 200009
             ]);
         }
+
         //数据返回
         return $result;
     }

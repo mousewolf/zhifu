@@ -17,6 +17,16 @@ use think\Route;
 
 
 //Route::miss('api/Miss/index');//强制路由错误返回
+/**
+ * OWNPay
+ */
+Route::rule('ownpay/list','ownpay/index/list','GET|POST');
+Route::rule('ownpay/pay','ownpay/index/pay','GET|POST');
+Route::rule('ownpay/notify','ownpay/index/notify','GET|POST');
+Route::rule('ownpay/add','ownpay/index/add','GET|POST');
+Route::rule('ownpay/addDo','ownpay/index/addDo','GET|POST');
+Route::rule('ownpay/getStatus','ownpay/index/getStatus','GET|POST');
+Route::rule('ownpay/paynotify','ownpay/index/paynotify','GET|POST');
 
 /**
  * Pay

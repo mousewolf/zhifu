@@ -46,15 +46,15 @@
                 <div style="width: 420px; max-width: 90%;margin: 10px auto;">
                     彻底告别繁琐的支付接入流程 一次接入所有主流支付渠道和分期渠道，99.99% 系统可用性，满足你丰富的交易场景需求,为你的用户提供完美支付体验。
                 </div>
-                <div style="margin: 30px 0 0 0;">
+            <!--    <div style="margin: 30px 0 0 0;">
                     扫码加入QQ交流群
                 </div>
                 <div style="margin: 16px 0 32px;">
-                    <img height="119" src="__COMMON__/qr-pub.jpg" width="119" />
-                </div>
+                    <img height="119" src="__COMMON__/1qr-pub.jpg" width="119" />
+                </div> --->
                 <div>
                     <span style="color: #76858c;">服务咨询请联系：</span>
-                    <a href="me@iredcap.cn" style="color:#35c8e6; text-decoration: none;" target="_blank"> me@iredcap.cn </a>
+                    <a href="me@iredcap.cn" style="color:#35c8e6; text-decoration: none;" target="_blank"> sihai@111.cn </a>
                 </div>
             </div>
         </div>

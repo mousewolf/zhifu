@@ -161,7 +161,7 @@ class Email extends Driver
                                         彻底告别繁琐的支付接入流程 一次接入所有主流支付渠道和分期渠道，99.99% 系统可用性，满足你丰富的交易场景需求,为你的用户提供完美支付体验。
                                     </div>
                                     <div style=\"margin: 16px 0 32px;\">
-                                        <img src=\"https://www.iredcap.cn/static/qr-pub.jpg\" width=\"125\" height=\"125\" />
+                                        <img src=\"https://www.iredcap.cn/static/qr-pub1.jpg\" width=\"125\" height=\"125\" />
                                     </div>
                                     <div>
                                         <span style=\"color: #76858c;\">服务咨询请联系：</span>

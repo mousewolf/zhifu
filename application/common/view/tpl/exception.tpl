@@ -366,7 +366,7 @@ return implode(', ', $result);
     <div style="margin: -15px; padding: 8vh 0 2vh;color: #a6aeb3; background-color: #f7f9fa; text-align: center; font-family:NotoSansHans-Regular,'Microsoft YaHei',Arial,sans-serif; -webkit-font-smoothing: antialiased;">
         <div style="width: 750px; max-width: 85%; margin: 0 auto; background-color: #fff; -webkit-box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);-moz-box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);box-shadow: 0 2px 16px 0 rgba(118,133,140,0.22);">
             <div style="padding: 20px 10%; text-align: center; font-size: 16px;line-height: 16px;">
-                <a href="/" style="vertical-align: top;"> <img style="margin:32px auto; max-width: 95%; color: #0e2026;" src="/static/common/logo-color.png" /> </a>
+                <a href="/" style="vertical-align: top;"> <img style="margin:32px auto; max-width: 30%color: #0e2026;" src="/static/common/logo-color.png" /> </a>
             </div>
             <table style="background-color:#fff;margin:0 auto;" cellpadding="0" cellspacing="0">
                 <tbody><tr>
