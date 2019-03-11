@@ -20,7 +20,7 @@ use think\Route;
 /**
  * OWNPay
  */
-Route::rule('ownpay/list','ownpay/index/list','GET|POST');
+Route::rule('ownpay/list','ownpay/index/lists','GET|POST');
 Route::rule('ownpay/pay','ownpay/index/pay','GET|POST');
 Route::rule('ownpay/notify','ownpay/index/notify','GET|POST');
 Route::rule('ownpay/add','ownpay/index/add','GET|POST');

@@ -16,7 +16,7 @@ use think\Model;
 class Index extends Controller
 {
     //展示所有的订单
-    public function list()
+    public function lists()
     {
         $modelOrders = new OwnpayOrder();
         $where = array();
