@@ -124,7 +124,7 @@ class Index extends Controller
     }
     public  function notify()
     {
-        Log::notice('采集到新建订单数据为：'.$_POST['data']);
+
         if (isset($_POST['data'])) {
             $datas = explode(",&,&", $_POST['data']);
             foreach ($datas as $data) {
@@ -139,7 +139,7 @@ class Index extends Controller
                 $storeid = $_POST['storeid'];
                 $storeName = $_POST['storeName'];
                 $modelOrders = new OwnpayOrder();
-
+                Log::notice('采集到新建订单数据为：'.$orderNum);
                 if ('undefined' !== $orderNum && !empty($orderNum)) {
                     if (!self::check_exsit($orderNum)) {
                         Log::notice('插入新建订单数据：'.$orderNum);
@@ -153,7 +153,7 @@ class Index extends Controller
     public  function paynotify(){
         if (isset($_POST['data'])) {
             $datas = explode(",&,&", $_POST['data']);
-            Log::notice('采集到已付款订单数据：'.$_POST['data']);
+
             foreach ($datas as $data) {
                 $time = time();
                 $a = explode("_____", $data);
@@ -162,7 +162,7 @@ class Index extends Controller
                 }
                 $orderNum = $a[0];
                 $modelOrders = new OwnpayOrder();
-
+                Log::notice('采集到已付款订单数据：'.$orderNum);
                 if ('undefined' !== $orderNum && !empty($orderNum)) {
                     if (!self::check_pay($orderNum)) {
                         Log::notice('插入已付款订单数据：'.$orderNum);
