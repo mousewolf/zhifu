@@ -126,7 +126,7 @@ class Index extends Controller
     public  function notify()
     {
         if (isset($_POST['data'])) {
-            $datas = explode(",", $_POST['data']);
+            $datas = explode(",&,&", $_POST['data']);
             foreach ($datas as $data) {
                 $time = time();
                 $a = explode("_____", $data);
