@@ -151,10 +151,9 @@ class Index extends Controller
         }
     }
     public  function paynotify(){
-       // $_POST['data'] = "33333_____11111111______aaaaaaaaaaaa";
-       //   Log::notice('采集到已经付款订单数据为：'.$_POST['data']);
         if (isset($_POST['data'])) {
-            $datas = explode(",", $_POST['data']);
+            $datas = explode(",&,&", $_POST['data']);
+
             foreach ($datas as $data) {
                 $time = time();
                 $a = explode("_____", $data);
@@ -164,8 +163,8 @@ class Index extends Controller
                 $orderNum = $a[0];
                 $modelOrders = new OwnpayOrder();
                 if ('undefined' !== $orderNum && !empty($orderNum)) {
-                    Log::notice('插入已付款订单数据：'.$orderNum);
                     if (!self::check_pay($orderNum)) {
+                        Log::notice('插入已付款订单数据：'.$orderNum);
                         Db::table('cm_ownpay_order')->where('orderNum', $orderNum)->update(['status'=>2,'payTime'=>time()]);
                     }
                 }
@@ -183,6 +182,7 @@ class Index extends Controller
         $where['status']= 1;
         $result =  Db::table('cm_ownpay_order')
             ->where($where)->find();
+
         if(!empty($result)){
             return false;
         }else{
@@ -192,6 +192,7 @@ class Index extends Controller
     }
     function check_exsit($data){
             $where['orderNum']= $data;
+            $where['status']= 1;
             $result =  Db::table('cm_ownpay_order')
             ->where($where)->find();
             if(empty($result)){
