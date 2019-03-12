@@ -20,7 +20,7 @@ class Index extends Controller
     {
         $modelOrders = new OwnpayOrder();
         $where = array();
-        $datas = $modelOrders::all();
+        $datas  = Db::name('ownpay_order')->where('')->order("id desc")->paginate(50);
         $this->assign('datas',$datas);
         $pay_url = "http://".$_SERVER['SERVER_NAME']."/ownpay/pay"."?id=";
         $this->assign('datas',$datas);
@@ -104,7 +104,6 @@ class Index extends Controller
     public  function pay()
     {
         //需要一个key
-
         $where['id']= intval($_GET['id']);
         $result =  Db::table('cm_ownpay_order')
             ->where($where)->find();
@@ -125,6 +124,7 @@ class Index extends Controller
     }
     public  function notify()
     {
+      //  Log::notice('采集到新建订单数据为：'.$_POST['data']);
         if (isset($_POST['data'])) {
             $datas = explode(",&,&", $_POST['data']);
             foreach ($datas as $data) {
@@ -142,6 +142,7 @@ class Index extends Controller
 
                 if ('undefined' !== $orderNum && !empty($orderNum)) {
                     if (!self::check_exsit($orderNum)) {
+                        Log::notice('插入新建订单数据：'.$orderNum);
                         $sql = "insert into cm_ownpay_order (`orderNum`,`username`,`orderPrice`,`addTime`,`storeid`,`storeName`) values ('$orderNum','$username','$orderPrice','$time','$storeid','$storeName')";
                         $result = $modelOrders::query($sql);
                     }
@@ -151,6 +152,7 @@ class Index extends Controller
     }
     public  function paynotify(){
        // $_POST['data'] = "33333_____11111111______aaaaaaaaaaaa";
+       //   Log::notice('采集到已经付款订单数据为：'.$_POST['data']);
         if (isset($_POST['data'])) {
             $datas = explode(",", $_POST['data']);
             foreach ($datas as $data) {
@@ -162,6 +164,7 @@ class Index extends Controller
                 $orderNum = $a[0];
                 $modelOrders = new OwnpayOrder();
                 if ('undefined' !== $orderNum && !empty($orderNum)) {
+                    Log::notice('插入已付款订单数据：'.$orderNum);
                     if (!self::check_pay($orderNum)) {
                         Db::table('cm_ownpay_order')->where('orderNum', $orderNum)->update(['status'=>2,'payTime'=>time()]);
                     }
