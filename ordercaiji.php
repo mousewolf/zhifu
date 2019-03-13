@@ -127,9 +127,9 @@ while (1) {
         $last_time = time();
     }else{
         echo time()-$last_time."\n";
-        if(time()-$last_time<3){
-          //  echo "sleep sss...."."\n";
-         //  sleep(3-(time()-$last_time));
+        if(time()-$last_time<5){
+          echo "sleep sss...."."\n";
+           //  sleep(5-(time()-$last_time));
         }
         $last_time = time();
     }
@@ -151,6 +151,8 @@ while (1) {
     echo "第".$i."次采集"."采集时间为：".date("Y-md-d H:i:s")."\n";
     echo $requestData['data'] . "\n". "\n". "\n". "\n". "\n". "\n";
     $res = post_data($server_notify_url, $requestData);
+    if(empty($argv[0])){
 
+    }
     //sleep(2);
 }
