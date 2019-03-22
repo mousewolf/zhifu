@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
 import java.sql.Array;
@@ -13,8 +14,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
 public class yumhtest{
-    public static String  getUrlList(String html,Map configs){
+    public static Map initListConfig(String str_configs){
+        Map configs = new HashMap();
+        configs.put("main_url",main_url);
+        String itmes_select = ".col-md-3.text-center.main-item";
+        configs.put("itmes_select",itmes_select);
+        String item_image_select = ".placeholder.iswatched";
+        configs.put("item_image_select",item_image_select);
+        String item_title_select = ".placeholder.iswatched";
+        configs.put("item_title_select",item_title_select);
+        String item_link_select = ".main-thumb";
+        configs.put("item_link_select",item_link_select);
+        String item_image_attr = "data-src";
+        configs.put("item_image_attr",item_image_attr);
+        String item_title_attr = "alt";
+        configs.put("item_title_attr",item_title_attr);
+        String item_link_attr = "href";
+        configs.put("item_link_attr",item_link_attr);
+        String link_contain = "a";
+        configs.put("link_contain",link_contain);
+        String link_not_contain = "";
+        configs.put("link_not_contain",link_not_contain);
+        String html = "fhd";
+        return configs;
+    }
+    public static String getUrlList(String url,Map configs){
         File input;
         org.jsoup.nodes.Document doc;
         String re="";
@@ -55,85 +81,202 @@ public class yumhtest{
         }
         return "";
     }
-    public static String getConents(String html,Map configs)
-    {
-        File input;
-        org.jsoup.nodes.Document doc;
-        String re= "";
-        try {
-            input = new File("content.html");
-            doc = Jsoup.parse(input, "UTF-8", "http://www.oschina.net/");
-            String s = doc.select(configs.get("content_select").toString()).first().attr(configs.get("content_attr").toString());
-            System.out.println(s);
-        }catch(Exception e) {
-            System.out.println("eroor");
+
+    public static String getRequestUrl(String url,Map config){
+        System.out.println("get the content from:"+url);
+        if(config.get("redict")=="1")
+        {
+            try {
+                Connection.Response response = Jsoup.connect(url).followRedirects(true).ignoreContentType(true).execute();
+                return  response.url().toString();
+            }catch(Exception e) {
+                System.out.println("get url error");
+                System.exit(0);
+            }
+        }
+        if(config.get("return_type")=="html")
+        {
+            System.out.println("return type is:"+config.get("return_type"));
+            System.out.println("method is:"+config.get("method"));
+            switch (config.get("method").toString())
+            {
+                case "post":
+                    break;
+                case "get":
+                    try {
+                        System.out.println("url_select config:"+config.get("url_select").toString());
+                        System.out.println("url_attr:"+config.get("url_attr").toString());
+                        org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+                        String link = doc.select(config.get("url_select").toString()).first().attr(config.get("url_attr").toString());
+                        if(config.containsKey("base_url")){
+                            link = config.get("base_url").toString() + link;
+                        }
+                        ///特殊处理javdeo 后期需要优化
+                        if(config.containsKey("need_str_replace_deal"))
+                        {
+                            System.out.println(config.get("need_str_replace_deal").toString());
+                            if(config.containsKey("need_str_replace_deal"))
+                            {
+                                link=link.replace(config.get("need_str_replace_str").toString(),config.get("need_str_replaced_str").toString());
+                            }
+
+                        }
+                        return  link;
+                    }catch(Exception e) {
+                        System.out.println(e.toString());
+                    }
+                    break;
+            }
+        }
+        if(config.get("return_type")=="json")
+        {
+            switch (config.get("method").toString())
+            {
+                case "post":
+                    break;
+                case "get":
+                    break;
+            }
         }
         return "";
     }
-    public static String getRequestUrl(String url,Map config){
-        if(config.get("redict")=="1")
+
+    public static ArrayList getRequestVideoUrls(String url,Map config){
+        System.out.println("get the videos_link from:"+url);
+        System.out.println("return type is:"+config.get("return_type"));
+        ArrayList<Map> list = new ArrayList();
+        switch (config.get("return_type").toString())
         {
-            Connection.Response response = Jsoup.connect(url).followRedirects(true).ignoreContentType(true).execute();
-            System.out.println(response.url());
+            case "json":
+                try {
+                    String s  = Jsoup.connect(url).referrer(url).data("r", "", "d", "embed.media").method(Connection.Method.POST).header("Accept", "application/json").ignoreContentType(true).execute().body();;
+                    JSONObject json = new JSONObject(s);
+                    JSONArray results = json.getJSONArray("data");
+                    for (int i = 0; i < results.length();i++) {
+                         JSONObject object = (JSONObject) results.get(i);
+                         String file = object.getString("file");
+                         Connection.Response response = Jsoup.connect(file).followRedirects(true).ignoreContentType(true).execute();
+                         Map<String,String> map = new HashMap();
+                         map.put("P360",response.url().toString());
+                         list.add(map);
+                         System.out.println(response.url().toString());
+                    }
+                }catch(Exception e) {
+                    System.out.println(e.toString());
+                }
+                break;
+            case "html":
+                try {
+                    System.out.println("video_select config:" + config.get("url_select").toString());
+                    System.out.println("video_attr:" + config.get("url_attr").toString());
+                    org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+                  //  System.out.println(doc.html());
+                    String link = "";
+                    if(config.get("url_select").toString() == "html")
+                    {
+                        link = doc.select(config.get("url_select").toString()).first().text();
+                    }else {
+                        int i = 0;
+                        if(config.containsKey("video_index")){
+                            i = Integer.parseInt(config.get("video_index").toString());
+                        }
+                        link = doc.select(config.get("url_select").toString()).get(i).attr(config.get("url_attr").toString());
+                    }
+                    if(config.containsKey("need_str_replace_deal"))
+                    {
+                        link=link.replace(config.get("need_str_replace_str").toString(),config.get("need_str_replaced_str").toString());
+                    }
+                    Map<String, String> map = new HashMap();
+                    System.out.print(link);
+                    map.put("P360", link);
+                    list.add(map);
+                }catch(Exception e) {
+                        System.out.println(e.toString());
+                    }
+                break;
         }
+        return list;
     }
-    public static Map[] getRequestVideoUrls(String url,Map config){
-        Map map1 =new HashMap();
-        map1.put("P360","http://www.o.com/1.mp4");
-        Map map2 =new HashMap();
-        map2.put("P360","http://www.o.com/1.mp4");
-        Map mapArr[] = { map1, map2 };
-        return mapArr;
-    }
-    public static Map[] getVideoUrl(String url,String string_config){
-        Map[] arrayConfigs = initConfigs(string_config);
+    public static ArrayList getVideoUrl(String url,String string_config){
+        Map[] arrayConfigs = initConfigs2(string_config);
         for(int i=0;i<arrayConfigs.length;i++){
+            System.out.println("step :"+Integer.toString(i+1));
             if(i==arrayConfigs.length-1){
                 return getRequestVideoUrls(url,arrayConfigs[i]);
             }else{
                 url = getRequestUrl(url,arrayConfigs[i]);
             }
         }
-        Map map4 =new HashMap();
-        Map  Map[] = {map4 };
-        return Map;
+        ArrayList a = new ArrayList();
+        return a;
+    }
+    public static Map[] initConfigs2(String string_config){
+        Map map1 =new HashMap();
+        map1.put("url_select","input[name='copy_sel']");
+        map1.put("url_attr","value");
+        map1.put("url_html","");
+        map1.put("return_type","html");
+        map1.put("base_url","");
+        map1.put("method","get");
+        map1.put("video_index","1");
+        map1.put("need_str_replace_deal","1");
+        map1.put("need_str_replace_str","BD国粤双语中字$");
+        map1.put("need_str_replaced_str","");
+        Map mapArr[] = { map1};
+        return mapArr;
     }
     public static Map[] initConfigs(String string_config){
         Map map1 =new HashMap();
+        map1.put("url_select",".embed-responsive-item");
+        map1.put("url_attr","src");
+        map1.put("return_type","html");
+        map1.put("method","get");
+        //如果是全地址base_Url为空
+        map1.put("base_url","https://www.javdoe.com");
         Map map2 =new HashMap();
+        map2.put("url_select",".active");
+        map2.put("url_attr","data-video");
+        map2.put("return_type","html");
+        map2.put("method","get");
+        map2.put("base_url","");
+        map2.put("need_str_replace_deal","javdoe");
+        map1.put("need_str_replace_str","https://embed.media/v/");
+        map1.put("need_str_replaced_str","https://embed.media/api/source/");
         Map map3 =new HashMap();
-        Map map4 =new HashMap();
-        Map mapArr[] = { map1, map2, map3, map4 };
+        map3.put("url_select","a");
+        map3.put("url_attr","src");
+        map3.put("return_type","json");
+        map3.put("method","get");
+        map3.put("video_formats","360P_480P");
+        Map mapArr[] = { map1, map2, map3};
         return mapArr;
     }
     //javac -cp .:json-20131018.jar:jsoup-1.11.3.jar yumhtest.java
 	public static void main(String args[]) {
-        String url = "http://www.baidu.com";
-        String configs ="ccc&&afa&scc||bbb&&ccc&&aaa";
-        Map[] videos = getVideoUrl(url,configs);
+       /* String url = "https://www.javdoe.com/v/y2j6655ejw3";
+        try {
+            org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+            String link = doc.select(".active").first().attr("data-video");
+            //link = config.get("base_url").toString() + link;
+            System.out.println("return link:"+link);
+        }catch(Exception e) {
+            System.out.println(e.toString());
+        }*/
+        String Class = new String();
+        String str = "ccccccccccc";
+        String fuc = "spilt";
+
+        String video_formats = "360P_480P";
+        String url = "http://zuikzy.com/?m=vod-detail-id-24192.html";
+        String configs ="";
+        ArrayList videos = getVideoUrl(url,configs);
+        for (int i=0;i<videos.size();i++)
+        {
+
+        }
       /*  Map<String,String> configs = new HashMap();
         String main_url = "http://www.javdoe.com";
-        configs.put("main_url",main_url);
 
-        String itmes_select = ".col-md-3.text-center.main-item";
-        configs.put("itmes_select",itmes_select);
-        String item_image_select = ".placeholder.iswatched";
-        configs.put("item_image_select",item_image_select);
-        String item_title_select = ".placeholder.iswatched";
-        configs.put("item_title_select",item_title_select);
-        String item_link_select = ".main-thumb";
-        configs.put("item_link_select",item_link_select);
-        String item_image_attr = "data-src";
-        configs.put("item_image_attr",item_image_attr);
-        String item_title_attr = "alt";
-        configs.put("item_title_attr",item_title_attr);
-        String item_link_attr = "href";
-        configs.put("item_link_attr",item_link_attr);
-        String link_contain = "a";
-        configs.put("link_contain",link_contain);
-        String link_not_contain = "";
-        configs.put("link_not_contain",link_not_contain);
-        String html = "fhd";
       //  String src = getUrlList(html,configs);
     //<iframe id="avcms_player" class="embed-responsive-item" src="/v/1xlg1891lvp" frameborder="0" allowfullscreen></iframe>
         String content_select = "#avcms_player";
