@@ -18,21 +18,29 @@ import java.util.regex.Matcher;
 public class yumhtest{
     public static Map initListConfig(String str_configs){
         Map configs = new HashMap();
-        configs.put("main_url",main_url);
-        String itmes_select = ".col-md-3.text-center.main-item";
+        String base_url = "https://wolongzy.net";
+        configs.put("base_url",base_url);
+        String itmes_select = ".videoContent li";
         configs.put("itmes_select",itmes_select);
-        String item_image_select = ".placeholder.iswatched";
+
+        String item_image_select = "";
         configs.put("item_image_select",item_image_select);
-        String item_title_select = ".placeholder.iswatched";
+
+        String item_title_select = ".videoName";
         configs.put("item_title_select",item_title_select);
-        String item_link_select = ".main-thumb";
+
+        String item_link_select = ".videoName";
         configs.put("item_link_select",item_link_select);
+
         String item_image_attr = "data-src";
         configs.put("item_image_attr",item_image_attr);
-        String item_title_attr = "alt";
+
+        String item_title_attr = "html";
         configs.put("item_title_attr",item_title_attr);
+
         String item_link_attr = "href";
         configs.put("item_link_attr",item_link_attr);
+
         String link_contain = "a";
         configs.put("link_contain",link_contain);
         String link_not_contain = "";
@@ -40,46 +48,66 @@ public class yumhtest{
         String html = "fhd";
         return configs;
     }
-    public static String getUrlList(String url,Map configs){
-        File input;
+    public static ArrayList getUrlList(String url,String string_configs){
         org.jsoup.nodes.Document doc;
         String re="";
+        Map configs = initListConfig(string_configs);
+        ArrayList lists =new ArrayList();
         try {
-            input = new File("test.html");
-            doc = Jsoup.parse(input, "UTF-8", "http://www.oschina.net/");
+            Map map =new HashMap();
+            doc = Jsoup.connect(url).get();
             Elements contents = doc.select(configs.get("itmes_select").toString());
             for (Element content : contents) {
+
+                //link
                 String link = content.select(configs.get("item_link_select").toString()).first().attr(configs.get("item_link_attr").toString());
-                String title = "";
-                if(configs.get("item_title_attr").toString() != "html") {
-                    title = content.select(configs.get("item_title_select").toString()).first().attr(configs.get("item_title_attr").toString());
-                }else{
-                    title = content.select(configs.get("item_title_select").toString()).first().html();
-                }
-                String image = content.select(configs.get("item_image_select").toString()).first().attr(configs.get("item_image_attr").toString());
-                if(!configs.get("link_contain").toString().isEmpty()){
-                    if(link.indexOf(configs.get("link_contain").toString())==-1){
-                        continue;
-                    }
-                }
-                if(!configs.get("link_not_contain").toString().isEmpty()){
-                    if(link.indexOf(configs.get("link_not_contain").toString())!=-1){
-                        continue;
-                    }
-                }
-                if(link.indexOf("http://")==-1 && link.indexOf("https://")==-1){
-                    link = configs.get("main_url").toString() + link;
-                }
                 System.out.println("link is:"+link);
+                if(configs.containsKey("link_contain")){
+                    if(!configs.get("link_contain").toString().isEmpty()){
+                        if(link.indexOf(configs.get("link_contain").toString())==-1){
+                            continue;
+                        }
+                    }
+                }
+                if(configs.containsKey("link_not_contain")) {
+                    if (!configs.get("link_not_contain").toString().isEmpty()) {
+                        if (link.indexOf(configs.get("link_not_contain").toString()) != -1) {
+                            continue;
+                        }
+                    }
+                }
+                if(configs.containsKey("base_url")){
+                    link = configs.get("base_url").toString() + link;
+                }
+                map.put("link",link);
+
+                //title
+                String title = "";
+                if(configs.containsKey("item_title_attr")){
+                    if(configs.get("item_title_attr").toString() != "html") {
+                        title = content.select(configs.get("item_title_select").toString()).first().attr(configs.get("item_title_attr").toString());
+                    }else{
+                        title = content.select(configs.get("item_title_select").toString()).first().html();
+                    }
+                }
                 System.out.println("title is:"+title);
-                System.out.println("image is:"+image);
-                System.out.println("");
+                map.put("title",title);
+
+                //tupian
+                String image = "http://pic.632802.com/data/User/admin/home/pictures/20190224/QQ%E6%88%AA%E5%9B%BE20190227123930.jpg";
+                if(configs.containsKey("item_image_select") && !configs.get("item_image_select").toString().isEmpty()){
+                    image = content.select(configs.get("item_image_select").toString()).first().attr(configs.get("item_image_attr").toString());
+                    System.out.println("image is:"+image);
+                }
+                map.put("image",image);
+
+                lists.add(map);
             }
         }
         catch(Exception e) {
-            System.out.println("eroor");
+            System.out.println(e.toString());
         }
-        return "";
+        return lists;
     }
 
     public static String getRequestUrl(String url,Map config){
@@ -262,12 +290,23 @@ public class yumhtest{
         }catch(Exception e) {
             System.out.println(e.toString());
         }*/
+        String str_config="";
+        String url = "https://wolongzy.net/type/21.html?page=5";
+
+        ArrayList<Map> lists = getUrlList(url,str_config);
+        for(int i=0;i<lists.size();i++){
+           Map map = lists.get(i);
+           System.out.println(lists.get(i).get("title"));
+           System.out.println(lists.get(i).get("image"));
+           System.out.println(lists.get(i).get("link"));
+        }
+        System.exit(0);
         String Class = new String();
         String str = "ccccccccccc";
         String fuc = "spilt";
 
         String video_formats = "360P_480P";
-        String url = "http://zuikzy.com/?m=vod-detail-id-24192.html";
+     //   String url = "http://zuikzy.com/?m=vod-detail-id-24192.html";
         String configs ="";
         ArrayList videos = getVideoUrl(url,configs);
         for (int i=0;i<videos.size();i++)
